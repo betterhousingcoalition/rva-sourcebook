@@ -15,6 +15,19 @@ source("_common.R")
 market <- read_rds("data/acs_market.rds")
 burden <- read_rds("data/acs_burden.rds")
 demo <- read_rds("data/acs_demographics.rds")
+# Eviction filings come from r/evict.R (monthly court filings, core three only).
+evict <- read_rds("data/evict.rds")
+
+ev_ann <- function(g, yr, col = "filings") {
+  evict$annual |> filter(geoid == g, year == yr) |> pull(all_of(col))
+}
+ev_sum <- function(g, col) evict$summary |> filter(geoid == g) |> pull(all_of(col))
+ev_last <- evict$last_month
+ev_last_yr <- year(ev_last)
+ev_pre_peak <- evict$annual |> filter(geoid == "bhc3", year < 2020) |> slice_max(filings, n = 1)
+ev_trough <- evict$annual |> filter(geoid == "bhc3") |> slice_min(filings, n = 1)
+ev_full <- evict$annual |> filter(geoid == "bhc3", complete_year)
+ev_latest_full <- max(ev_full$year)
 
 # Geographies this page reads at. `bhc3`, `secondary4`, and `rr17` are pooled
 # rows the r/ scripts build for count tables (tenure, burden). Medians cannot be
@@ -553,6 +566,116 @@ ggplot(loc_plot, aes(x = share, y = fct_reorder(label, total), fill = level)) +
 - The `r nrow(loc_plot |> distinct(label))` localities with reliable renter-burden estimates all fall between `r p_fmt(min(loc_burden$total[loc_burden$rel != "Low"]))` and `r p_fmt(max(loc_burden$total[loc_burden$rel != "Low"]))`.
 - `r n_loc_low` of the 17 localities are omitted because their renter-burden estimates are too imprecise to show; they are mostly small, rural localities with few renter households.
 
+## Eviction filings fell sharply in 2020 and have not fully returned
+
+```{r}
+#| label: fig-evict-monthly
+#| fig-alt: "Line chart of monthly eviction filings from 2016 to 2026 in Richmond city, Henrico, and Chesterfield. All three run at roughly 600 to 1,800 filings a month before 2020, collapse to near zero in 2020 and 2021, then recover to a level below the pre-2020 peak. Richmond city is highest throughout, Henrico second, Chesterfield lowest."
+#| fig-height: 4.2
+
+ev_geos <- c("51760", "51087", "51041")
+ev_cols <- c(
+  "Richmond city" = rva_pal[["blue"]],
+  "Henrico" = rva_pal[["orange"]],
+  "Chesterfield" = rva_pal[["aqua"]]
+)
+
+ev_loc <- evict$monthly |> filter(geoid %in% ev_geos)
+
+ggplot(ev_loc, aes(x = month, y = filings, color = locality)) +
+  geom_line(linewidth = 0.9) +
+  scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  scale_y_continuous(labels = label_comma(), limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
+  scale_color_manual(values = ev_cols) +
+  labs(
+    title = "Monthly eviction filings collapsed in 2020 and are still below 2016-19",
+    subtitle = glue::glue(
+      "Filings per month: ",
+      "<span style='color:{ev_cols[[\"Richmond city\"]]}'>**Richmond city**</span>, ",
+      "<span style='color:{ev_cols[[\"Henrico\"]]}'>**Henrico**</span>, ",
+      "<span style='color:{ev_cols[[\"Chesterfield\"]]}'>**Chesterfield**</span>"
+    ),
+    x = NULL, y = NULL,
+    caption = eviction_cap()
+  ) +
+  theme_rva()
+```
+
+- Across the core three, filings peaked at `r n_fmt(ev_pre_peak$filings)` in `r ev_pre_peak$year`, then fell to `r n_fmt(ev_trough$filings)` in `r ev_trough$year` — `r p_fmt(1 - ev_trough$filings / ev_pre_peak$filings, 0.1)` below the peak.
+- The monthly low was `r n_fmt(ev_sum("bhc3", "min_filings"))` filings, in `r format(ev_sum("bhc3", "min_month"), "%B %Y")`.
+- In the latest 12 months (through `r format(ev_last, "%B %Y")`), the core averaged `r n_fmt(round(ev_sum("bhc3", "latest12_mean")))` filings a month, `r p_fmt(abs(ev_sum("bhc3", "latest12_vs_pre")), 1)` `r if_else(ev_sum("bhc3", "latest12_vs_pre") < 0, "below", "above")` the 2016-2019 monthly average of `r n_fmt(round(ev_sum("bhc3", "pre_mean_filings")))`.
+- Richmond city accounts for the largest share of filings: `r p_fmt(ev_ann("51760", ev_latest_full) / ev_ann("bhc3", ev_latest_full))` of the core total in `r ev_latest_full`, with Henrico at `r p_fmt(ev_ann("51087", ev_latest_full) / ev_ann("bhc3", ev_latest_full))` and Chesterfield at `r p_fmt(ev_ann("51041", ev_latest_full) / ev_ann("bhc3", ev_latest_full))`.
+
+```{r}
+#| label: fig-evict-pct
+#| fig-alt: "Line chart of eviction filings as a percent of each month's historical average for the Richmond core, 2016 to 2026, with a reference line at 100 percent. The series hovers near 100 percent through 2019, drops to roughly 20 percent in 2020 and 2021, and recovers to roughly 80 to 90 percent in the most recent years."
+#| fig-height: 3.8
+
+ev_core <- evict$monthly |> filter(geoid == "bhc3")
+
+ggplot(ev_core, aes(x = month, y = pct_hist / 100)) +
+  geom_hline(yintercept = 1, color = rva_ink[["baseline"]], linewidth = 0.5) +
+  geom_line(color = rva_pal[["blue"]], linewidth = 1) +
+  scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  scale_y_continuous(labels = label_percent(accuracy = 1), limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
+  labs(
+    title = "Filings have recovered to about 85% of the historical average",
+    subtitle = "Core three, monthly filings as % of historical average",
+    x = NULL, y = NULL,
+    caption = paste(eviction_cap(), "The historical-average baseline is the data provider's; the line at 100% is that baseline.")
+  ) +
+  theme_rva()
+```
+
+- Filings ran at `r round(ev_ann("bhc3", 2018, "pct_hist"))`% of the historical average in 2018 and `r round(ev_ann("bhc3", 2019, "pct_hist"))`% in 2019, already easing before the pandemic.
+- The core bottomed at `r round(ev_ann("bhc3", ev_trough$year, "pct_hist"))`% of average in `r ev_trough$year`, then climbed to `r round(ev_ann("bhc3", ev_latest_full, "pct_hist"))`% in `r ev_latest_full`.
+- Over the latest 12 months the core stands at `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of average; Chesterfield is closest to its baseline (`r round(ev_sum("51041", "latest12_pct_hist"))`%) and Richmond city furthest (`r round(ev_sum("51760", "latest12_pct_hist"))`%).
+
+```{r}
+#| label: tbl-evict
+
+evict$annual |>
+  filter(geoid %in% c("51760", "51087", "51041", "bhc3")) |>
+  mutate(
+    year_lab = if_else(complete_year, as.character(year), paste0(year, "*")),
+    locality = factor(locality, levels = c("Richmond city", "Henrico", "Chesterfield", "Richmond core"))
+  ) |>
+  arrange(locality, year) |>
+  transmute(
+    Locality = as.character(locality),
+    Year = year_lab,
+    Filings = n_fmt(filings),
+    Defaults = if_else(is.na(defaults), "&mdash;", n_fmt(defaults)),
+    `Default share` = if_else(is.na(default_share), "&mdash;", p_fmt(default_share, 1)),
+    `% of historical avg.` = sprintf("%.0f%%", pct_hist)
+  ) |>
+  select(-Locality) |>
+  kbl(
+    escape = FALSE, align = "lrrrrr",
+    caption = paste0(
+      "Eviction filings, defaults, and percent of the historical average by year. ",
+      "* Partial year (through ", format(ev_last, "%B %Y"), "). 2016 defaults omitted (January is a partial count). ",
+      "Source: general district court eviction filing records."
+    )
+  ) |>
+  pack_rows(index = table(factor(
+    evict$annual |> filter(geoid %in% c("51760", "51087", "51041", "bhc3")) |>
+      mutate(locality = factor(locality, levels = c("Richmond city", "Henrico", "Chesterfield", "Richmond core"))) |>
+      arrange(locality, year) |> pull(locality),
+    levels = c("Richmond city", "Henrico", "Chesterfield", "Richmond core")
+  ))) |>
+  kable_styling(c("condensed", "striped"))
+```
+
+- A *default* is a case the tenant did not contest. Defaults made up `r p_fmt(ev_ann("bhc3", ev_latest_full, "default_share"), 0.1)` of core filings in `r ev_latest_full`, against `r p_fmt(ev_ann("bhc3", 2018, "default_share"), 0.1)` in 2018.
+- `r ev_last_yr` is a partial year (`r ev_ann("bhc3", ev_last_yr, "n_months")` months), so its totals are not comparable to full years; `r n_fmt(ev_ann("bhc3", ev_last_yr))` filings so far.
+
+::: callout-note
+## What eviction filings do and don't measure
+
+A filing is a landlord's court request, not a completed eviction: many cases are dismissed, settled, or paid before judgment, and a household can be filed against more than once. Filings are a signal of housing instability, not a count of households displaced. The 2020-2021 collapse reflects pandemic-era eviction moratoria and rental assistance as much as underlying need, so read the recovery against the pre-2020 baseline, not as a measure of the renter burden shown above. Counts cover the three core localities only; the expansion ring is not included.
+:::
+
 ::: callout-warning
 ## Small-geography reliability
 
@@ -572,4 +695,5 @@ A household is **cost-burdened** when it pays 30% or more of its income on housi
 - **Values and rents:** the Richmond MSA's median home value `r chg_phrase(real_chg(market$median_value, "40060"))` and median rent `r chg_phrase(real_chg(market$median_rent, "40060"))` after inflation.
 - **Affordability:** the typical home was worth `r sprintf("%.1f", ratio_at("40060", pti))` times the typical household income in the metro, and median rent equalled `r p_fmt(ratio_at("40060", rent_share))` of it.
 - **Cost burden:** about half of renter households (`r p_fmt(b30("rr17", "Renter"))`) are cost-burdened and that has not eased, while owner burden fell to `r p_fmt(b30("rr17", "Owner"))`.
+- **Evictions:** core-three filings fell `r p_fmt(1 - ev_trough$filings / ev_pre_peak$filings, 1)` from the pre-2020 peak to the `r ev_trough$year` trough and now run at about `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average.
 :::

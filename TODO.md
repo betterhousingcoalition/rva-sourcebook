@@ -61,6 +61,13 @@
 - [ ] `data-notes.qmd` needs a PUMS / AMI section (geography caveat, FY2026 limits, CPI inflation, replicate-weight SEs). See METHODOLOGY.md.
 - [ ] Optional: a `mapgl` choropleth of share at/below 80% AMI by PUMA for Phase 5 (boundaries for all PUMAs are in `data/puma_va.rds`; the profiles now cover the seven core-three PUMAs).
 
+## Phase 4c — eviction filings (added 2026-10-31 at the user's request)
+
+- [x] `r/evict.R` — combines the three `data-out/*-virginia-filings.csv` exports (Richmond city, Henrico, Chesterfield) into `data/evict.rds` (monthly, annual, summary) + `data-out/evict_monthly.csv`, `evict_annual.csv`. Ran clean; validation passes.
+- [x] "Eviction filings" section in `market.qmd` (2 figures, 1 table, bullets, caveat callout, bullet in the opening tip box). Renders clean.
+- [ ] Add an eviction paragraph/section to `summary.qmd` and `data-notes.qmd` (source, baseline definition, partial 2026).
+- [ ] Confirm the source and the "historical average" baseline definition; the exports don't document either.
+
 ## Phase 5 — interactive maps
 
 - [ ] One `mapgl` choropleth per page (e.g. inventory: vacancy rate by locality; demographics: median household income; market: median rent or home value).

@@ -6,7 +6,17 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-10-30 (latest) — `profiles.qmd` and its summary section narrowed to the core three
+## 2026-10-31 (latest) — eviction filings: `r/evict.R` and a `market.qmd` section (ralph loop, iteration 1)
+
+**What changed:** Added `r/evict.R`: reads the three `*-virginia-filings.csv` exports, builds a core-three total (percent of historical average rebuilt as a ratio of sums using the baseline implied by each locality's own percent), annual rollup, and a 2016-19 vs latest-12-months summary. Writes `data/evict.rds` and `data-out/evict_monthly.csv` / `evict_annual.csv`. Added an eviction section to `market.qmd` (monthly filings by locality, percent of average, annual table, caveat callout) and a bullet in its opening box. Rendered clean.
+
+**Data surprises:** `defaults_comparison` is empty in all files (dropped, checked in validation). January 2016 defaults are a partial count (4-82 vs hundreds) so 2016 defaults are set to NA. Data runs through Sept 2026, so 2026 is a 9-month year. Core filings: 37.5k (2016) -> 7.6k (2021) -> 31.5k (2025); latest 12 months at 85% of the historical average, 15% below the 2016-19 monthly mean. Chesterfield is near baseline (97%); Richmond city furthest (81%). 38 locality-months sit outside 20-200% of average (the 2020-21 trough).
+
+**Left open:** Source and baseline definition are undocumented in the exports; `summary.qmd` and `data-notes.qmd` have no eviction text yet. `r/hud.R` has unrelated uncommitted changes and is not in this commit.
+
+---
+
+## 2026-10-30 — `profiles.qmd` and its summary section narrowed to the core three
 
 **What changed:** At the user's request (BHC's target population is Richmond city, Henrico, Chesterfield), `r/pums/pums_profiles.R` now keeps only the seven `puma_core3` PUMAs; the geography total is "Core three" (was "PUMS region") and the outer-ring group is gone. Re-ran the script (validation passes; benchmark vs ACS B25003 owners +0.35%, renters -0.59%). Rewrote the geography callout, bullets, fig-geo levels, and the final callout in `profiles.qmd`; updated the matching section, watch item, and caveat in `summary.qmd`. Both render clean (exit 0, no NA text).
 

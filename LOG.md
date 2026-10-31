@@ -6,7 +6,17 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-10-31 (latest) — eviction filings: `r/evict.R` and a `market.qmd` section (ralph loop, iteration 1)
+## 2026-10-31 (latest) — HMDA lending in `market.qmd`
+
+**What changed:** Added `r/hmda_prep.R` (reads `data/hmda_data.parquet` from `r/hmda.R`; core three, principal residence, 1-4 unit). Denial rate = denied / (originated + approved-not-accepted + denied). Outputs `data/hmda.rds` and `data-out/hmda_rates.csv`, `hmda_by_race.csv`, `hmda_denial_reasons.csv`. New market.qmd section with originations by locality, denial rate by race/ethnicity, and denial reasons.
+
+**Numbers:** core home-purchase originations 17,262 (2021 peak) -> 10,607 (2023) -> 10,877 (2025). Home-purchase denial rate flat at ~8%. 2022-25 denial rate: Black 16.1%, Hispanic 10.6%, Asian 9.0%, White non-Hispanic 4.5%. Top reasons: DTI 36%, credit history 33%.
+
+**Left open:** `r/hmda.R` not brought to anatomy; no summary/data-notes text; `renv` reports out-of-sync on Rscript start.
+
+---
+
+## 2026-10-31 — eviction filings: `r/evict.R` and a `market.qmd` section (ralph loop, iteration 1)
 
 **What changed:** Added `r/evict.R`: reads the three `*-virginia-filings.csv` exports, builds a core-three total (percent of historical average rebuilt as a ratio of sums using the baseline implied by each locality's own percent), annual rollup, and a 2016-19 vs latest-12-months summary. Writes `data/evict.rds` and `data-out/evict_monthly.csv` / `evict_annual.csv`. Added an eviction section to `market.qmd` (monthly filings by locality, percent of average, annual table, caveat callout) and a bullet in its opening box. Rendered clean.
 

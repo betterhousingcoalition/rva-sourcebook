@@ -29,6 +29,22 @@ ev_trough <- evict$annual |> filter(geoid == "bhc3") |> slice_min(filings, n = 1
 ev_full <- evict$annual |> filter(geoid == "bhc3", complete_year)
 ev_latest_full <- max(ev_full$year)
 
+# Mortgage lending (HMDA) from r/hmda_prep.R: principal-residence, 1-4 unit
+# loans in the core three.
+hmda <- read_rds("data/hmda.rds")
+hm_first <- min(hmda$rates$activity_year)
+hm_last <- max(hmda$rates$activity_year)
+hm <- function(g, yr, col, purp = "Home purchase") {
+  hmda$rates |> filter(geoid == g, activity_year == yr, purpose == purp) |> pull(all_of(col))
+}
+hm_peak <- hmda$rates |> filter(geoid == "bhc3", purpose == "Home purchase") |> slice_max(originated, n = 1)
+hm_low <- hmda$rates |> filter(geoid == "bhc3", purpose == "Home purchase", activity_year > hm_peak$activity_year) |> slice_min(originated, n = 1)
+hm_race <- function(grp, yrs = (hm_last - 3):hm_last) {
+  hmda$by_race |>
+    filter(race_ethnicity == grp, activity_year %in% yrs) |>
+    summarise(rate = sum(denied) / sum(decided_apps))  |> pull(rate)
+}
+
 # Geographies this page reads at. `bhc3`, `secondary4`, and `rr17` are pooled
 # rows the r/ scripts build for count tables (tenure, burden). Medians cannot be
 # pooled, so the home-value, rent, and ratio figures read the three core
@@ -566,6 +582,122 @@ ggplot(loc_plot, aes(x = share, y = fct_reorder(label, total), fill = level)) +
 - The `r nrow(loc_plot |> distinct(label))` localities with reliable renter-burden estimates all fall between `r p_fmt(min(loc_burden$total[loc_burden$rel != "Low"]))` and `r p_fmt(max(loc_burden$total[loc_burden$rel != "Low"]))`.
 - `r n_loc_low` of the 17 localities are omitted because their renter-burden estimates are too imprecise to show; they are mostly small, rural localities with few renter households.
 
+## Home-purchase lending peaked in 2021 and has settled lower
+
+```{r}
+#| label: fig-hmda-orig
+#| fig-alt: "Two line charts of mortgage loans originated for a principal residence, 2018 to 2025, in Richmond city, Henrico, and Chesterfield. In the all-purposes panel, originations roughly double from 2018 to 2020 and 2021 on refinancing, then fall by more than half by 2023. In the home-purchase panel, originations rise modestly to 2021 and fall about a third by 2023. Chesterfield has the most loans in each panel, Henrico is second, and Richmond city has the fewest."
+#| fig-height: 4.2
+
+hm_cols <- c(
+  "Richmond city" = rva_pal[["blue"]],
+  "Henrico" = rva_pal[["orange"]],
+  "Chesterfield" = rva_pal[["aqua"]]
+)
+
+hm_loc <- hmda$rates |>
+  filter(geoid != "bhc3") |>
+  mutate(
+    locality = factor(locality, levels = names(hm_cols)),
+    purpose = factor(purpose, levels = c("Home purchase", "All purposes"))
+  )
+
+ggplot(hm_loc, aes(x = activity_year, y = originated, color = locality)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 1.8) +
+  facet_wrap(~purpose, scales = "free_y") +
+  scale_x_continuous(breaks = hm_first:hm_last, labels = \(x) paste0("'", str_sub(x, 3, 4))) +
+  scale_y_continuous(labels = label_comma(), limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
+  scale_color_manual(values = hm_cols) +
+  labs(
+    title = "Refinancing drove the boom; purchase lending held steadier",
+    subtitle = glue::glue(
+      "Loans originated, principal residence: ",
+      "<span style='color:{hm_cols[[\"Richmond city\"]]}'>**Richmond city**</span>, ",
+      "<span style='color:{hm_cols[[\"Henrico\"]]}'>**Henrico**</span>, ",
+      "<span style='color:{hm_cols[[\"Chesterfield\"]]}'>**Chesterfield**</span>"
+    ),
+    x = NULL, y = NULL,
+    caption = "**Source:** FFIEC/CFPB Home Mortgage Disclosure Act (HMDA) loan-level data, 2018-2025. One- to four-unit properties; owner-occupied principal residences only."
+  ) +
+  theme_rva() +
+  theme(strip.text = ggtext::element_markdown(face = "bold", hjust = 0))
+```
+
+- Across the core three, lenders originated `r n_fmt(hm("bhc3", hm_peak$activity_year, "originated"))` home-purchase loans for principal residences in `r hm_peak$activity_year`, the peak, and `r n_fmt(hm("bhc3", hm_low$activity_year, "originated"))` in `r hm_low$activity_year`, the low since (`r p_fmt(hm("bhc3", hm_low$activity_year, "originated") / hm("bhc3", hm_peak$activity_year, "originated") - 1, 0.1)`). In `r hm_last` it was `r n_fmt(hm("bhc3", hm_last, "originated"))`.
+- Counting all purposes, originations were `r n_fmt(hm("bhc3", 2021, "originated", "All purposes"))` in 2021, against `r n_fmt(hm("bhc3", 2023, "originated", "All purposes"))` in 2023 and `r n_fmt(hm("bhc3", hm_last, "originated", "All purposes"))` in `r hm_last`; the swing is mostly refinancing, not buying.
+- In `r hm_last`, Chesterfield had `r n_fmt(hm("51041", hm_last, "originated"))` home-purchase originations, Henrico `r n_fmt(hm("51087", hm_last, "originated"))`, and Richmond city `r n_fmt(hm("51760", hm_last, "originated"))`.
+- Median originated loan in the core: `r d_fmt(hm("bhc3", hm_first, "median_loan"))` in `r hm_first` and `r d_fmt(hm("bhc3", hm_last, "median_loan"))` in `r hm_last` for home purchase (nominal dollars).
+
+```{r}
+#| label: fig-hmda-race
+#| fig-alt: "Line chart of the home-purchase mortgage denial rate in the Richmond core, 2018 to 2025, for four groups of applicants. Black applicants have the highest denial rate, roughly 11 to 18 percent. Hispanic or Latino applicants are next, Asian applicants lower, and non-Hispanic White applicants lowest at roughly 4 to 5 percent."
+#| fig-height: 4
+
+race_cols <- c(
+  "White, non-Hispanic" = rva_pal[["blue"]],
+  "Black" = rva_pal[["orange"]],
+  "Hispanic or Latino" = rva_pal[["aqua"]],
+  "Asian" = rva_pal[["violet"]]
+)
+
+hm_race_df <- hmda$by_race |>
+  filter(race_ethnicity %in% names(race_cols), reliable) |>
+  mutate(race_ethnicity = factor(race_ethnicity, levels = names(race_cols)))
+
+ggplot(hm_race_df, aes(x = activity_year, y = denial_rate, color = race_ethnicity)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 1.8) +
+  scale_x_continuous(breaks = hm_first:hm_last, labels = \(x) paste0("'", str_sub(x, 3, 4))) +
+  scale_y_continuous(labels = label_percent(accuracy = 1), limits = c(0, NA), expand = expansion(mult = c(0, 0.08))) +
+  scale_color_manual(values = race_cols) +
+  labs(
+    title = "Black applicants are denied more than three times as often",
+    subtitle = glue::glue(
+      "Home-purchase denial rate, core three: ",
+      "<span style='color:{race_cols[[\"White, non-Hispanic\"]]}'>**White**</span>, ",
+      "<span style='color:{race_cols[[\"Black\"]]}'>**Black**</span>, ",
+      "<span style='color:{race_cols[[\"Hispanic or Latino\"]]}'>**Hispanic**</span>, ",
+      "<span style='color:{race_cols[[\"Asian\"]]}'>**Asian**</span>"
+    ),
+    x = NULL, y = NULL,
+    caption = "**Source:** FFIEC/CFPB HMDA, 2018-2025. Denial rate = denied / (originated + approved-not-accepted + denied). Year-groups with fewer than 100 decided applications are omitted."
+  ) +
+  theme_rva()
+```
+
+- Over `r hm_last - 3`-`r hm_last`, `r p_fmt(hm_race("Black"))` of Black applicants' home-purchase applications were denied, against `r p_fmt(hm_race("White, non-Hispanic"))` for non-Hispanic White applicants, `r p_fmt(hm_race("Hispanic or Latino"))` for Hispanic or Latino applicants, and `r p_fmt(hm_race("Asian"))` for Asian applicants.
+- The overall home-purchase denial rate in the core was `r p_fmt(hm("bhc3", hm_last, "denial_rate"))` in `r hm_last` and `r p_fmt(hm("bhc3", hm_first, "denial_rate"))` in `r hm_first` — little changed. The all-purposes rate is higher (`r p_fmt(hm("bhc3", hm_last, "denial_rate", "All purposes"))` in `r hm_last`) because refinance and home-improvement applications are denied more often.
+- Denial rates by locality in `r hm_last` are close: `r p_fmt(hm("51760", hm_last, "denial_rate"))` in Richmond city, `r p_fmt(hm("51087", hm_last, "denial_rate"))` in Henrico, and `r p_fmt(hm("51041", hm_last, "denial_rate"))` in Chesterfield.
+
+```{r}
+#| label: tbl-hmda-reasons
+
+hmda$reasons |>
+  transmute(
+    `Stated reason` = reason,
+    Denials = n_fmt(denials),
+    `Share of denied applications` = p_fmt(share_of_denials, 1)
+  ) |>
+  kbl(
+    align = "lrr",
+    caption = paste0(
+      "Reasons given for denial, all denied principal-residence applications in the core three, ",
+      min(hmda$reason_years), "-", max(hmda$reason_years), ". A denial can cite up to four reasons, so shares sum to more than 100%. ",
+      "Source: FFIEC/CFPB HMDA."
+    )
+  ) |>
+  kable_styling(c("condensed", "striped"))
+```
+
+- Debt-to-income (`r p_fmt(hmda$reasons$share_of_denials[hmda$reasons$reason == "Debt-to-income ratio"])`) and credit history (`r p_fmt(hmda$reasons$share_of_denials[hmda$reasons$reason == "Credit history"])`) are the most-cited reasons, together far ahead of collateral or cash.
+
+::: callout-note
+## How to read the lending figures
+
+HMDA covers most mortgage lenders but not every loan, and the denial rate describes **applications that reached a credit decision** (originated, approved-but-not-accepted, or denied); withdrawn and incomplete applications are not counted. Denial rates compare applicant groups but do not control for income, credit, or loan terms, so a gap is a flag for further review, not evidence of discrimination on its own. Race and ethnicity follow the grouping built in `r/hmda.R`; "Incomplete/No Data" and "Other Minority" are not charted because they are heterogeneous or small. Figures cover principal residences with one to four units.
+:::
+
 ## Eviction filings fell sharply in 2020 and have not fully returned
 
 ```{r}
@@ -695,5 +827,6 @@ A household is **cost-burdened** when it pays 30% or more of its income on housi
 - **Values and rents:** the Richmond MSA's median home value `r chg_phrase(real_chg(market$median_value, "40060"))` and median rent `r chg_phrase(real_chg(market$median_rent, "40060"))` after inflation.
 - **Affordability:** the typical home was worth `r sprintf("%.1f", ratio_at("40060", pti))` times the typical household income in the metro, and median rent equalled `r p_fmt(ratio_at("40060", rent_share))` of it.
 - **Cost burden:** about half of renter households (`r p_fmt(b30("rr17", "Renter"))`) are cost-burdened and that has not eased, while owner burden fell to `r p_fmt(b30("rr17", "Owner"))`.
+- **Mortgage lending:** core-three home-purchase originations for principal residences peaked at `r n_fmt(hm("bhc3", hm_peak$activity_year, "originated"))` in `r hm_peak$activity_year` and were `r n_fmt(hm("bhc3", hm_last, "originated"))` in `r hm_last`; Black applicants were denied `r p_fmt(hm_race("Black"))` of the time against `r p_fmt(hm_race("White, non-Hispanic"))` for White applicants.
 - **Evictions:** core-three filings fell `r p_fmt(1 - ev_trough$filings / ev_pre_peak$filings, 1)` from the pre-2020 peak to the `r ev_trough$year` trough and now run at about `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average.
 :::

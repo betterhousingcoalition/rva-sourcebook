@@ -144,6 +144,9 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#phase-3-demographics-page" id="toc-phase-3-demographics-page" class="nav-link" data-scroll-target="#phase-3-demographics-page">Phase 3 — demographics page</a></li>
   <li><a href="#phase-4-market-page" id="toc-phase-4-market-page" class="nav-link" data-scroll-target="#phase-4-market-page">Phase 4 — market page</a></li>
   <li><a href="#phase-4b-pums-profiles-and-summary-added-2026-10-30-at-the-users-request" id="toc-phase-4b-pums-profiles-and-summary-added-2026-10-30-at-the-users-request" class="nav-link" data-scroll-target="#phase-4b-pums-profiles-and-summary-added-2026-10-30-at-the-users-request">Phase 4b — PUMS profiles and summary (added 2026-10-30 at the user’s request)</a></li>
+  <li><a href="#phase-4c-eviction-filings-added-2026-10-31-at-the-users-request" id="toc-phase-4c-eviction-filings-added-2026-10-31-at-the-users-request" class="nav-link" data-scroll-target="#phase-4c-eviction-filings-added-2026-10-31-at-the-users-request">Phase 4c — eviction filings (added 2026-10-31 at the user’s request)</a></li>
+  <li><a href="#phase-4d-hmda-mortgage-lending-added-2026-10-31-at-the-users-request" id="toc-phase-4d-hmda-mortgage-lending-added-2026-10-31-at-the-users-request" class="nav-link" data-scroll-target="#phase-4d-hmda-mortgage-lending-added-2026-10-31-at-the-users-request">Phase 4d — HMDA mortgage lending (added 2026-10-31 at the user’s request)</a></li>
+  <li><a href="#phase-4e-external-affairs-section-added-2026-11-03-at-the-users-request" id="toc-phase-4e-external-affairs-section-added-2026-11-03-at-the-users-request" class="nav-link" data-scroll-target="#phase-4e-external-affairs-section-added-2026-11-03-at-the-users-request">Phase 4e — external affairs section (added 2026-11-03 at the user’s request)</a></li>
   <li><a href="#phase-5-interactive-maps" id="toc-phase-5-interactive-maps" class="nav-link" data-scroll-target="#phase-5-interactive-maps">Phase 5 — interactive maps</a></li>
   <li><a href="#phase-6-polish-publish" id="toc-phase-6-polish-publish" class="nav-link" data-scroll-target="#phase-6-polish-publish">Phase 6 — polish &amp; publish</a></li>
   <li><a href="#surfaced-during-phase-2-not-blocking" id="toc-surfaced-during-phase-2-not-blocking" class="nav-link" data-scroll-target="#surfaced-during-phase-2-not-blocking">Surfaced during Phase 2 — not blocking</a></li>
@@ -228,6 +231,36 @@ ul.task-list li input[type="checkbox"] {
 <li><label><input type="checkbox"><code>r/pums/</code> is untracked in git; commit it with <code>profiles.qmd</code>, <code>summary.qmd</code>, and the log.</label></li>
 <li><label><input type="checkbox"><code>data-notes.qmd</code> needs a PUMS / AMI section (geography caveat, FY2026 limits, CPI inflation, replicate-weight SEs). See METHODOLOGY.md.</label></li>
 <li><label><input type="checkbox">Optional: a <code>mapgl</code> choropleth of share at/below 80% AMI by PUMA for Phase 5 (boundaries for all PUMAs are in <code>data/puma_va.rds</code>; the profiles now cover the seven core-three PUMAs).</label></li>
+</ul>
+</section>
+<section id="phase-4c-eviction-filings-added-2026-10-31-at-the-users-request" class="level2">
+<h2 class="anchored" data-anchor-id="phase-4c-eviction-filings-added-2026-10-31-at-the-users-request">Phase 4c — eviction filings (added 2026-10-31 at the user’s request)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>r/evict.R</code> — combines the three <code>data-out/*-virginia-filings.csv</code> exports (Richmond city, Henrico, Chesterfield) into <code>data/evict.rds</code> (monthly, annual, summary) + <code>data-out/evict_monthly.csv</code>, <code>evict_annual.csv</code>. Ran clean; validation passes.</label></li>
+<li><label><input type="checkbox" checked="">“Eviction filings” section in <code>market.qmd</code> (2 figures, 1 table, bullets, caveat callout, bullet in the opening tip box). Renders clean.</label></li>
+<li><label><input type="checkbox" checked="">Eviction section added to <code>summary.qmd</code> (2026-11-03).</label></li>
+<li><label><input type="checkbox">Add an eviction paragraph to <code>data-notes.qmd</code> (source, baseline definition, partial 2026).</label></li>
+<li><label><input type="checkbox">Confirm the source and the “historical average” baseline definition; the exports don’t document either.</label></li>
+</ul>
+</section>
+<section id="phase-4d-hmda-mortgage-lending-added-2026-10-31-at-the-users-request" class="level2">
+<h2 class="anchored" data-anchor-id="phase-4d-hmda-mortgage-lending-added-2026-10-31-at-the-users-request">Phase 4d — HMDA mortgage lending (added 2026-10-31 at the user’s request)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>r/hmda_prep.R</code> — core-three, principal-residence, 1-4 unit; originations, denial rates (locality, purpose, race/ethnicity), denial reasons → <code>data/hmda.rds</code> + <code>data-out/hmda_*.csv</code>.</label></li>
+<li><label><input type="checkbox" checked="">Lending section in <code>market.qmd</code> (2 figures, 1 table, bullets, callout) and a bullet in the opening box.</label></li>
+<li><label><input type="checkbox"><code>r/hmda.R</code> has no header/validation, no <code>source("_common.R")</code> (uses <code>rr</code>), and leaves four stray <code>all(is.na(...))</code> lines on columns that aren’t selected; bring to script anatomy.</label></li>
+<li><label><input type="checkbox" checked="">Lending added to <code>summary.qmd</code> (2026-11-03).</label></li>
+<li><label><input type="checkbox">Add lending to <code>data-notes.qmd</code> (denial-rate definition, HMDA coverage).</label></li>
+</ul>
+</section>
+<section id="phase-4e-external-affairs-section-added-2026-11-03-at-the-users-request" class="level2">
+<h2 class="anchored" data-anchor-id="phase-4e-external-affairs-section-added-2026-11-03-at-the-users-request">Phase 4e — external affairs section (added 2026-11-03 at the user’s request)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>summary.qmd</code> section “For external affairs: connecting the data to Better Housing Coalition’s work”: quotable-numbers table, bullets by BHC line of work (rental, senior, homeownership, mixed-income/mixed-use), and a “using these figures” callout.</label></li>
+<li><label><input type="checkbox" checked=""><code>r/summary_audit.R</code> -&gt; <code>data/summary_audit.rds</code> + <code>data-out/summary_audit.csv</code>: 90% MOEs and independent HMDA/eviction re-computation for the figures the BHC section quotes (2026-11-03). Re-run after any data refresh; the page reads it.</label></li>
+<li><label><input type="checkbox">Re-check <code>summary.qmd</code>’s hand-typed numbers (none remain in prose, but the Profiles and market <code>fig-alt</code> text carries rounded values).</label></li>
+<li><label><input type="checkbox">BHC to supply program facts (units, residents served, pipeline) to pair with the regional figures; the section deliberately states none beyond the 8 senior properties.</label></li>
+<li><label><input type="checkbox">Mixed-use has no direct data (retail/commercial demand); consider a public source if this section is used for that case.</label></li>
 </ul>
 </section>
 <section id="phase-5-interactive-maps" class="level2">

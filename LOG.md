@@ -6,7 +6,39 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-10-31 (latest) — HMDA lending in `market.qmd`
+## 2026-11-03 (latest) — accuracy audit of the BHC section and margins of error
+
+**What changed:** Added `r/summary_audit.R` (writes `data/summary_audit.rds`, `data-out/summary_audit.csv`): 90% MOEs for the quoted ACS/PUMS figures, binomial intervals for HMDA rates, and stopifnot re-computation of HMDA originations/denials from the raw parquet and eviction annual totals from the raw exports (all pass). `summary.qmd` now shows a margin-of-error and caution column on the quotable-numbers table and reads the audit frame.
+
+**Corrections made:** (1) the denial-reasons bullets implied home-purchase denials; the reasons cover all loan purposes (only 18% of denials are home purchase) -- reworded in both sections. (2) Real rent (+11.3%, +/-1.3) and income (+9.6%, +/-1.6) changes are within each other's margins of error; wording no longer implies rent outpaced income. (3) Senior counts rounded to 500 (about 50 sample households; +/-1,100). (4) Renters above 120% AMI paying 30%+ (3.2%) rests on about 10 cases; quoted as "about 3%".
+
+**Verified without change:** ACS shares and medians (relative MOE 0.3-5%, all High); PUMS counts and shares (relative MOE 2-7%); BPS rr17 = sum of 17 localities every year; PEP migration eras; evictions 37,548 / 7,575 / 31,520 and 84.9% of baseline reproduce from raw exports; HMDA 17,262 / 10,607 / 10,877 and denial rates reproduce from the parquet.
+
+**Left open:** Eviction baseline definition still undocumented (provider's); 2014 under-18 cells of pooled ACS rows have no MOE (immaterial, noted in script); about 16% of HMDA decided applications lack race/ethnicity.
+
+---
+
+## 2026-11-03 — external affairs / BHC section in `summary.qmd`
+
+**What changed:** Added a section tying the data to BHC's work (rental, 8 senior properties, homeownership, mixed-income/mixed-use): quotable-numbers table, bullets per line of work, and a use-with-care callout. New setup helpers derive household counts and senior counts from PUMS `band_counts` x profile shares. Rendered clean.
+
+**Numbers:** ~84,000 core-three renter households at or below 80% AMI; ~11,900 senior renter households at or below 50% AMI (23%); 55.4% of lower-income renters live outside Richmond city.
+
+**Left open:** BHC program data not included; mixed-use demand is not measured by any series here. Senior counts are derived (count x share), flagged "about" in the page.
+
+---
+
+## 2026-11-03 — eviction and lending added to `summary.qmd`
+
+**What changed:** `summary.qmd` now reads `data/evict.rds` and `data/hmda.rds`, with computed-inline helpers. New section "Evictions have not fully rebounded, and lending has settled below its 2021 peak" (5 bullets, core-three-only callout) between Market and Income bands; watch-list item 7 (the box is now "Seven things"); a "Reading the numbers" caveat on geography and the denial-rate definition. Rendered clean, no NA text.
+
+**Numbers:** filings 37,548 (2016) -> 7,575 (2021) -> 31,520 (2025); latest 12 months 85% of baseline, 15% below the 2016-19 mean. Home-purchase originations 17,262 (2021) -> 10,607 (2023) -> 10,877 (2025); denial rate 8.3% (2025). Black applicants denied 3.6x as often as White non-Hispanic over 2022-25.
+
+**Left open:** `data-notes.qmd` still has no eviction or HMDA text; the eviction source and baseline definition are still unconfirmed. At-a-glance table not extended (its columns are ACS windows).
+
+---
+
+## 2026-10-31 — HMDA lending in `market.qmd`
 
 **What changed:** Added `r/hmda_prep.R` (reads `data/hmda_data.parquet` from `r/hmda.R`; core three, principal residence, 1-4 unit). Denial rate = denied / (originated + approved-not-accepted + denied). Outputs `data/hmda.rds` and `data-out/hmda_rates.csv`, `hmda_by_race.csv`, `hmda_denial_reasons.csv`. New market.qmd section with originations by locality, denial rate by race/ethnicity, and denial reasons.
 

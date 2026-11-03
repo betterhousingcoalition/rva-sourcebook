@@ -65,7 +65,8 @@
 
 - [x] `r/evict.R` — combines the three `data-out/*-virginia-filings.csv` exports (Richmond city, Henrico, Chesterfield) into `data/evict.rds` (monthly, annual, summary) + `data-out/evict_monthly.csv`, `evict_annual.csv`. Ran clean; validation passes.
 - [x] "Eviction filings" section in `market.qmd` (2 figures, 1 table, bullets, caveat callout, bullet in the opening tip box). Renders clean.
-- [ ] Add an eviction paragraph/section to `summary.qmd` and `data-notes.qmd` (source, baseline definition, partial 2026).
+- [x] Eviction section added to `summary.qmd` (2026-11-03).
+- [ ] Add an eviction paragraph to `data-notes.qmd` (source, baseline definition, partial 2026).
 - [ ] Confirm the source and the "historical average" baseline definition; the exports don't document either.
 
 ## Phase 4d — HMDA mortgage lending (added 2026-10-31 at the user's request)
@@ -73,7 +74,16 @@
 - [x] `r/hmda_prep.R` — core-three, principal-residence, 1-4 unit; originations, denial rates (locality, purpose, race/ethnicity), denial reasons → `data/hmda.rds` + `data-out/hmda_*.csv`.
 - [x] Lending section in `market.qmd` (2 figures, 1 table, bullets, callout) and a bullet in the opening box.
 - [ ] `r/hmda.R` has no header/validation, no `source("_common.R")` (uses `rr`), and leaves four stray `all(is.na(...))` lines on columns that aren't selected; bring to script anatomy.
-- [ ] Add lending to `summary.qmd` and `data-notes.qmd` (denial-rate definition, HMDA coverage).
+- [x] Lending added to `summary.qmd` (2026-11-03).
+- [ ] Add lending to `data-notes.qmd` (denial-rate definition, HMDA coverage).
+
+## Phase 4e — external affairs section (added 2026-11-03 at the user's request)
+
+- [x] `summary.qmd` section "For external affairs: connecting the data to Better Housing Coalition's work": quotable-numbers table, bullets by BHC line of work (rental, senior, homeownership, mixed-income/mixed-use), and a "using these figures" callout.
+- [x] `r/summary_audit.R` -> `data/summary_audit.rds` + `data-out/summary_audit.csv`: 90% MOEs and independent HMDA/eviction re-computation for the figures the BHC section quotes (2026-11-03). Re-run after any data refresh; the page reads it.
+- [ ] Re-check `summary.qmd`'s hand-typed numbers (none remain in prose, but the Profiles and market `fig-alt` text carries rounded values).
+- [ ] BHC to supply program facts (units, residents served, pipeline) to pair with the regional figures; the section deliberately states none beyond the 8 senior properties.
+- [ ] Mixed-use has no direct data (retail/commercial demand); consider a public source if this section is used for that case.
 
 ## Phase 5 — interactive maps
 

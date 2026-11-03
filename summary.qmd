@@ -20,6 +20,10 @@ market <- read_rds("data/acs_market.rds")
 burden <- read_rds("data/acs_burden.rds")
 P <- read_rds("data/pums_profiles.rds") # written by r/pums/pums_profiles.R (core three, 2020-2024)
 
+evict <- read_rds("data/evict.rds") # written by r/evict.R (court filings, core three)
+hmda <- read_rds("data/hmda.rds") # written by r/hmda_prep.R (core three, principal residence, 1-4 unit)
+audit <- read_rds("data/summary_audit.rds") # written by r/summary_audit.R: margins of error for quoted figures
+
 first_yr <- min(demo$population$year)
 latest_yr <- max(demo$population$year)
 latest_bps <- max(permits$annual$year)
@@ -125,6 +129,35 @@ bsev <- function(g, ten, yr = latest_yr) {
   burden |> filter(geoid == g, year == yr, tenure == ten, burden == "Severely cost-burdened") |> pull(share)
 }
 
+# ---- Evictions and lending (core three) -------------------------------------
+
+ev_sum <- function(g, col) evict$summary |> filter(geoid == g) |> pull(all_of(col))
+ev_ann <- function(g, yr, col = "filings") {
+  evict$annual |> filter(geoid == g, year == yr) |> pull(all_of(col))
+}
+ev_last_yr <- year(evict$last_month)
+ev_pre_peak <- evict$annual |> filter(geoid == "bhc3", year < 2020) |> slice_max(filings, n = 1)
+ev_trough <- evict$annual |> filter(geoid == "bhc3") |> slice_min(filings, n = 1)
+ev_latest_full <- evict$annual |> filter(geoid == "bhc3", complete_year) |> pull(year) |> max()
+
+hm_first <- min(hmda$rates$activity_year)
+hm_last <- max(hmda$rates$activity_year)
+hm <- function(g, yr, col, purp = "Home purchase") {
+  hmda$rates |> filter(geoid == g, activity_year == yr, purpose == purp) |> pull(all_of(col))
+}
+hm_peak <- hmda$rates |> filter(geoid == "bhc3", purpose == "Home purchase") |> slice_max(originated, n = 1)
+hm_low <- hmda$rates |>
+  filter(geoid == "bhc3", purpose == "Home purchase", activity_year > hm_peak$activity_year) |>
+  slice_min(originated, n = 1)
+# Pooled denial rate by group over the last four years (same window as market.qmd).
+hm_race <- function(grp, yrs = (hm_last - 3):hm_last) {
+  hmda$by_race |>
+    filter(race_ethnicity == grp, activity_year %in% yrs) |>
+    summarise(rate = sum(denied) / sum(decided_apps)) |>
+    pull(rate)
+}
+hm_reason <- function(r) hmda$reasons |> filter(reason == r) |> pull(share_of_denials)
+
 # ---- Income bands (PUMS) ---------------------------------------------------
 # The PUMS profiles cover the core three only, not the 17 localities -- see profiles.qmd.
 
@@ -154,6 +187,30 @@ low_renter_city <- P$dist5 |>
   mutate(share = n / sum(n)) |>
   filter(geo == "Richmond city") |>
   pull(share)
+
+# ---- External-affairs figures (BHC section) ---------------------------------
+# Household counts by AMI band and tenure are PUMS (core three). Counts of
+# subgroups (e.g. seniors) are band count x the group's share within that band.
+
+hh_count <- function(bands, ten) {
+  P$band_counts |>
+    filter(unit == "Households", ami5 %in% bands, tenure == ten) |>
+    pull(est) |>
+    sum()
+}
+senior_hh <- function(bands, ten) {
+  map_dbl(bands, \(b) hh_count(b, ten) * pr("Householder age", "65 and over", b, ten)) |> sum()
+}
+renters_le80 <- hh_count(ami5_lv[1:3], "Renter")
+owners_le80 <- hh_count(ami5_lv[1:3], "Owner")
+senior_renters_le50 <- senior_hh(ami5_lv[1:2], "Renter")
+senior_owners_le50 <- senior_hh(ami5_lv[1:2], "Owner")
+renters_le50 <- hh_count(ami5_lv[1:2], "Renter")
+sr_share_le50 <- senior_renters_le50 / renters_le50
+# Rounded for quoting: "about 41,000".
+round_to <- function(x, k = 1000) n_fmt(round(x / k) * k)
+# Margin-of-error text for a quoted figure, from r/summary_audit.R.
+au <- function(key, col = "moe_text") audit |> filter(key == .env$key) |> pull(all_of(col))
 ```
 
 The Richmond region's housing picture in one page: who is arriving, what exists, what it costs, and who carries the cost. Each section links to the page with the figures and tables behind it. Trends compare the ACS 5-year windows ending `r first_yr` and `r latest_yr` unless noted.
@@ -237,7 +294,7 @@ Full detail: [Inventory](inventory.qmd)
 
 ## Prices rose faster than incomes; renters are no better off
 
-- After inflation, the Richmond MSA's median home value rose `r p_fmt(real_chg(market$median_value, "40060"))` and median gross rent `r p_fmt(real_chg(market$median_rent, "40060"))`, against `r p_fmt(inc_real_growth("40060"))` for median household income.
+- After inflation, the Richmond MSA's median home value rose `r p_fmt(real_chg(market$median_value, "40060"))` and median gross rent `r p_fmt(real_chg(market$median_rent, "40060"))`, against `r p_fmt(inc_real_growth("40060"))` for median household income (the rent and income changes are within each other's margins of error; the home-value change is not).
 - The typical home was worth `r sprintf("%.1f", pti("40060", first_yr))` times the typical household income in the `r first_yr` window and `r sprintf("%.1f", pti("40060", latest_yr))` times in `r latest_yr`. Median rent equalled `r p_fmt(rent_share("40060", latest_yr))` of median income, from `r p_fmt(rent_share("40060", first_yr))`.
 - Renter cost burden has not eased: `r p_fmt(b30("rr17", "Renter"))` of renter households pay 30% or more of income on housing (`r p_fmt(b30("rr17", "Renter", first_yr))` in `r first_yr`), and `r p_fmt(bsev("rr17", "Renter"))` pay half or more. Owner burden fell from `r p_fmt(b30("rr17", "Owner", first_yr))` to `r p_fmt(b30("rr17", "Owner"))`.
 - Renter burden is now nearly identical across the core: `r p_fmt(b30("51760", "Renter"))` in Richmond city, `r p_fmt(b30("51087", "Renter"))` in Henrico, `r p_fmt(b30("51041", "Renter"))` in Chesterfield.
@@ -247,11 +304,23 @@ Full detail: [Inventory](inventory.qmd)
 Full detail: [Market](market.qmd)
 :::
 
+## Evictions have not fully rebounded, and lending has settled below its 2021 peak
+
+- Eviction filings in the core three fell from `r n_fmt(ev_pre_peak$filings)` in `r ev_pre_peak$year` to `r n_fmt(ev_trough$filings)` in `r ev_trough$year` (`r p_fmt(1 - ev_trough$filings / ev_pre_peak$filings, 1)` lower), then recovered to `r n_fmt(ev_ann("bhc3", ev_latest_full))` in `r ev_latest_full`.
+- The latest 12 months run at `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average, `r p_fmt(-ev_sum("bhc3", "latest12_vs_pre"), 1)` below the 2016-19 monthly mean. Richmond city is furthest below baseline (`r round(ev_sum("51760", "latest12_pct_hist"))`%) and Chesterfield closest (`r round(ev_sum("51041", "latest12_pct_hist"))`%).
+- Home-purchase loans originated for principal residences peaked at `r n_fmt(hm("bhc3", hm_peak$activity_year, "originated"))` in `r hm_peak$activity_year`, fell to `r n_fmt(hm("bhc3", hm_low$activity_year, "originated"))` in `r hm_low$activity_year`, and were `r n_fmt(hm("bhc3", hm_last, "originated"))` in `r hm_last`. Counting refinances, the swings are larger (`r n_fmt(hm("bhc3", 2021, "originated", "All purposes"))` in 2021, `r n_fmt(hm("bhc3", hm_last, "originated", "All purposes"))` in `r hm_last`).
+- The home-purchase denial rate was `r p_fmt(hm("bhc3", hm_last, "denial_rate"))` in `r hm_last`, against `r p_fmt(hm("bhc3", hm_first, "denial_rate"))` in `r hm_first`. Over the last four years Black applicants were denied `r p_fmt(hm_race("Black"))` of the time and Hispanic or Latino applicants `r p_fmt(hm_race("Hispanic or Latino"))`, against `r p_fmt(hm_race("White, non-Hispanic"))` for non-Hispanic White applicants.
+- Across all denied applications (all loan purposes, not only home purchase, `r min(hmda$reason_years)`-`r max(hmda$reason_years)`), debt-to-income (`r p_fmt(hm_reason("Debt-to-income ratio"))`) and credit history (`r p_fmt(hm_reason("Credit history"))`) are the most-cited denial reasons.
+
+::: {.callout-note appearance="minimal"}
+Full detail: [Market](market.qmd). Eviction and lending figures cover Richmond city, Henrico, and Chesterfield only. Filings are landlord court requests, not completed evictions, and the 2020-21 trough reflects pandemic moratoria and rental assistance. Lending counts cover one- to four-unit principal residences.
+:::
+
 ## Lower-income renters carry the cost burden, and most live in Henrico and Chesterfield
 
 - `r p_fmt(le80("All households"))` of households in the core three earn 80% of area median income (AMI) or less: `r p_fmt(le80("Renter"))` of renters and `r p_fmt(le80("Owner"))` of owners.
 - Richmond city has the highest share (`r p_fmt(le80("All households", "Richmond city"))`, against `r p_fmt(le80("All households", "Henrico County"))` in Henrico and `r p_fmt(le80("All households", "Chesterfield County"))` in Chesterfield), but only `r p_fmt(low_renter_city)` of the core three's lower-income renter households live in the city.
-- `r p_fmt(pbsev(ami_b1, "Renter"))` of renters at 30% of AMI or less pay half or more of income on housing, and `r p_fmt(pb30(ami_b3, "Renter"))` of renters at 51-80% of AMI pay 30% or more; above 120% of AMI, `r p_fmt(pb30(ami_b5, "Renter"))` do.
+- `r p_fmt(pbsev(ami_b1, "Renter"))` of renters at 30% of AMI or less pay half or more of income on housing, and `r p_fmt(pb30(ami_b3, "Renter"))` of renters at 51-80% of AMI pay 30% or more; above 120% of AMI, about `r p_fmt(pb30(ami_b5, "Renter"), 1)` do (a small sample).
 - The lowest-income renters are mostly people living alone (`r p_fmt(pr("Household type", "Living alone", ami_b1, "Renter"))`) and are `r p_fmt(pr("Householder race and ethnicity", "Black", ami_b1, "Renter"))` Black; the lowest-income owners skew old (`r p_fmt(pr("Householder age", "65 and over", ami_b1, "Owner"))` are 65 or over).
 
 ::: {.callout-note appearance="minimal"}
@@ -261,7 +330,7 @@ Full detail: [Profiles](profiles.qmd). These figures come from household-level s
 ## What to watch
 
 ::: callout-warning
-## Six things to look out for
+## Seven things to look out for
 
 1. **Growth leans on migration.** With natural increase down to `r n_fmt(per_year("rr17", era2, natural_change))` a year, a slowdown in international or domestic moves would show up directly in population growth. International migration in `r intl_last$year` was `r p_fmt(intl_last$international_mig / intl_peak$international_mig, 1)` of its `r intl_peak$year` peak.
 2. **Home values are outrunning incomes.** Real home values rose `r p_fmt(real_chg(market$median_value, "40060"))` against `r p_fmt(inc_real_growth("40060"))` for income, and the value-to-income ratio widened from `r sprintf("%.1f", pti("40060", first_yr))` to `r sprintf("%.1f", pti("40060", latest_yr))`. The value measure is every owner's own estimate, so it understates the cost of buying today.
@@ -269,6 +338,100 @@ Full detail: [Profiles](profiles.qmd). These figures come from household-level s
 4. **Production is volatile and its mix keeps changing.** Permits swing between single-family and multifamily from year to year, and the expansion ring continues to build almost entirely detached homes (`r p_fmt(struct_share("secondary4", "Single-family detached"), 1)` of its stock) even though `r p_fmt(hh_share("rr17", "Living alone"), 1)` of the region's households are one person.
 5. **Lower-income renters are where the burden concentrates.** Renters at 30% of AMI or less number `r n_fmt(P$band_counts |> filter(unit == "Households", ami5 == ami_b1, tenure == "Renter") |> pull(est))` households in the core three, and `r p_fmt(pbsev(ami_b1, "Renter"))` of them pay half or more of income on housing.
 6. **The outer suburbs are the oldest part of the region.** The expansion ring has the highest 65-and-over share (`r p_fmt(age_share("secondary4", "65 and over"))`) and, in aggregate, more deaths than births in `r era2` (`r n_fmt(era_at("secondary4", era2, natural_change))`), so its growth depends entirely on in-migration.
+7. **Access to credit is uneven, and eviction filings are back near their old level.** Black applicants were denied home-purchase loans `r sprintf("%.1f", hm_race("Black") / hm_race("White, non-Hispanic"))` times as often as non-Hispanic White applicants, and eviction filings in the latest 12 months were at `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average, after a trough of `r n_fmt(ev_trough$filings)` filings in `r ev_trough$year`.
+:::
+
+## For external affairs: connecting the data to Better Housing Coalition's work
+
+Better Housing Coalition (BHC) is the Richmond region's largest nonprofit affordable housing developer and property manager. It provides affordable rental housing and homeownership, operates 8 senior affordable properties, and is working to do more mixed-income, mixed-use development. The figures below are regional public data; each bullet names the part of BHC's work it speaks to.
+
+### Quotable numbers
+
+```{r}
+#| label: tbl-bhc-numbers
+
+bhc_tbl <- tribble(
+  ~Figure, ~Value, ~`Margin of error (90%)`, ~Geography, ~Page, ~Caution,
+  "Households at or below 80% of AMI",
+    p_fmt(le80("All households")), au("le80_all"), "Core three", "Profiles", "",
+  "Renter households at or below 80% of AMI",
+    paste0(round_to(renters_le80), " (", p_fmt(le80("Renter")), " of renters)"), au("renters_le80"), "Core three", "Profiles", "Quote as \"about\"",
+  "Renters at or below 30% of AMI paying half or more of income on housing",
+    p_fmt(pbsev(ami_b1, "Renter")), au("renter_le30_sev"), "Core three", "Profiles", "",
+  "Renter households paying 30%+ of income on housing",
+    p_fmt(b30("rr17", "Renter")), au("renter_b30_2024"), "17-locality region", "Market", "",
+  "Renter households at or below 50% of AMI with a householder 65 or over",
+    paste0(round_to(senior_renters_le50, 500), " (", p_fmt(sr_share_le50, 1), ")"), au("senior_renters_le50"), "Core three", "Profiles",
+    "Derived from a small sample (about 50 households); quote as \"about\"",
+  "Population 65 and over",
+    paste0(p_fmt(age_share("rr17", "65 and over", first_yr)), " to ", p_fmt(age_share("rr17", "65 and over"))), au("pop65_2024"), "17-locality region", "Demographics", "",
+  "Median home value to median household income",
+    paste0(sprintf("%.1f", pti("40060", first_yr)), " to ", sprintf("%.1f", pti("40060", latest_yr))), au("pti_2024"), "Richmond MSA", "Market", "",
+  "Black vs. White non-Hispanic home-purchase denial rate",
+    paste0(p_fmt(hm_race("Black")), " vs. ", p_fmt(hm_race("White, non-Hispanic"))),
+    paste0(au("denial_Black"), " / ", au("denial_White")), "Core three", "Market",
+    paste0("Loan records, not a sample; the interval shows only case-count noise. About ", p_fmt(au("hmda_unknown_race", "est"), 1), " of applications have no race/ethnicity"),
+  "Eviction filings, latest 12 months vs. historical average",
+    paste0(round(ev_sum("bhc3", "latest12_pct_hist")), "%"), au("evict_pct_hist"), "Core three", "Market",
+    paste0("Court counts; the provider's baseline is undocumented. Counts alone: ", p_fmt(-ev_sum("bhc3", "latest12_vs_pre"), 1), " below the 2016-19 mean")
+)
+
+bhc_tbl |>
+  kbl(
+    align = "lllllll",
+    caption = paste0(
+      "Figures for external communications, with margins of error. AMI = area median income. ACS and PUMS figures use the ",
+      latest_yr, " 5-year window (changes are ", first_yr, " to ", latest_yr, "); the margin shown is for the latest figure. ",
+      "Lending is ", (hm_last - 3), "-", hm_last, "; evictions run through ", format(evict$last_month, "%B %Y"), ". ",
+      "Margins of error are published ACS values or PUMS replicate-weight standard errors x 1.645; see r/summary_audit.R."
+    )
+  ) |>
+  kable_styling(c("condensed", "striped"))
+```
+
+### Affordable rental housing
+
+- The core three have about `r round_to(renters_le80)` renter households at or below 80% of AMI, the income range where affordable rental housing is aimed. That is `r p_fmt(le80("Renter"))` of all renters, against `r p_fmt(le80("Owner"))` of owners.
+- Need is deepest at the bottom: `r p_fmt(pbsev(ami_b1, "Renter"))` of renters at or below 30% of AMI pay half or more of their income on housing, and `r p_fmt(pb30(ami_b3, "Renter"))` of renters at 51-80% of AMI pay 30% or more. Above 120% of AMI, about `r p_fmt(pb30(ami_b5, "Renter"), 1)` do (a small sample, so quote it loosely).
+- The burden is not easing region-wide: `r p_fmt(b30("rr17", "Renter"))` of renter households pay 30% or more (`r p_fmt(b30("rr17", "Renter", first_yr))` in `r first_yr`), and real median rent rose `r p_fmt(real_chg(market$median_rent, "40060"))` (`r au("rent_real_chg")`) while real median income rose `r p_fmt(inc_real_growth("40060"))` (`r au("income_real_chg")`); those two changes are within each other's margins of error, so do not say rent grew faster than income.
+- Housing stability is part of the case: filings in the core three are back to `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average, about `r round_to(ev_sum("bhc3", "latest12_mean"), 100)` a month, after falling to `r n_fmt(ev_trough$filings)` for all of `r ev_trough$year`. Filings are court requests, not completed evictions.
+- Where the need is: `r p_fmt(1 - low_renter_city)` of the core three's lower-income renter households live in Henrico or Chesterfield, not Richmond city, even though the city has the highest share of lower-income households (`r p_fmt(le80("All households", "Richmond city"))`).
+
+### Senior affordable housing
+
+- The region's 65-and-over population grew from `r p_fmt(age_share("rr17", "65 and over", first_yr))` to `r p_fmt(age_share("rr17", "65 and over"))` of residents between the `r first_yr` and `r latest_yr` windows, so the group BHC's 8 senior properties serve is growing as a share of the region.
+- About `r round_to(senior_renters_le50, 500)` renter households in the core three have a householder 65 or over and income at or below 50% of AMI, `r p_fmt(sr_share_le50, 1)` of all renter households in that range.
+- Older owners are exposed too: `r p_fmt(pr("Householder age", "65 and over", ami_b1, "Owner"))` of owner households at or below 30% of AMI have a householder 65 or over, roughly `r round_to(senior_owners_le50, 500)` older owner households at or below 50% of AMI.
+- The outer suburbs are the oldest part of the region (`r p_fmt(age_share("secondary4", "65 and over"))` aged 65 and over in the expansion ring), with more deaths than births in `r era2`, which points to a long-run need for senior housing outside the core.
+
+### Homeownership
+
+- The typical home was worth `r sprintf("%.1f", pti("40060", first_yr))` times the typical household income in the `r first_yr` window and `r sprintf("%.1f", pti("40060", latest_yr))` times in `r latest_yr`; real median home value rose `r p_fmt(real_chg(market$median_value, "40060"))` against `r p_fmt(inc_real_growth("40060"))` for income.
+- About `r round_to(owners_le80)` owner households in the core three earn 80% of AMI or less (`r p_fmt(le80("Owner"))` of owners), and `r p_fmt(under50("rr17", "Renter"))` of renter households region-wide earn under $50,000, against `r p_fmt(under50("rr17", "Owner"))` of owners. The gap between the two groups is the gap affordable homeownership has to bridge.
+- Access to credit is uneven: over `r (hm_last - 3)`-`r hm_last`, Black applicants were denied home-purchase loans `r p_fmt(hm_race("Black"))` of the time and Hispanic or Latino applicants `r p_fmt(hm_race("Hispanic or Latino"))`, against `r p_fmt(hm_race("White, non-Hispanic"))` for non-Hispanic White applicants.
+- Across all denied applications (all loan purposes, `r min(hmda$reason_years)`-`r max(hmda$reason_years)`; most denials in the lending data are refinance, cash-out, and home-improvement loans, so do not describe these as home-purchase denial reasons), debt-to-income (`r p_fmt(hm_reason("Debt-to-income ratio"))`) and credit history (`r p_fmt(hm_reason("Credit history"))`) lead, ahead of collateral and cash to close.
+- Lenders originated `r n_fmt(hm("bhc3", hm_last, "originated"))` home-purchase loans for principal residences in the core three in `r hm_last`, `r p_fmt(1 - hm("bhc3", hm_last, "originated") / hm("bhc3", hm_peak$activity_year, "originated"), 1)` below the `r hm_peak$activity_year` peak of `r n_fmt(hm("bhc3", hm_peak$activity_year, "originated"))`.
+
+### Mixed-income, mixed-use development
+
+- Richmond city is the one core locality where renters outnumber owners (`r n_fmt(hh("51760", "Renter"))` renter households to `r n_fmt(hh("51760", "Owner"))`) and the only one that is substantially multifamily, with `r p_fmt(struct_share("51760", "20+ units"), 1)` of units in buildings of 20 or more.
+- The suburbs are built almost entirely as detached homes: `r p_fmt(struct_share("bhc3", "Single-family detached"), 1)` of the core's stock and `r p_fmt(struct_share("secondary4", "Single-family detached"), 1)` of the expansion ring's, even though `r p_fmt(hh_share("rr17", "Living alone"), 1)` of the region's households are one person.
+- Production leans on multifamily in recent years: it outnumbered single-family permits in `r n_mf_lead` of the last 4 years and was `r p_fmt(perm_last$mf_share, 1)` of `r latest_bps` permitted units. Permits swing between `r n_fmt(perm_trough$total_units)` (`r perm_trough$year`) and `r n_fmt(perm_peak$total_units)` (`r perm_peak$year`) units a year.
+- Lower-income households are spread across the core, not concentrated in one place: `r p_fmt(le80("All households", "Richmond city"))` of households in Richmond city, `r p_fmt(le80("All households", "Henrico County"))` in Henrico, and `r p_fmt(le80("All households", "Chesterfield County"))` in Chesterfield are at or below 80% of AMI. That supports mixed-income communities in all three localities, not only in the city.
+- The region's housing stock is old in the city (`r p_fmt(prewar("51760"), 1)` of Richmond city's housing predates 1950) and tight in the suburbs (`r p_fmt(vac("51041"))` vacancy in Chesterfield), which limits the supply of affordable options without new construction.
+
+::: callout-warning
+## Using these figures in communications
+
+- **These are regional figures, not BHC results.** They describe need and market conditions across Richmond city, Henrico, and Chesterfield (or the 17-locality region where noted). They do not count BHC's residents, properties, or outcomes; pair them with BHC's own program data.
+- **Say "at or below 80% of AMI," not "low-income," without a definition.** AMI bands here follow HUD income limits for the Richmond area; see [Profiles](profiles.qmd).
+- **PUMS counts are survey estimates.** Household counts by income band carry sampling error, so quote them rounded (for example, "about `r round_to(hh_count(ami_b1, "Renter"))` renter households at or below 30% of AMI").
+- **Senior counts are derived and rest on a small sample.** They multiply the income-band count by the share of those households with a householder 65 or over (about 50 sample households for renters at or below 50% of AMI, margin of error `r au("senior_renters_le50")`), so quote them as "about" and round to the nearest 500.
+- **Lending rates are not sampled, but have caveats.** HMDA counts reporting lenders' applications, so the margin shown is only case-count noise. Denial rates exclude withdrawn and incomplete applications; about `r p_fmt(au("hmda_unknown_race", "est"), 1)` of decided applications have no race or ethnicity recorded; lenders under the reporting threshold are not in the data.
+- **The eviction baseline is the provider's.** The "percent of the historical average" has no documented definition. Prefer the count-based comparison (`r p_fmt(-ev_sum("bhc3", "latest12_vs_pre"), 1)` below the 2016-19 monthly mean) for anything external.
+- **Check the wording of changes.** Home values rose far faster than incomes (outside the margins of error); rent and income changes are statistically similar.
+- **The data do not measure demand for mixed-use space.** The mixed-income points rest on income, tenure, and structure-type patterns; retail and commercial demand needs separate evidence.
+- **Eviction filings are not evictions.** Lead with the trend against the pre-2020 baseline, not a count of displaced households.
 :::
 
 ::: callout-note
@@ -277,6 +440,7 @@ Full detail: [Profiles](profiles.qmd). These figures come from household-level s
 - **Stock and production are different series.** Stock (ACS) counts units standing; production (Building Permits Survey) counts permits issued, which lead completions and can be cancelled.
 - **Small geographies are noisy.** The four expansion-ring localities and Ashland carry wide margins of error; the pages suppress cells with a coefficient of variation above 30.
 - **Income-band figures use a different geography.** They come from PUMS, which reports only whole PUMAs; the seven used here tile Richmond city, Henrico, and Chesterfield exactly. The other localities are not covered, so these totals will not match the 17-locality pages.
+- **Eviction and lending figures cover the core three only.** Eviction filings are court records and lending figures are HMDA loan-level data; neither is ACS, so they will not reconcile with the 17-locality pages. Denial rates count denied / (originated + approved-not-accepted + denied) and are shown only where at least 100 applications were decided.
 - **Migration figures are modeled** from administrative records and revised each vintage. The 2010-2019 and 2020-2025 series come from different vintages and are compared, not joined.
 - **Dollar changes are inflation-adjusted** with national CPI-U, so they measure change relative to national prices, not a local cost-of-living index.
 - See [Data Notes](data-notes.qmd) for sources and definitions.

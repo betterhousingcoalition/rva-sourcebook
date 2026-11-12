@@ -11,7 +11,8 @@ source("_common.R")
 # Data flow rule: pages read_rds() only, never call an API. The frames are
 # written by r/acs_market.R (tenure, median home value, median gross rent),
 # r/acs_burden.R (cost burden), and r/acs_demographics.R (median household
-# income, used here only as the denominator of the affordability ratios).
+# income, all households and renter households, used here only as the
+# denominators of the affordability ratios).
 market <- read_rds("data/acs_market.rds")
 burden <- read_rds("data/acs_burden.rds")
 demo <- read_rds("data/acs_demographics.rds")
@@ -138,10 +139,19 @@ afford <- market$median_value |>
     demo$median_income |> select(geoid, year, income = estimate, income_rel = reliability),
     by = join_by(geoid, year)
   ) |>
+  inner_join(
+    demo$median_income_renter |>
+      select(geoid, year, income_renter = estimate, income_renter_rel = reliability),
+    by = join_by(geoid, year)
+  ) |>
   mutate(
     pti = value / income,
     rent_share = rent * 12 / income,
-    ratio_rel = rel_worst(value_rel, rent_rel, income_rel)
+    # Renter-income versions: renters are the group moving toward ownership.
+    pti_renter = value / income_renter,
+    rent_share_renter = rent * 12 / income_renter,
+    ratio_rel = rel_worst(value_rel, rent_rel, income_rel),
+    ratio_renter_rel = rel_worst(value_rel, rent_rel, income_renter_rel)
   )
 
 ratio_at <- function(g, col, yr = latest_yr) {
@@ -438,6 +448,27 @@ window_bars(metro_geos, pti, label_number(accuracy = 0.1, suffix = "x")) +
 - Among the core three, the ratio is `r sprintf("%.1f", ratio_at("51760", pti))` in Richmond city, `r sprintf("%.1f", ratio_at("51087", pti))` in Henrico, and `r sprintf("%.1f", ratio_at("51041", pti))` in Chesterfield; statewide it is `r sprintf("%.1f", ratio_at("51", pti))`.
 
 ```{r}
+#| label: fig-pti-renter
+#| fig-alt: "Grouped bar chart of the ratio of median home value to median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The ratio is higher than the all-household version in every geography and rises in the Richmond metro from about 5.9 to about 6.5."
+#| fig-height: 4.2
+
+window_bars(metro_geos, pti_renter, label_number(accuracy = 0.1, suffix = "x")) +
+  labs(
+    title = glue::glue(
+      "For renters, metro home values went from {round(ratio_at('40060', pti_renter, first_yr), 1)}x to ",
+      "{round(ratio_at('40060', pti_renter), 1)}x income"
+    ),
+    subtitle = window_sub("Median home value / renter household income"),
+    caption = paste(acs_cap("B25077, B25119", "2010-2014, 2015-2019, 2020-2024"))
+  ) +
+  theme_rva()
+```
+
+- Measured against renter households, the typical Richmond MSA home was worth `r sprintf("%.1f", ratio_at("40060", pti_renter))` times the typical renter income in the `r latest_yr` window, against `r sprintf("%.1f", ratio_at("40060", pti_renter, first_yr))` times in the `r first_yr` window.
+- Among the core three, the renter ratio is `r sprintf("%.1f", ratio_at("51760", pti_renter))` in Richmond city, `r sprintf("%.1f", ratio_at("51087", pti_renter))` in Henrico, and `r sprintf("%.1f", ratio_at("51041", pti_renter))` in Chesterfield; statewide it is `r sprintf("%.1f", ratio_at("51", pti_renter))`.
+- This is the more relevant gap for renters weighing a move to ownership, but it is still a ratio of two medians: it does not say how many renters could qualify for a loan.
+
+```{r}
 #| label: fig-rent-share
 #| fig-alt: "Grouped bar chart of annual median gross rent as a share of median household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024."
 #| fig-height: 4.2
@@ -455,12 +486,32 @@ window_bars(metro_geos, rent_share, label_percent(accuracy = 1)) +
 ```
 
 - Annual median rent equals `r p_fmt(ratio_at("51760", rent_share))` of Richmond city's median household income, `r p_fmt(ratio_at("51087", rent_share))` of Henrico's, and `r p_fmt(ratio_at("51041", rent_share))` of Chesterfield's.
-- The ratio compares two medians, not one household's rent and income: renters are on average lower-income than the all-household median, so a typical renter's burden is higher than this ratio implies (see the cost-burden section below).
+- The ratio compares two medians, not one household's rent and income: renters are on average lower-income than the all-household median, so a typical renter's burden is higher than this ratio implies. The renter-income version below corrects for that, and the cost-burden section follows.
+
+```{r}
+#| label: fig-rent-share-renter
+#| fig-alt: "Grouped bar chart of annual median gross rent as a share of median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The share is higher than the all-household version in every geography."
+#| fig-height: 4.2
+
+window_bars(metro_geos, rent_share_renter, label_percent(accuracy = 1)) +
+  labs(
+    title = glue::glue(
+      "Median rent took {p_fmt(ratio_at('40060', rent_share_renter), 0.1)} of metro renter income, ",
+      "from {p_fmt(ratio_at('40060', rent_share_renter, first_yr), 0.1)}"
+    ),
+    subtitle = window_sub("Annual rent / renter household income"),
+    caption = acs_cap("B25064, B25119", "2010-2014, 2015-2019, 2020-2024")
+  ) +
+  theme_rva()
+```
+
+- Annual median rent equals `r p_fmt(ratio_at("51760", rent_share_renter))` of Richmond city's median renter income, `r p_fmt(ratio_at("51087", rent_share_renter))` of Henrico's, and `r p_fmt(ratio_at("51041", rent_share_renter))` of Chesterfield's.
+- Rent and renter income are both renter-side medians, so this ratio is the closest single-number match to the cost-burden shares below (rent is gross rent; burden counts each household's own income).
 
 ::: callout-note
 ## What these ratios do and don't measure
 
-Median home value is the owner's own estimate of what their home is worth, for *every* owner-occupied home, not just recent sales, so the price-to-income ratio understates what it costs to enter the market today. Both ratios divide one median by another; they describe how local prices compare with local incomes, not what any particular household can afford.
+Median home value is the owner's own estimate of what their home is worth, for *every* owner-occupied home, not just recent sales, so the price-to-income ratio understates what it costs to enter the market today. The ratios appear twice, against all-household income and against renter-household income (ACS Table B25119); the renter version is the better yardstick for renters weighing a move to ownership. Both ratios divide one median by another; they describe how local prices compare with local incomes, not what any particular household can afford.
 :::
 
 ## Renter cost burden stayed near half while owner burden fell
@@ -825,7 +876,7 @@ A household is **cost-burdened** when it pays 30% or more of its income on housi
 
 - **Tenure:** about two-thirds of households own (`r p_fmt(own_rate("rr17"))`), a share that barely moved, but Richmond city is a majority-renter locality (`r p_fmt(own_rate("51760"))` own).
 - **Values and rents:** the Richmond MSA's median home value `r chg_phrase(real_chg(market$median_value, "40060"))` and median rent `r chg_phrase(real_chg(market$median_rent, "40060"))` after inflation.
-- **Affordability:** the typical home was worth `r sprintf("%.1f", ratio_at("40060", pti))` times the typical household income in the metro, and median rent equalled `r p_fmt(ratio_at("40060", rent_share))` of it.
+- **Affordability:** the typical home was worth `r sprintf("%.1f", ratio_at("40060", pti))` times the typical household income in the metro (`r sprintf("%.1f", ratio_at("40060", pti_renter))` times the typical renter income), and median rent equalled `r p_fmt(ratio_at("40060", rent_share))` of household income (`r p_fmt(ratio_at("40060", rent_share_renter))` of renter income).
 - **Cost burden:** about half of renter households (`r p_fmt(b30("rr17", "Renter"))`) are cost-burdened and that has not eased, while owner burden fell to `r p_fmt(b30("rr17", "Owner"))`.
 - **Mortgage lending:** core-three home-purchase originations for principal residences peaked at `r n_fmt(hm("bhc3", hm_peak$activity_year, "originated"))` in `r hm_peak$activity_year` and were `r n_fmt(hm("bhc3", hm_last, "originated"))` in `r hm_last`; Black applicants were denied `r p_fmt(hm_race("Black"))` of the time against `r p_fmt(hm_race("White, non-Hispanic"))` for White applicants.
 - **Evictions:** core-three filings fell `r p_fmt(1 - ev_trough$filings / ev_pre_peak$filings, 1)` from the pre-2020 peak to the `r ev_trough$year` trough and now run at about `r round(ev_sum("bhc3", "latest12_pct_hist"))`% of the historical average.

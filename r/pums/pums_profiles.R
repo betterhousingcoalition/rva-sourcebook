@@ -305,6 +305,33 @@ band_counts <- bind_rows(
 ) |>
   finish()
 
+## 5b. Households with a householder 65+, counted directly ----
+# Weighted count of 65+ households by profile band x tenure, plus a combined
+# "50% AMI or less" row (the two lowest bands), each with a replicate-weight SE
+# and the unweighted record count (n_obs). This replaces multiplying a band
+# count by a profile share, which treated the two as independent.
+le50_label <- "50% AMI or less"
+sen_hh <- hh |> filter(householder_age == "65 and over")
+seniors <- bind_rows(
+  sen_hh |> add_all("ami5", all_ami),
+  sen_hh |> filter(ami5 %in% ami5_levels[1:2]) |> mutate(ami5 = le50_label)
+) |>
+  add_all("tenure", all_ten) |>
+  rep_total(c("ami5", "tenure")) |>
+  mutate(unit = "Households") |>
+  finish()
+
+# 65+ share of all households at or below 50% AMI, by tenure (SE from the
+# replicate ratio, so numerator and denominator are not treated as independent).
+seniors_le50_share <- hh |>
+  filter(ami5 %in% ami5_levels[1:2]) |>
+  add_all("tenure", all_ten) |>
+  rep_share("tenure", "householder_age") |>
+  filter(category == "65 and over") |>
+  mutate(unit = "Households") |>
+  select(unit, tenure, est, se, n_obs, denom_obs) |>
+  finish()
+
 ## 6. Profiles by AMI band and tenure ----
 # One call per topic; the band x tenure grid includes "All" margins.
 prof_one <- function(df, topic, cat, unit) {
@@ -386,6 +413,21 @@ stopifnot(
   "PUMS vs ACS B25003 households differ by more than 3%" = all(abs(bench$pct_diff) <= 0.03)
 )
 
+# Direct senior count must equal the old band-count x share route (same records,
+# same weights) -- a structural identity, so it gates the build.
+sen_old <- band_counts |>
+  filter(unit == "Households", ami5 %in% ami5_levels[1:2], tenure == "Renter") |>
+  inner_join(
+    profile |> filter(topic == "Householder age", category == "65 and over", tenure == "Renter"),
+    by = c("ami5", "tenure"), suffix = c("_n", "_s")
+  ) |>
+  summarise(x = sum(est_n * est_s)) |>
+  pull(x)
+sen_new <- seniors |> filter(ami5 == le50_label, tenure == "Renter") |> pull(est)
+message("Senior renters at or below 50% AMI: direct ", round(sen_new), " vs count x share ", round(sen_old),
+        " (", sum(seniors$n_obs[seniors$ami5 == le50_label & seniors$tenure == "Renter"]), " records)")
+stopifnot("Direct senior count differs from count x share" = abs(sen_new - sen_old) < 1)
+
 low_share <- profile |> filter(tenure != all_ten, ami5 != all_ami) |> count(reliability) |> mutate(p = n / sum(n))
 message("Profile cells (band x tenure): ", paste0(low_share$reliability, " ", round(low_share$p * 100), "%", collapse = ", "))
 
@@ -400,6 +442,8 @@ out <- list(
   le80 = le80,
   tenure_mix = tenure_mix,
   band_counts = band_counts,
+  seniors = seniors,
+  seniors_le50_share = seniors_le50_share,
   profile = profile,
   medians = medians,
   benchmark = bench

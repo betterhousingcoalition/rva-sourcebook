@@ -104,6 +104,13 @@ inc <- function(g, yr, col = estimate_real) {
 real_growth <- function(g) inc(g, latest_yr) / inc(g, first_yr) - 1
 nominal_growth <- function(g) inc(g, latest_yr, estimate) / inc(g, first_yr, estimate) - 1
 
+# Renter-occupied median household income (B25119).
+inc_renter <- function(g, yr, col = estimate_real) {
+  demo$median_income_renter |> filter(geoid == g, year == yr) |> pull({{ col }})
+}
+renter_growth <- function(g) inc_renter(g, latest_yr) / inc_renter(g, first_yr) - 1
+renter_ratio <- function(g, yr = latest_yr) inc_renter(g, yr, estimate) / inc(g, yr, estimate)
+
 have_real <- !anyNA(demo$median_income$estimate_real)
 
 top_band <- function(g, yr = latest_yr) {
@@ -701,6 +708,47 @@ demo$median_income |>
 - Inflation consumed most of the nominal gain: the Richmond MSA's median rose `r p_fmt(nominal_growth("40060"))` as published but only `r p_fmt(real_growth("40060"))` after adjusting for prices.
 - Ashland's median (`r d_fmt(inc("5103368", latest_yr, estimate))`) is a small-town estimate with a wide margin of error; it carries a reliability marker in the table.
 
+## Typical renters earn well under the typical household in every geography
+
+```{r}
+#| label: fig-income-renter
+#| fig-alt: "Dumbbell chart of real median renter household income, in 2024 dollars, in the 2014 and 2024 ACS windows for Richmond city, Henrico, Chesterfield, four comparison metros, and Virginia. Renter income is well below the all-household figure everywhere. Richmond city rises from about 38 thousand to about 48 thousand dollars and the Richmond metro from about 48 thousand to about 55 thousand."
+#| fig-height: 4.8
+
+renter_plot <- demo$median_income_renter |>
+  filter(geoid %in% inc_geos, year %in% c(first_yr, latest_yr)) |>
+  select(geoid, year, estimate_real) |>
+  pivot_wider(names_from = year, values_from = estimate_real) |>
+  mutate(
+    start = .data[[as.character(first_yr)]],
+    end = .data[[as.character(latest_yr)]],
+    geo = fct_reorder(short_name(geoid), end)
+  )
+
+ggplot(renter_plot, aes(y = geo)) +
+  geom_segment(aes(x = start, xend = end, yend = geo), color = rva_ink[["baseline"]], linewidth = 1.2) +
+  geom_point(aes(x = start), color = rva_seq[2], size = 3.4) +
+  geom_point(aes(x = end), color = rva_seq[7], size = 3.4) +
+  scale_x_continuous(labels = label_dollar(), expand = expansion(mult = c(0.04, 0.12))) +
+  labs(
+    title = "Renter incomes trail every geography's overall median",
+    subtitle = glue::glue(
+      "Median renter household income, {latest_yr} dollars: ",
+      "<span style='color:{rva_seq[2]}'>**{first_yr}**</span> to ",
+      "<span style='color:{rva_seq[7]}'>**{latest_yr}**</span>"
+    ),
+    caption = paste(
+      acs_cap("B25119", "2010-2014 and 2020-2024"),
+      "Earlier window inflated to 2024 dollars with national CPI-U (BLS)."
+    )
+  ) +
+  theme_rva()
+```
+
+- The Richmond MSA's median renter household income was `r d_fmt(inc_renter("40060", latest_yr))` in `r latest_yr` dollars, `r p_fmt(renter_ratio("40060"))` of the all-household median (`r d_fmt(inc("40060", latest_yr))`). It rose `r p_fmt(renter_growth("40060"))` in real terms, against `r p_fmt(real_growth("40060"))` for all households.
+- Among the core three, renter income is `r p_fmt(renter_ratio("51760"))` of the all-household median in Richmond city, `r p_fmt(renter_ratio("51087"))` in Henrico, and `r p_fmt(renter_ratio("51041"))` in Chesterfield. Richmond city's real renter income rose `r p_fmt(renter_growth("51760"))`, Henrico's `r p_fmt(renter_growth("51087"))`, and Chesterfield's `r p_fmt(renter_growth("51041"))`.
+- This is the income the Market page and the summary set against home values and rents, because renters are the group that would be moving toward ownership.
+
 ```{r}
 #| label: fig-income-bands
 #| fig-alt: "Stacked horizontal bar chart of households by income band for Richmond city, Henrico, the pooled core, the region, Chesterfield, and the pooled expansion ring in 2024. About 20 percent of Richmond city households earn under 25 thousand dollars against about 8 percent in Chesterfield and the expansion ring, and about 34 percent of expansion-ring households earn 150 thousand or more against 18 percent in Richmond city."
@@ -782,5 +830,5 @@ Ashland and the four expansion-ring localities have much smaller samples than th
 - **Age:** the 65-and-over share rose in every geography, and the expansion ring is the oldest.
 - **Race and ethnicity:** the region diversified, but Richmond city's White share rose while its Black share fell.
 - **Households:** living alone dominates in Richmond city (`r p_fmt(hh_share("51760", "Living alone"))`); married couples dominate in the ring.
-- **Income:** real median income rose everywhere, and renters earn far less than owners — the gap the market page turns into cost burden.
+- **Income:** real median income rose everywhere, and renters earn far less than owners (median renter income is `r p_fmt(renter_ratio("40060"))` of the metro's all-household median) — the gap the market page turns into cost burden.
 :::

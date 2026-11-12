@@ -121,6 +121,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Profiles</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./presentation.html" target="_blank"> 
+<span class="menu-text">Presentation</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./data-notes.html"> 
 <span class="menu-text">Data Notes</span></a>
   </li>  
@@ -498,12 +502,12 @@ Figure&nbsp;4
 </ul>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
-<div id="fig-rent-share" class="quarto-float quarto-figure quarto-figure-left anchored" alt="Grouped bar chart of annual median gross rent as a share of median household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024." data-fig-align="left" width="100%">
+<div id="fig-pti-renter" class="quarto-float quarto-figure quarto-figure-left anchored" alt="Grouped bar chart of the ratio of median home value to median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The ratio is higher than the all-household version in every geography and rises in the Richmond metro from about 5.9 to about 6.5." data-fig-align="left" width="100%">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-rent-share-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="market_files/figure-html/fig-rent-share-1.png" id="fig-rent-share" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Grouped bar chart of annual median gross rent as a share of median household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024.">
+<div aria-describedby="fig-pti-renter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="market_files/figure-html/fig-pti-renter-1.png" id="fig-pti-renter" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Grouped bar chart of the ratio of median home value to median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The ratio is higher than the all-household version in every geography and rises in the Richmond metro from about 5.9 to about 6.5.">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rent-share-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-pti-renter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5
 </figcaption>
 </figure>
@@ -511,8 +515,45 @@ Figure&nbsp;5
 </div>
 </div>
 <ul>
+<li>Measured against renter households, the typical Richmond MSA home was worth 6.5 times the typical renter income in the 2024 window, against 5.9 times in the 2014 window.</li>
+<li>Among the core three, the renter ratio is 7.3 in Richmond city, 6.0 in Henrico, and 5.9 in Chesterfield; statewide it is 6.4.</li>
+<li>This is the more relevant gap for renters weighing a move to ownership, but it is still a ratio of two medians: it does not say how many renters could qualify for a loan.</li>
+</ul>
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div id="fig-rent-share" class="quarto-float quarto-figure quarto-figure-left anchored" alt="Grouped bar chart of annual median gross rent as a share of median household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024." data-fig-align="left" width="100%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rent-share-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="market_files/figure-html/fig-rent-share-1.png" id="fig-rent-share" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Grouped bar chart of annual median gross rent as a share of median household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rent-share-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
 <li>Annual median rent equals 25.5% of Richmond city’s median household income, 20.8% of Henrico’s, and 19.2% of Chesterfield’s.</li>
-<li>The ratio compares two medians, not one household’s rent and income: renters are on average lower-income than the all-household median, so a typical renter’s burden is higher than this ratio implies (see the cost-burden section below).</li>
+<li>The ratio compares two medians, not one household’s rent and income: renters are on average lower-income than the all-household median, so a typical renter’s burden is higher than this ratio implies. The renter-income version below corrects for that, and the cost-burden section follows.</li>
+</ul>
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div id="fig-rent-share-renter" class="quarto-float quarto-figure quarto-figure-left anchored" alt="Grouped bar chart of annual median gross rent as a share of median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The share is higher than the all-household version in every geography." data-fig-align="left" width="100%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rent-share-renter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="market_files/figure-html/fig-rent-share-renter-1.png" id="fig-rent-share-renter" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Grouped bar chart of annual median gross rent as a share of median renter household income in Richmond city, Henrico, Chesterfield, the Richmond metro, and Virginia across three ACS windows ending 2014, 2019, and 2024. The share is higher than the all-household version in every geography.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-rent-share-renter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Annual median rent equals 34.2% of Richmond city’s median renter income, 31.0% of Henrico’s, and 31.4% of Chesterfield’s.</li>
+<li>Rent and renter income are both renter-side medians, so this ratio is the closest single-number match to the cost-burden shares below (rent is gross rent; burden counts each household’s own income).</li>
 </ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -524,7 +565,7 @@ What these ratios do and don’t measure
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Median home value is the owner’s own estimate of what their home is worth, for <em>every</em> owner-occupied home, not just recent sales, so the price-to-income ratio understates what it costs to enter the market today. Both ratios divide one median by another; they describe how local prices compare with local incomes, not what any particular household can afford.</p>
+<p>Median home value is the owner’s own estimate of what their home is worth, for <em>every</em> owner-occupied home, not just recent sales, so the price-to-income ratio understates what it costs to enter the market today. The ratios appear twice, against all-household income and against renter-household income (ACS Table B25119); the renter version is the better yardstick for renters weighing a move to ownership. Both ratios divide one median by another; they describe how local prices compare with local incomes, not what any particular household can afford.</p>
 </div>
 </div>
 </section>
@@ -538,7 +579,7 @@ What these ratios do and don’t measure
 <img src="market_files/figure-html/fig-burden-trend-1.png" id="fig-burden-trend" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Six small line charts of the share of households paying 30 percent or more of income on housing, by tenure, across three ACS windows ending 2014, 2019, and 2024, for the region, the pooled core, Richmond city, Henrico, Chesterfield, and the expansion ring. The renter line stays near 50 percent in most panels; the owner line falls from roughly 26 percent to 20 percent in the region.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-burden-trend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6
+Figure&nbsp;8
 </figcaption>
 </figure>
 </div>
@@ -648,7 +689,7 @@ Table&nbsp;3: Share of households paying 30% or more of income on housing, by te
 <img src="market_files/figure-html/fig-burden-locality-1.png" id="fig-burden-locality" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Horizontal stacked bar chart of the share of renter households paying 30 percent or more of income on housing in 2024, by locality, split into households paying 30 to 49 percent and those paying 50 percent or more. Only localities with reliable estimates are shown. Chesterfield, Richmond city, Henrico, and Petersburg all sit near or just above half.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-burden-locality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7
+Figure&nbsp;9
 </figcaption>
 </figure>
 </div>
@@ -669,7 +710,7 @@ Figure&nbsp;7
 <img src="market_files/figure-html/fig-hmda-orig-1.png" id="fig-hmda-orig" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Two line charts of mortgage loans originated for a principal residence, 2018 to 2025, in Richmond city, Henrico, and Chesterfield. In the all-purposes panel, originations roughly double from 2018 to 2020 and 2021 on refinancing, then fall by more than half by 2023. In the home-purchase panel, originations rise modestly to 2021 and fall about a third by 2023. Chesterfield has the most loans in each panel, Henrico is second, and Richmond city has the fewest.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-hmda-orig-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;8
+Figure&nbsp;10
 </figcaption>
 </figure>
 </div>
@@ -689,7 +730,7 @@ Figure&nbsp;8
 <img src="market_files/figure-html/fig-hmda-race-1.png" id="fig-hmda-race" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Line chart of the home-purchase mortgage denial rate in the Richmond core, 2018 to 2025, for four groups of applicants. Black applicants have the highest denial rate, roughly 11 to 18 percent. Hispanic or Latino applicants are next, Asian applicants lower, and non-Hispanic White applicants lowest at roughly 4 to 5 percent.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-hmda-race-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9
+Figure&nbsp;11
 </figcaption>
 </figure>
 </div>
@@ -798,7 +839,7 @@ How to read the lending figures
 <img src="market_files/figure-html/fig-evict-monthly-1.png" id="fig-evict-monthly" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Line chart of monthly eviction filings from 2016 to 2026 in Richmond city, Henrico, and Chesterfield. All three run at roughly 600 to 1,800 filings a month before 2020, collapse to near zero in 2020 and 2021, then recover to a level below the pre-2020 peak. Richmond city is highest throughout, Henrico second, Chesterfield lowest.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-evict-monthly-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10
+Figure&nbsp;12
 </figcaption>
 </figure>
 </div>
@@ -818,7 +859,7 @@ Figure&nbsp;10
 <img src="market_files/figure-html/fig-evict-pct-1.png" id="fig-evict-pct" class="img-fluid quarto-figure quarto-figure-left anchored figure-img" style="width:100.0%" alt="Line chart of eviction filings as a percent of each month's historical average for the Richmond core, 2016 to 2026, with a reference line at 100 percent. The series hovers near 100 percent through 2019, drops to roughly 20 percent in 2020 and 2021, and recovers to roughly 80 to 90 percent in the most recent years.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-evict-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;11
+Figure&nbsp;13
 </figcaption>
 </figure>
 </div>
@@ -1233,7 +1274,7 @@ What this page shows
 <ul>
 <li><strong>Tenure:</strong> about two-thirds of households own (67.0%), a share that barely moved, but Richmond city is a majority-renter locality (43.5% own).</li>
 <li><strong>Values and rents:</strong> the Richmond MSA’s median home value rose 24.1% and median rent rose 11.3% after inflation.</li>
-<li><strong>Affordability:</strong> the typical home was worth 4.1 times the typical household income in the metro, and median rent equalled 20.0% of it.</li>
+<li><strong>Affordability:</strong> the typical home was worth 4.1 times the typical household income in the metro (6.5 times the typical renter income), and median rent equalled 20.0% of household income (31.7% of renter income).</li>
 <li><strong>Cost burden:</strong> about half of renter households (51.2%) are cost-burdened and that has not eased, while owner burden fell to 20.0%.</li>
 <li><strong>Mortgage lending:</strong> core-three home-purchase originations for principal residences peaked at 17,262 in 2021 and were 10,877 in 2025; Black applicants were denied 16.1% of the time against 4.5% for White applicants.</li>
 <li><strong>Evictions:</strong> core-three filings fell 80% from the pre-2020 peak to the 2021 trough and now run at about 85% of the historical average.</li>

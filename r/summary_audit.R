@@ -104,29 +104,20 @@ add("renter_le30_sev", "Renters at or below 30% of AMI paying 50%+ of income", x
 x1 <- pf("Cost burden", "Cost-burdened (30-49%)", lv[5], "Renter")
 x2 <- pf("Cost burden", "Severely cost-burdened (50%+)", lv[5], "Renter")
 add("renter_gt120_b30", "Renters above 120% of AMI paying 30%+ of income", x1$est + x2$est, 1.645 * rss(c(x1$se, x2$se)), "pct",
-  "ACS PUMS 2020-2024", paste0("Small sample (", min(x1$n_obs, x2$n_obs), " cases in the smaller category); quote as 'about 3%'."))
-# Seniors: count x share by band, delta method, treating count and share as independent.
-sen <- function(bands, ten) {
-  est <- 0
-  v <- 0
-  for (bd in bands) {
-    c1 <- bc |> filter(ami5 == bd, tenure == ten)
-    s1 <- pf("Householder age", "65 and over", bd, ten)
-    est <- est + c1$est * s1$est
-    v <- v + (c1$est * s1$se)^2 + (s1$est * c1$se)^2
-  }
-  c(est, 1.645 * sqrt(v))
-}
-r <- sen(lv[1:2], "Renter")
-n_sen <- sum(map_dbl(lv[1:2], \(bd) pf("Householder age", "65 and over", bd, "Renter")$n_obs * pf("Householder age", "65 and over", bd, "Renter")$est))
-add("senior_renters_le50", "Renter households at or below 50% of AMI with a householder 65+", r[1], r[2], "n",
-  "ACS PUMS 2020-2024", paste0("Derived (count x share); roughly ", round(n_sen), " sample households. Quote as 'about 12,000'."))
-rr_le50 <- cnt(lv[1:2], "Renter")
-add("senior_share_renters_le50", "65+ share of renter households at or below 50% of AMI", r[1] / rr_le50[1], r[2] / rr_le50[1], "pct",
-  "ACS PUMS 2020-2024", "Approximate MOE (ignores the numerator-denominator overlap).")
-r <- sen(lv[1:2], "Owner")
-add("senior_owners_le50", "Owner households at or below 50% of AMI with a householder 65+", r[1], r[2], "n", "ACS PUMS 2020-2024",
-  "Derived (count x share).")
+  "ACS PUMS 2020-2024", paste0("Small sample: ", x1$n_obs + x2$n_obs, " sample cases (of ", x1$denom_obs,
+    " renter households above 120% of AMI) pay 30%+; quote as 'about 3%'."))
+# Seniors: direct weighted counts of 65+ households (P$seniors, r/pums/pums_profiles.R),
+# with replicate-weight SEs; n_obs is the unweighted record count.
+sen_row <- \(ten) P$seniors |> filter(unit == "Households", ami5 == "50% AMI or less", tenure == ten)
+r <- sen_row("Renter")
+add("senior_renters_le50", "Renter households at or below 50% of AMI with a householder 65+", r$est, 1.645 * r$se, "n",
+  "ACS PUMS 2020-2024", paste0("PUMS estimate from ", r$n_obs, " sample households (unweighted records). Quote as 'about 12,000'."))
+sh <- P$seniors_le50_share |> filter(tenure == "Renter")
+add("senior_share_renters_le50", "65+ share of renter households at or below 50% of AMI", sh$est, 1.645 * sh$se, "pct",
+  "ACS PUMS 2020-2024", "Replicate-weight SE of the ratio.")
+r <- sen_row("Owner")
+add("senior_owners_le50", "Owner households at or below 50% of AMI with a householder 65+", r$est, 1.645 * r$se, "n", "ACS PUMS 2020-2024",
+  paste0("PUMS estimate from ", r$n_obs, " sample households (unweighted records)."))
 d5 <- P$dist5 |> filter(unit == "Households", tenure == "Renter", measure == "count", geo != "Core three", band %in% lv[1:3])
 g <- d5 |> summarise(n = sum(est), v = sum(se^2), .by = geo)
 city <- g |> filter(geo == "Richmond city")

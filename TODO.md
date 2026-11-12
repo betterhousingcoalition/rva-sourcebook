@@ -19,6 +19,7 @@
 
 - [x] `renv::init()` + `renv::snapshot()` — **user runs**, package installs are a long job. Pin R + tidyverse/tidycensus/tigris/sf/mapgl/kableExtra/ggtext/formattable/janitor.
 - [x] Add `.Rprofile` (`source("renv/activate.R")`) once renv exists.
+- [x] `renv::snapshot()` 2026-11-12 recorded `arrow`, `assertthat`, `readxlsb` (GitHub source `velofrog/readxlsb`, compiled; needs Rtools to restore). `renv::status()` clean.
 - [x] Define a palette + light theme in `_common.R` — `rva_pal` (8-hue categorical), `rva_seq` (sequential blue ramp), `rva_ink` (chart chrome), `theme_rva()`. Values from the dataviz skill's validated reference palette.
 - [x] Decide the `mapgl` basemap style — `rva_map_style` in `_common.R`, Carto's free Positron MapLibre style, no token.
 - [x] `r/geo.R` written — tigris county/independent-city boundaries for the `rr` region → `data/geo.rds` + `data-out/geo.csv`.
@@ -106,12 +107,33 @@
 ## Presentation — external affairs committee deck (2026-11-06)
 
 - [x] `presentation.qmd` + `presentation.css` — 10-slide reveal.js deck built from the `summary.qmd` findings (BHC section first): headline on every slide, big-number cards plus charts, a six-figure quotables table with margins of error, a cautions slide for Q&A. Speaker notes on each slide. Renders standalone to `docs/presentation.html`.
-- [ ] Decide whether to link the deck from the site navbar or `summary.qmd` (not linked yet). Not committed yet either.
-- [ ] Setup chunk copies a subset of `summary.qmd`'s helpers; if those change (or get promoted to `_common.R`), update the deck too.
+- [x] Deck linked from the site navbar (Presentation tab, opens in a new tab), 2026-11-12. Not committed yet.
+- [x] Six 2027 General Assembly legislation slides added 2026-11-12 (nine LIS bills plus unfiled proposals).
+- [ ] Legislation slides: confirm the unfiled proposals' source can be shown publicly; add patrons and bill numbers once filed; refresh LIS statuses before the session opens (snapshot is 2026-11-12). Read the LIS history for HB143, HB1376 and SB349 if the slides should say whether they were carried over.
+- [ ] Setup chunk copies a subset of `summary.qmd`'s helpers; if those change (or get promoted to `_common.R`), update the deck too. (Renter-income helpers now exist in `summary.qmd`, `presentation.qmd` and `demographics.qmd` — a strong case for promoting `inc_renter()` to `_common.R`.)
 - [x] BHC branding on the site and the deck (`_brand.yml`, `styles.css`, `presentation.css`, navbar logo, favicon, title-slide logo).
 - [ ] Confirm brand blue/red/brown against the brand guide (extracted only as CMYK swatches, converted approximately) and the logo usage rules; update `_brand.yml` and `rva_brand` in `_common.R` together.
 - [ ] Optional: Lato in R charts (`showtext`/`sysfonts`); charts currently use the system sans font.
 - [ ] Before publishing `docs/`: confirm BHC has cleared use of its logo and brand on the public site. `img/` logo files are still untracked.
+
+## Renter-income comparison (2026-11-12, at the user's request)
+
+Why: the question is whether renters can move to ownership, so home values and rents are compared with median *renter* household income (ACS B25119), not the all-household median.
+
+- [x] `r/acs_demographics.R` pulls B25119 (`median_income_renter`; nominal + real, 3 windows, all geographies) → `data/acs_demographics.rds`, `data-out/acs_demographics.csv`.
+- [x] `r/summary_audit.R` has `pti_*` (renter denominator) and `renter_income_real_chg` keys.
+- [x] `presentation.qmd`: price-vs-income chart, homeownership stat, and quotables use renter income.
+- [x] `summary.qmd`: `pti()`/`rent_share()` and every income comparison switched to renter income; renter row in the at-a-glance table; all-household income kept as a reference figure.
+- [x] `market.qmd`: renter-income versions of the price-to-income and rent-share figures (`fig-pti-renter`, `fig-rent-share-renter`); the all-household versions stay.
+- [x] `demographics.qmd`: renter median-income figure (`fig-income-renter`) and bullets.
+- [ ] **User: `Rscript r/summary_audit.R`** — the 2026-11-03 audit files predate B25119, so `au("pti_2024")` still shows the all-household margin and `au("renter_income_real_chg")` is empty until it re-runs. Then paste back the output.
+- [x] Quoted-figure review: senior sample size (509, not 50), eviction wording, "two-thirds" seniors claim (2026-11-12). Direct senior counts added to `pums_profiles.R`.
+- [x] `pums_profiles.R` and `summary_audit.R` re-run with direct senior counts (2026-11-12).
+- [ ] **User: render `summary` and `presentation`** (they now read `P$seniors`).
+- [ ] **User: render `demographics`, `market`, `summary`, `presentation`** and re-read the new figures. Not yet rendered; `market.qmd` and `demographics.qmd` are frozen pages, so confirm they actually re-execute.
+- [ ] Check the typed numbers in the new `fig-alt` text (renter ratio ~5.9 to ~6.5; renter income ~$38k to ~$48k for Richmond city, ~$48k to ~$55k for the metro) against the rendered figures.
+- [ ] Add B25119 and the renter-income rationale to `data-notes.qmd` and METHODOLOGY.md (median of renter-occupied households; B25119 is published in all three windows).
+- [ ] Confirm B25119 `estimate_real` for small localities: renter-income cells for Amelia (CV 43) and similar are Low reliability and should be suppressed anywhere they're tabled.
 
 ## Future — not in scope right now
 

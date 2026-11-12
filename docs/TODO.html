@@ -117,6 +117,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Profiles</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./presentation.html" target="_blank"> 
+<span class="menu-text">Presentation</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./data-notes.html"> 
 <span class="menu-text">Data Notes</span></a>
   </li>  
@@ -155,6 +159,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#phase-6-polish-publish" id="toc-phase-6-polish-publish" class="nav-link" data-scroll-target="#phase-6-polish-publish">Phase 6 — polish &amp; publish</a></li>
   <li><a href="#surfaced-during-phase-2-not-blocking" id="toc-surfaced-during-phase-2-not-blocking" class="nav-link" data-scroll-target="#surfaced-during-phase-2-not-blocking">Surfaced during Phase 2 — not blocking</a></li>
   <li><a href="#presentation-external-affairs-committee-deck-2026-11-06" id="toc-presentation-external-affairs-committee-deck-2026-11-06" class="nav-link" data-scroll-target="#presentation-external-affairs-committee-deck-2026-11-06">Presentation — external affairs committee deck (2026-11-06)</a></li>
+  <li><a href="#renter-income-comparison-2026-11-12-at-the-users-request" id="toc-renter-income-comparison-2026-11-12-at-the-users-request" class="nav-link" data-scroll-target="#renter-income-comparison-2026-11-12-at-the-users-request">Renter-income comparison (2026-11-12, at the user’s request)</a></li>
   <li><a href="#future-not-in-scope-right-now" id="toc-future-not-in-scope-right-now" class="nav-link" data-scroll-target="#future-not-in-scope-right-now">Future — not in scope right now</a></li>
   </ul></li>
   </ul>
@@ -189,6 +194,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><p><label><input type="checkbox" checked=""><code>renv::init()</code> + <code>renv::snapshot()</code> — <strong>user runs</strong>, package installs are a long job. Pin R + tidyverse/tidycensus/tigris/sf/mapgl/kableExtra/ggtext/formattable/janitor.</label></p></li>
 <li><p><label><input type="checkbox" checked="">Add <code>.Rprofile</code> (<code>source("renv/activate.R")</code>) once renv exists.</label></p></li>
+<li><p><label><input type="checkbox" checked=""><code>renv::snapshot()</code> 2026-11-12 recorded <code>arrow</code>, <code>assertthat</code>, <code>readxlsb</code> (GitHub source <code>velofrog/readxlsb</code>, compiled; needs Rtools to restore). <code>renv::status()</code> clean.</label></p></li>
 <li><p><label><input type="checkbox" checked="">Define a palette + light theme in <code>_common.R</code> — <code>rva_pal</code> (8-hue categorical), <code>rva_seq</code> (sequential blue ramp), <code>rva_ink</code> (chart chrome), <code>theme_rva()</code>. Values from the dataviz skill’s validated reference palette.</label></p></li>
 <li><p><label><input type="checkbox" checked="">Decide the <code>mapgl</code> basemap style — <code>rva_map_style</code> in <code>_common.R</code>, Carto’s free Positron MapLibre style, no token.</label></p></li>
 <li><p><label><input type="checkbox" checked=""><code>r/geo.R</code> written — tigris county/independent-city boundaries for the <code>rr</code> region → <code>data/geo.rds</code> + <code>data-out/geo.csv</code>.</label></p></li>
@@ -296,9 +302,34 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="presentation-external-affairs-committee-deck-2026-11-06">Presentation — external affairs committee deck (2026-11-06)</h2>
 <ul class="task-list">
 <li><label><input type="checkbox" checked=""><code>presentation.qmd</code> + <code>presentation.css</code> — 10-slide reveal.js deck built from the <code>summary.qmd</code> findings (BHC section first): headline on every slide, big-number cards plus charts, a six-figure quotables table with margins of error, a cautions slide for Q&amp;A. Speaker notes on each slide. Renders standalone to <code>docs/presentation.html</code>.</label></li>
-<li><label><input type="checkbox">Decide whether to link the deck from the site navbar or <code>summary.qmd</code> (not linked yet). Not committed yet either.</label></li>
-<li><label><input type="checkbox">Setup chunk copies a subset of <code>summary.qmd</code>’s helpers; if those change (or get promoted to <code>_common.R</code>), update the deck too.</label></li>
-<li><label><input type="checkbox">Optional: BHC logo on the title slide (<code>img/</code> has two logo files that are not tracked); left off because the deck publishes to a public site and could read as BHC-endorsed.</label></li>
+<li><label><input type="checkbox" checked="">Deck linked from the site navbar (Presentation tab, opens in a new tab), 2026-11-12. Not committed yet.</label></li>
+<li><label><input type="checkbox" checked="">Six 2027 General Assembly legislation slides added 2026-11-12 (nine LIS bills plus unfiled proposals).</label></li>
+<li><label><input type="checkbox">Legislation slides: confirm the unfiled proposals’ source can be shown publicly; add patrons and bill numbers once filed; refresh LIS statuses before the session opens (snapshot is 2026-11-12). Read the LIS history for HB143, HB1376 and SB349 if the slides should say whether they were carried over.</label></li>
+<li><label><input type="checkbox">Setup chunk copies a subset of <code>summary.qmd</code>’s helpers; if those change (or get promoted to <code>_common.R</code>), update the deck too. (Renter-income helpers now exist in <code>summary.qmd</code>, <code>presentation.qmd</code> and <code>demographics.qmd</code> — a strong case for promoting <code>inc_renter()</code> to <code>_common.R</code>.)</label></li>
+<li><label><input type="checkbox" checked="">BHC branding on the site and the deck (<code>_brand.yml</code>, <code>styles.css</code>, <code>presentation.css</code>, navbar logo, favicon, title-slide logo).</label></li>
+<li><label><input type="checkbox">Confirm brand blue/red/brown against the brand guide (extracted only as CMYK swatches, converted approximately) and the logo usage rules; update <code>_brand.yml</code> and <code>rva_brand</code> in <code>_common.R</code> together.</label></li>
+<li><label><input type="checkbox">Optional: Lato in R charts (<code>showtext</code>/<code>sysfonts</code>); charts currently use the system sans font.</label></li>
+<li><label><input type="checkbox">Before publishing <code>docs/</code>: confirm BHC has cleared use of its logo and brand on the public site. <code>img/</code> logo files are still untracked.</label></li>
+</ul>
+</section>
+<section id="renter-income-comparison-2026-11-12-at-the-users-request" class="level2">
+<h2 class="anchored" data-anchor-id="renter-income-comparison-2026-11-12-at-the-users-request">Renter-income comparison (2026-11-12, at the user’s request)</h2>
+<p>Why: the question is whether renters can move to ownership, so home values and rents are compared with median <em>renter</em> household income (ACS B25119), not the all-household median.</p>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>r/acs_demographics.R</code> pulls B25119 (<code>median_income_renter</code>; nominal + real, 3 windows, all geographies) → <code>data/acs_demographics.rds</code>, <code>data-out/acs_demographics.csv</code>.</label></li>
+<li><label><input type="checkbox" checked=""><code>r/summary_audit.R</code> has <code>pti_*</code> (renter denominator) and <code>renter_income_real_chg</code> keys.</label></li>
+<li><label><input type="checkbox" checked=""><code>presentation.qmd</code>: price-vs-income chart, homeownership stat, and quotables use renter income.</label></li>
+<li><label><input type="checkbox" checked=""><code>summary.qmd</code>: <code>pti()</code>/<code>rent_share()</code> and every income comparison switched to renter income; renter row in the at-a-glance table; all-household income kept as a reference figure.</label></li>
+<li><label><input type="checkbox" checked=""><code>market.qmd</code>: renter-income versions of the price-to-income and rent-share figures (<code>fig-pti-renter</code>, <code>fig-rent-share-renter</code>); the all-household versions stay.</label></li>
+<li><label><input type="checkbox" checked=""><code>demographics.qmd</code>: renter median-income figure (<code>fig-income-renter</code>) and bullets.</label></li>
+<li><label><input type="checkbox"><strong>User: <code>Rscript r/summary_audit.R</code></strong> — the 2026-11-03 audit files predate B25119, so <code>au("pti_2024")</code> still shows the all-household margin and <code>au("renter_income_real_chg")</code> is empty until it re-runs. Then paste back the output.</label></li>
+<li><label><input type="checkbox" checked="">Quoted-figure review: senior sample size (509, not 50), eviction wording, “two-thirds” seniors claim (2026-11-12). Direct senior counts added to <code>pums_profiles.R</code>.</label></li>
+<li><label><input type="checkbox" checked=""><code>pums_profiles.R</code> and <code>summary_audit.R</code> re-run with direct senior counts (2026-11-12).</label></li>
+<li><label><input type="checkbox"><strong>User: render <code>summary</code> and <code>presentation</code></strong> (they now read <code>P$seniors</code>).</label></li>
+<li><label><input type="checkbox"><strong>User: render <code>demographics</code>, <code>market</code>, <code>summary</code>, <code>presentation</code></strong> and re-read the new figures. Not yet rendered; <code>market.qmd</code> and <code>demographics.qmd</code> are frozen pages, so confirm they actually re-execute.</label></li>
+<li><label><input type="checkbox">Check the typed numbers in the new <code>fig-alt</code> text (renter ratio ~5.9 to ~6.5; renter income ~$38k to ~$48k for Richmond city, ~$48k to ~$55k for the metro) against the rendered figures.</label></li>
+<li><label><input type="checkbox">Add B25119 and the renter-income rationale to <code>data-notes.qmd</code> and METHODOLOGY.md (median of renter-occupied households; B25119 is published in all three windows).</label></li>
+<li><label><input type="checkbox">Confirm B25119 <code>estimate_real</code> for small localities: renter-income cells for Amelia (CV 43) and similar are Low reliability and should be suppressed anywhere they’re tabled.</label></li>
 </ul>
 </section>
 <section id="future-not-in-scope-right-now" class="level2">

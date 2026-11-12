@@ -4,19 +4,20 @@ renter_b30_2024,"Renters paying 30%+ of income on housing, 2024",0.5123600228166
 renter_b50_2024,"Renters paying 50%+ of income on housing, 2024",0.25708967546308803,0.008860161001194774,pct,ACS B25070,,0.03446330929172954,High,±0.9 pts
 pop65_2014,"Population 65+ share, 2014",0.12864066055372858,0.0015821094696120246,pct,ACS B01001,,0.012298673396124504,High,±0.2 pts
 pop65_2024,"Population 65+ share, 2024",0.16724945722193063,0.002048138281640759,pct,ACS B01001,,0.012246008541139806,High,±0.2 pts
-pti_2014,"Median home value / median household income, 2014",3.601052331719088,0.03598664113431166,ratio,"ACS B25077, B19013",,0.009993367998940515,High,±0.04
-pti_2024,"Median home value / median household income, 2024",4.078265785253637,0.05489215159537226,ratio,"ACS B25077, B19013",,0.013459679796705154,High,±0.05
+pti_2014,"Median home value / median renter household income, 2014",5.934332974346229,0.11867222814158103,ratio,"ACS B25077, B25119",,0.01999756816049825,High,±0.12
+pti_2024,"Median home value / median renter household income, 2024",6.459216488817424,0.16848851685993704,ratio,"ACS B25077, B25119",,0.026084977512618485,High,±0.17
 value_real_chg,"Real change in median home value, 2014-2024",0.24141947647584705,0.010003349209370056,pct,ACS B25077,,0.04143555174336088,High,±1.0 pts
 rent_real_chg,"Real change in median gross rent, 2014-2024",0.11317918191255427,0.012947249770429612,pct,ACS B25064,,0.11439603601688035,High,±1.3 pts
 income_real_chg,"Real change in median household income, 2014-2024",0.09615624282486834,0.0161138374001098,pct,ACS B19013,Rent and income changes are within each other's margins of error; do not say rent outpaced income.,0.16757973197287163,Moderate,±1.6 pts
+renter_income_real_chg,"Real change in median renter household income, 2014-2024",0.14054027249286793,0.0363436613817406,pct,ACS B25119,Compare with rent change only after checking the margins of error.,0.25859962227969174,Moderate,±3.6 pts
 le80_all,Core-three households at or below 80% of AMI,0.40243870501411577,0.007637985868116679,pct,ACS PUMS 2020-2024,,0.018979252673643237,High,±0.8 pts
 renters_le80,Core-three renter households at or below 80% of AMI,84149,3022.1244770878902,n,ACS PUMS 2020-2024,,0.035913967808148525,High,"±3,000"
 owners_le80,Core-three owner households at or below 80% of AMI,69519,2564.0003724348894,n,ACS PUMS 2020-2024,,0.03688200883837353,High,"±2,600"
 renter_le30_sev,Renters at or below 30% of AMI paying 50%+ of income,0.8078100782519941,0.02962425394799672,pct,ACS PUMS 2020-2024,,0.03667230051412594,High,±3.0 pts
-renter_gt120_b30,Renters above 120% of AMI paying 30%+ of income,0.03244491696300913,0.009025409036679742,pct,ACS PUMS 2020-2024,Small sample (10 cases in the smaller category); quote as 'about 3%'.,0.2781763641734614,Moderate,±0.9 pts
-senior_renters_le50,Renter households at or below 50% of AMI with a householder 65+,11882,1099.5394281523577,n,ACS PUMS 2020-2024,"Derived (count x share); roughly 115 sample households. Quote as 'about 12,000'.",0.092538245089409,High,"±1,100"
-senior_share_renters_le50,65+ share of renter households at or below 50% of AMI,0.2258634782443401,0.02090100990652114,pct,ACS PUMS 2020-2024,Approximate MOE (ignores the numerator-denominator overlap).,0.092538245089409,High,±2.1 pts
-senior_owners_le50,Owner households at or below 50% of AMI with a householder 65+,17514,1431.9506493539752,n,ACS PUMS 2020-2024,Derived (count x share).,0.081760343117162,High,"±1,400"
+renter_gt120_b30,Renters above 120% of AMI paying 30%+ of income,0.03244491696300913,0.009025409036679742,pct,ACS PUMS 2020-2024,Small sample: 42 sample cases (of 1081 renter households above 120% of AMI) pay 30%+; quote as 'about 3%'.,0.2781763641734614,Moderate,±0.9 pts
+senior_renters_le50,Renter households at or below 50% of AMI with a householder 65+,11882,1092.2743638785312,n,ACS PUMS 2020-2024,"PUMS estimate from 509 sample households (unweighted records). Quote as 'about 12,000'.",0.0919268106277168,High,"±1,100"
+senior_share_renters_le50,65+ share of renter households at or below 50% of AMI,0.2258634782443401,0.018551553293603428,pct,ACS PUMS 2020-2024,Replicate-weight SE of the ratio.,0.08213613567720884,High,±1.9 pts
+senior_owners_le50,Owner households at or below 50% of AMI with a householder 65+,17514,1199.239016492855,n,ACS PUMS 2020-2024,PUMS estimate from 910 sample households (unweighted records).,0.0684731652673778,High,"±1,200"
 low_renter_city,Share of lower-income renters living in Richmond city,0.4462916968710264,0.017299801423606667,pct,ACS PUMS 2020-2024,,0.03876344002117101,High,±1.7 pts
 denial_Black,"Home-purchase denial rate, Black",0.1614928098607624,0.006466872058286722,pct,HMDA,"8,762 decided applications, last four years. Excludes withdrawn and incomplete files.",0.04004433425774435,High,±0.6 pts
 denial_White,"Home-purchase denial rate, White, non-Hispanic",0.044821398051615106,0.002224876194991121,pct,HMDA,"23,404 decided applications, last four years. Excludes withdrawn and incomplete files.",0.04963870587947779,High,±0.2 pts

@@ -6,7 +6,57 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-06 (latest) — BHC branding across the site and the deck
+## 2026-11-12 (latest) — quoted-figure review: sample sizes and one wrong claim
+
+**What changed:** Fixed the senior-count sample size. The pages said "about 50 sample households" (hardcoded) and the audit said "roughly 115" (`n_obs x share`, which double-counts the share). In a PUMS profile row `n_obs` is already the unweighted record count in the category, so the true figure is **509** records (226 + 283) for core-three renters at or below 50% of AMI with a householder 65+, and **910** for owners. `r/summary_audit.R` now sums `n_obs` (`sen_n()`); `summary.qmd` and `presentation.qmd` compute `senior_renters_n` instead of typing a number. The audit's `renter_gt120_b30` note reported the smaller category (10 cases); it now reports 42 sample cases of 1,081 renter households above 120% of AMI.
+
+**Review of other quoted figures (checked against the .rds frames):** all computed inline figures and the typed numbers in `fig-alt` text on profiles, market, demographics, and inventory matched. Two wording problems fixed: (1) `presentation.qmd` speaker notes said "about two-thirds" of owners at or below 30% of AMI are 65+; the data say 52.9%, now computed ("about half"); (2) `summary.qmd` watch-item 7 said eviction filings were "back near their old level" while the section header said "have not fully rebounded" (latest 12 months = 85% of the historical average, 15% below the 2016-19 mean); now "recovering but still below". Not checked: the 2027 General Assembly bill slides (external LIS facts, not from this repo's data).
+
+**Follow-up (same day):** senior counts are now tallied directly instead of band count x share. `r/pums/pums_profiles.R` adds `seniors` (weighted 65+ households by band x tenure plus a combined "50% AMI or less" row, with replicate-weight SE and `n_obs`) and `seniors_le50_share` (ratio SE), and gates on the direct count equalling count x share. `summary_audit.R`, `summary.qmd`, and `presentation.qmd` read those; the old independence-assumption margin of error is gone. Wording changed from "derived" to "PUMS estimate".
+
+**Results:** `pums_profiles.R` ran: direct 11,882 = count x share 11,882 (509 records). `summary_audit.R` re-run: senior renters 11,882 +/-1,100 (unchanged), 65+ share 22.6% +/-1.9 pts (was +/-2.1), senior owners 17,514 +/-1,200 (was +/-1,400).
+
+**Left open:** USER must render `summary` and `presentation` (docs/ is stale).
+
+---
+
+## 2026-11-12 — legislation slides and a navbar tab for the deck
+
+**What changed:** `presentation.qmd` gains six slides before "Six numbers you can quote": a nine-bill table (patron, LIS status), then tenant bills (HB79, HB1409, SB349), land-use bills (HB419, SB717, HB143, HB1376, HB464), homeownership (HB183, Housing Opportunity Tax Credit changes, Acquisition Fund pilot), and two "not yet filed" slides (zoning and parking proposals; budget requests and right to rest). The cautions slide gains a "bill status changes daily" bullet. `_quarto.yml` adds a Presentation navbar tab that opens the deck in a new browser tab. README now says not to render with `--to html`, which had turned the deck into a plain HTML page.
+
+**Source and snapshot:** LIS bill pages load their content with JavaScript, so a plain fetch returned nothing; each bill was read in a headless browser on 2026-11-12. All nine show "In Committee". HB79, HB183, HB419, HB464, HB1409 and SB717 were carried over from the 2026 session (HB183 passed the House 96 to 2, SB717 passed the Senate); I did not read the history for HB143, HB1376 and SB349, so the slides do not say they were carried over. Unfiled proposals come from pasted advocacy notes, not LIS.
+
+**Choices made:** Sponsor names and dollar amounts for unfiled items are left off the slides (the notes had pending or blank patrons and `$___M` placeholders); only the $2.4 million State Rental Assistance Program figure is shown. Headlines were shortened to one line so they do not hit the slide counter.
+
+**Icons:** Each bill bullet has a line icon in brand orange (14 hand-drawn 24px SVG shapes in `presentation.css`, applied as CSS masks; no extension or font installed). Use: wrap a list in `::: icon-list` and start each item with `[]{.ico .ico-NAME}`. The combined parking bullet was split in two (parking reform; multi-modal parking) so each has its own icon. Checked the land-use and zoning slides in a browser; the other three icon slides were not viewed. Swap in Font Awesome or Lucide (needs an extension install) if the hand-drawn set looks rough.
+
+**Left open:** Confirm the source of the unfiled proposals can be shown publicly and whether to attribute it. Add patrons and bill numbers once pre-filing happens. Refresh statuses from LIS before the session opens. Slides checked in a browser, but `quarto render` of the whole site was not re-run after the last edit.
+
+---
+
+## 2026-11-12 — renter income replaces all-household income in the price comparisons
+
+**What changed:** `r/acs_demographics.R` now pulls B25119 (median household income by tenure; renter-occupied series `median_income_renter`, nominal + real, three windows). Rationale: the question is whether renters can move to ownership, so home values and rents are set against median *renter* income. `presentation.qmd` already did this; `summary.qmd` still divided by all-household income and now matches (`pti()`, `rent_share()`, the at-a-glance table, watch item 2, the BHC rental and homeownership bullets, the quotables table, the wording caution). `market.qmd` gains renter-income versions of the price-to-income and rent-share figures (`fig-pti-renter`, `fig-rent-share-renter`) beside the originals; `demographics.qmd` gains `fig-income-renter` and bullets. All-household figures were kept as a reference, not removed.
+
+**Numbers (Richmond MSA, checked against the data, not yet from a render):** real renter income +14.1% (±3.6 pts) 2014 to 2024, against +9.6% for all households; real rent +11.3% (±1.3); real home value +24.1% (±1.0). Median home value / renter income 5.9 to 6.5, against 3.6 to 4.1 on all-household income. Renter median income is 61-75% of the all-household median across the eight geographies checked.
+
+**Wording check:** rent and renter-income changes differ by 2.7 pts against a combined margin of about 3.9, so they are still within each other's margins of error; home value vs. renter income (10 pts apart) is clearly outside. "Home values rose faster than renter incomes; do not say rent outpaced income" stands.
+
+**Surprises:** `data/summary_audit.rds` and `data-out/summary_audit.csv` were last built 2026-11-03, so `au("pti_2024")` in the deck and summary reads the old all-household margin and `au("renter_income_real_chg")` is empty until `r/summary_audit.R` is re-run (the script already has the renter keys). Chesterfield is the one core locality where renter income grew slower than all-household income (+5.5% vs +6.1%). Small-locality renter incomes are noisy (Amelia CV 43, Low).
+
+**Left open:** Re-run `r/summary_audit.R`; render the four pages and read the new figures; check the typed numbers in the new `fig-alt` text; document B25119 in `data-notes.qmd` and METHODOLOGY.md; consider promoting `inc_renter()` to `_common.R` (now copied into three pages). Nothing was rendered this session.
+
+---
+
+## 2026-11-12 — renv lockfile brought back in sync
+
+**What changed:** `renv::status()` reported `arrow`, `assertthat`, and `readxlsb` installed and used but not recorded. Ran `renv::snapshot()` (user); status now clean. `readxlsb` is recorded as `Source: GitHub` (`velofrog/readxlsb`, commit `644ef7a`), so `renv::restore()` can reinstall it; it compiles (Rcpp), so a fresh Windows restore needs Rtools. `arrow` is used by `r/hmda.R`, `r/hmda_prep.R`, `r/summary_audit.R`; `readxlsb` by `r/hud.R`. `assertthat` appeared in no `.R`/`.qmd` file and was likely picked up as a dependency.
+
+**Left open:** Nothing.
+
+---
+
+## 2026-11-06 — BHC branding across the site and the deck
 
 **What changed:** Added `_brand.yml` (colors, Lato Regular/Bold/Black, logos), rewrote `styles.css` (white navbar with logo and orange rule, Lato Black headings with orange rules, orange-dark links), set the navbar logo and favicon in `_quarto.yml`, and restyled `presentation.css` (logo on the title slide and as a corner mark, brand orange/blue stat cards, orange headline rules). `_common.R` gains `rva_brand`, and the `rva_pal` orange moved from `#eb6834` to the logo's `#eb6e1f`; the deck's charts now use brand blue and orange. Full-site render took 28 seconds (frozen pages, no R re-run).
 

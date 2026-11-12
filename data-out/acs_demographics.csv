@@ -3110,3 +3110,72 @@ secondary4,Expansion ring (4 localities),2024,B25118,tenure_income,Renter / $150
 51670,"Hopewell city, Virginia",2024,B19013,median_income,NA,54729,7645,8.491688891399187,High
 51730,"Petersburg city, Virginia",2024,B19013,median_income,NA,50698,2886,3.4605059269257694,High
 51760,"Richmond city, Virginia",2024,B19013,median_income,NA,64587,1911,1.7986624671521738,High
+16820,"Charlottesville, VA Metro Area",2014,B25119,median_income_renter,Renter,38074,1618,2.5833551140931283,High
+40060,"Richmond, VA Metro Area",2014,B25119,median_income_renter,Renter,36213,696,1.1683657911561256,High
+47260,"Virginia Beach-Norfolk-Newport News, VA-NC Metro Area",2014,B25119,median_income_renter,Renter,38342,614,0.9734815075772217,High
+47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV Metro Area",2014,B25119,median_income_renter,Renter,57510,537,0.5676295757206755,High
+51,Virginia,2014,B25119,median_income_renter,Renter,41321,347,0.5104964769490612,High
+51007,"Amelia County, Virginia",2014,B25119,median_income_renter,Renter,19004,13352,42.71057317000612,Low
+5103368,"Ashland town, Virginia",2014,B25119,median_income_renter,Renter,33333,3722,6.787909824386998,High
+51036,"Charles City County, Virginia",2014,B25119,median_income_renter,Renter,32784,11078,20.541564496581476,Medium
+51041,"Chesterfield County, Virginia",2014,B25119,median_income_renter,Renter,44537,1729,2.359978960835337,High
+51053,"Dinwiddie County, Virginia",2014,B25119,median_income_renter,Renter,41088,2661,3.9369869045251824,High
+51075,"Goochland County, Virginia",2014,B25119,median_income_renter,Renter,35538,8149,13.93944339044759,High
+51085,"Hanover County, Virginia",2014,B25119,median_income_renter,Renter,39629,2085,3.198357777504899,High
+51087,"Henrico County, Virginia",2014,B25119,median_income_renter,Renter,40630,1621,2.4253269366145815,High
+51097,"King and Queen County, Virginia",2014,B25119,median_income_renter,Renter,42208,8657,12.468285589847703,High
+51101,"King William County, Virginia",2014,B25119,median_income_renter,Renter,34326,4644,8.224378907974618,High
+51127,"New Kent County, Virginia",2014,B25119,median_income_renter,Renter,60112,10503,10.621510566294488,High
+51145,"Powhatan County, Virginia",2014,B25119,median_income_renter,Renter,45101,4206,5.66914016490782,High
+51149,"Prince George County, Virginia",2014,B25119,median_income_renter,Renter,47858,3657,4.645201019581611,High
+51183,"Sussex County, Virginia",2014,B25119,median_income_renter,Renter,23977,4553,11.54348398471534,High
+51570,"Colonial Heights city, Virginia",2014,B25119,median_income_renter,Renter,34415,2793,4.933524162212791,High
+51670,"Hopewell city, Virginia",2014,B25119,median_income_renter,Renter,29138,3417,7.128847715754044,High
+51730,"Petersburg city, Virginia",2014,B25119,median_income_renter,Renter,23929,2249,5.713457529690482,High
+51760,"Richmond city, Virginia",2014,B25119,median_income_renter,Renter,28985,1143,2.3972152035456973,High
+16820,"Charlottesville, VA Metro Area",2019,B25119,median_income_renter,Renter,47719,2404,3.0625079659921486,High
+40060,"Richmond, VA Metro Area",2019,B25119,median_income_renter,Renter,42400,783,1.1226128347766242,High
+47260,"Virginia Beach-Norfolk-Newport News, VA-NC Metro Area",2019,B25119,median_income_renter,Renter,44191,510,0.7015690867750857,High
+47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV Metro Area",2019,B25119,median_income_renter,Renter,66026,640,0.5892493120284106,High
+51,Virginia,2019,B25119,median_income_renter,Renter,48085,367,0.4639706851437408,High
+51007,"Amelia County, Virginia",2019,B25119,median_income_renter,Renter,43003,7197,10.17388551459653,High
+5103368,"Ashland town, Virginia",2019,B25119,median_income_renter,Renter,43750,10561,14.674424663482416,High
+51036,"Charles City County, Virginia",2019,B25119,median_income_renter,Renter,32321,6605,12.422875432038174,High
+51041,"Chesterfield County, Virginia",2019,B25119,median_income_renter,Renter,50939,1702,2.031155805820789,High
+51053,"Dinwiddie County, Virginia",2019,B25119,median_income_renter,Renter,39074,9936,15.458160363789508,Medium
+51075,"Goochland County, Virginia",2019,B25119,median_income_renter,Renter,55583,25228,27.591476193739016,Medium
+51085,"Hanover County, Virginia",2019,B25119,median_income_renter,Renter,53547,4086,4.638710996895435,High
+51087,"Henrico County, Virginia",2019,B25119,median_income_renter,Renter,47281,1452,1.8668699309161696,High
+51097,"King and Queen County, Virginia",2019,B25119,median_income_renter,Renter,44228,22824,31.371013919856573,Low
+51101,"King William County, Virginia",2019,B25119,median_income_renter,Renter,40726,21137,31.55045946466765,Low
+51127,"New Kent County, Virginia",2019,B25119,median_income_renter,Renter,46685,10045,13.07996782419065,High
+51145,"Powhatan County, Virginia",2019,B25119,median_income_renter,Renter,57188,14836,15.770520012594305,Medium
+51149,"Prince George County, Virginia",2019,B25119,median_income_renter,Renter,52107,5233,6.105043497414107,High
+51183,"Sussex County, Virginia",2019,B25119,median_income_renter,Renter,40000,9840,14.954407294832828,High
+51570,"Colonial Heights city, Virginia",2019,B25119,median_income_renter,Renter,34141,3042,5.416479076712887,High
+51670,"Hopewell city, Virginia",2019,B25119,median_income_renter,Renter,31214,4050,7.88750585963784,High
+51730,"Petersburg city, Virginia",2019,B25119,median_income_renter,Renter,31367,2851,5.525331396334191,High
+51760,"Richmond city, Virginia",2019,B25119,median_income_renter,Renter,32762,1472,2.7313131882904593,High
+16820,"Charlottesville, VA Metro Area",2024,B25119,median_income_renter,Renter,58907,2913,3.006129439104027,High
+40060,"Richmond, VA Metro Area",2024,B25119,median_income_renter,Renter,54728,1391,1.5450824169843103,High
+47260,"Virginia Beach-Chesapeake-Norfolk, VA-NC Metro Area",2024,B25119,median_income_renter,Renter,53412,877,0.9981477927958995,High
+47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV Metro Area",2024,B25119,median_income_renter,Renter,81928,819,0.6076949765959524,High
+51,Virginia,2024,B25119,median_income_renter,Renter,60343,529,0.5329210465380607,High
+51007,"Amelia County, Virginia",2024,B25119,median_income_renter,Renter,71279,25361,21.629121166957653,Medium
+5103368,"Ashland town, Virginia",2024,B25119,median_income_renter,Renter,45781,14337,19.037376902550925,Medium
+51036,"Charles City County, Virginia",2024,B25119,median_income_renter,Renter,55455,13066,14.323067609516082,High
+51041,"Chesterfield County, Virginia",2024,B25119,median_income_renter,Renter,62263,3857,3.7657691583505932,High
+51053,"Dinwiddie County, Virginia",2024,B25119,median_income_renter,Renter,44013,22678,31.32260522364317,Low
+51075,"Goochland County, Virginia",2024,B25119,median_income_renter,Renter,75114,16042,12.98290023682746,High
+51085,"Hanover County, Virginia",2024,B25119,median_income_renter,Renter,68534,4516,4.005732561647346,High
+51087,"Henrico County, Virginia",2024,B25119,median_income_renter,Renter,59572,2348,2.3960176309345065,High
+51097,"King and Queen County, Virginia",2024,B25119,median_income_renter,Renter,46583,13030,17.003998549635917,Medium
+51101,"King William County, Virginia",2024,B25119,median_income_renter,Renter,37188,10994,17.97161093571054,Medium
+51127,"New Kent County, Virginia",2024,B25119,median_income_renter,Renter,84534,13728,9.8721091558419,High
+51145,"Powhatan County, Virginia",2024,B25119,median_income_renter,Renter,50055,16658,20.230633840769073,Medium
+51149,"Prince George County, Virginia",2024,B25119,median_income_renter,Renter,66581,4729,4.317706307316147,High
+51183,"Sussex County, Virginia",2024,B25119,median_income_renter,Renter,37718,9137,14.726144797796348,High
+51570,"Colonial Heights city, Virginia",2024,B25119,median_income_renter,Renter,47682,14849,18.931143241400825,Medium
+51670,"Hopewell city, Virginia",2024,B25119,median_income_renter,Renter,42008,5633,8.151580911784642,High
+51730,"Petersburg city, Virginia",2024,B25119,median_income_renter,Renter,45863,1982,2.6270920390826995,High
+51760,"Richmond city, Virginia",2024,B25119,median_income_renter,Renter,48196,1938,2.4444258891189246,High

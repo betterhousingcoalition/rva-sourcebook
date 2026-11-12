@@ -24,7 +24,7 @@ Adjust the paths to match where R and Quarto are actually installed on this mach
 ### Running things
 
 - **Data scripts:** `Rscript r/<name>.R` from the project root. Never run R inline — see [CLAUDE.md](CLAUDE.md)'s Execution section.
-- **Render the site:** `quarto render` from the project root, or `quarto preview` to view it live while editing. Renders can take a couple of minutes once maps and multiple pages are in place — let it run rather than interrupting.
+- **Render the site:** `quarto render` from the project root (**no `--to html`** — that flag forces every page to HTML and turns `presentation.qmd` into a scrolling page instead of reveal.js slides), or `quarto preview` to view it live while editing. Renders can take a couple of minutes once maps and multiple pages are in place — let it run rather than interrupting.
 
 ## Repo layout
 

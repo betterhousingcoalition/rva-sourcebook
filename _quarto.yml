@@ -27,6 +27,9 @@ website:
         text: Market
       - href: profiles.qmd
         text: Profiles
+      - href: presentation.qmd
+        text: Presentation
+        target: _blank
       - href: data-notes.qmd
         text: Data Notes
       - href: about.qmd

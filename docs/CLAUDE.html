@@ -117,6 +117,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Profiles</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./presentation.html" target="_blank"> 
+<span class="menu-text">Presentation</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./data-notes.html"> 
 <span class="menu-text">Data Notes</span></a>
   </li>  
@@ -254,7 +258,7 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="what-_common.r-provides">What <code>_common.R</code> provides</h2>
 <ul>
 <li><strong>Geography:</strong> <code>rr</code> (17-locality Richmond region), <code>bhc</code> (3-locality core: Richmond city, Henrico, Chesterfield), <code>secondary</code> (4 expansion localities: Hanover, Goochland, New Kent, Powhatan), <code>ashland</code> (place 5103368, sumlev 160), <code>regions</code> (comparison MSAs: Charlottesville, Richmond, Hampton Roads, DC), <code>virginia</code>; and PUMA sets <code>puma_core3</code>/<code>puma_region</code>/<code>puma_locality</code>, used by <code>r/pums/</code> and <code>profiles.qmd</code> (<code>profiles.qmd</code> covers the core three only, via <code>puma_core3</code> — see METHODOLOGY.md).</li>
-<li><strong>Palette/theme:</strong> <code>rva_pal</code> (8-hue categorical, fixed order — never cycle or reorder), <code>rva_seq</code> (7-step blue sequential ramp for choropleths/magnitude), <code>rva_ink</code> (chart chrome: primary/muted/gridline/baseline), <code>theme_rva()</code> (ggplot2 theme; <code>legend.position = "none"</code> by default since 2-3 series use bold ggtext subtitle spans instead of a legend box), and <code>rva_map_style</code> (free Carto MapLibre basemap URL, no token). Values come from the dataviz skill’s validated reference palette — CVD-safe adjacent pairs. Change values in <code>_common.R</code> only, never at the call site.</li>
+<li><strong>Palette/theme:</strong> <code>rva_pal</code> (8-hue categorical, fixed order — never cycle or reorder), <code>rva_seq</code> (7-step blue sequential ramp for choropleths/magnitude), <code>rva_ink</code> (chart chrome: primary/muted/gridline/baseline), <code>rva_brand</code> (Better Housing Coalition brand colors; mirrors <code>_brand.yml</code>, which drives site and deck fonts, colors, and logo — change both together), <code>theme_rva()</code> (ggplot2 theme; <code>legend.position = "none"</code> by default since 2-3 series use bold ggtext subtitle spans instead of a legend box), and <code>rva_map_style</code> (free Carto MapLibre basemap URL, no token). Values come from the dataviz skill’s validated reference palette — CVD-safe adjacent pairs. Change values in <code>_common.R</code> only, never at the call site.</li>
 <li><strong>Caption helpers:</strong> <code>acs_cap</code>, <code>pums_cap</code>, <code>chas_cap</code>, <code>dec_cap</code>, <code>pep_cap</code>, <code>bps_cap</code>, <code>oews_cap</code> and others — see the file for the full list. Not every helper has a matching script yet; that’s fine, they’re cheap to keep around.</li>
 <li><strong><code>flag_reliability(df, cv_col = cv)</code></strong> — High at or below 15, Medium at or below 30, Low above 30, from a <strong>0 to 100</strong> CV. Use it for secondary-locality and Ashland ACS estimates, which run noisier than the <code>bhc</code> core.</li>
 <li><strong><code>export_csv(df, name)</code></strong> — writes <code>data-out/&lt;name&gt;.csv</code>. All data in this project is public-source, so no filename-prefix privacy convention is needed (unlike sibling reports that mix in licensed MLS/CoStar data).</li>
@@ -319,6 +323,11 @@ ul.task-list li input[type="checkbox"] {
 <pre><code>rva-sourcebook/
 ├── _quarto.yml            # website config: freeze auto, execute-dir project, output-dir docs
 ├── _common.R              # sourced by every page: libs, geography constants, caption helpers, flag_reliability(), export_csv()
+├── _brand.yml             # BHC brand (colors, Lato, logos) for the site and the deck
+├── styles.css             # site-wide brand styling on top of _brand.yml
+├── presentation.qmd       # reveal.js deck for the external affairs committee (built from summary.qmd findings)
+├── presentation.css       # deck-only styling
+├── img/                   # BHC logo files (used by _brand.yml, navbar, favicon, deck)
 ├── CLAUDE.md              # this file
 ├── PLAN.md                # target architecture and phased build order
 ├── METHODOLOGY.md         # internal data/geography/scope conventions

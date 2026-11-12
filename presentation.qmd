@@ -118,11 +118,12 @@ hh_count <- function(bands, ten) {
     pull(est) |>
     sum()
 }
-senior_hh <- function(bands, ten) {
-  map_dbl(bands, \(b) hh_count(b, ten) * pr("Householder age", "65 and over", b, ten)) |> sum()
-}
 renters_le80 <- hh_count(ami5_lv[1:3], "Renter")
-senior_renters_le50 <- senior_hh(ami5_lv[1:2], "Renter")
+# 65+ households are counted directly from the PUMS records (P$seniors), with
+# replicate-weight SEs; n_obs is the unweighted record count.
+sen_row <- P$seniors |> filter(unit == "Households", ami5 == "50% AMI or less", tenure == "Renter")
+senior_renters_le50 <- sen_row$est
+senior_renters_n <- sen_row$n_obs
 
 low_renter <- P$dist5 |>
   filter(unit == "Households", tenure == "Renter", measure == "count", geo != "Core three", band %in% ami5_lv[1:3]) |>
@@ -286,10 +287,10 @@ ggplot(chg, aes(measure, change, fill = measure)) +
 ::::
 
 ::: notes
-Home value is the stronger finding: its rise is outside the margins of error. Rent and income changes are within each other's margins of error, so do not say rent grew faster than income. Renter burden is essentially unchanged region-wide; owner burden fell. Dollar changes are adjusted with national CPI-U.
+Home value is the stronger finding: its rise is outside the margins of error. Rent and renter-income changes are within each other's margins of error, so do not say rent grew faster than renter income. Renter burden is essentially unchanged region-wide; owner burden fell. Dollar changes are adjusted with national CPI-U.
 :::
 
-## Housing stability: eviction filings have recovered, but not fully
+## Eviction filings are nearly back to pre-pandemic levels
 
 :::: columns
 ::: {.column width="34%"}
@@ -335,7 +336,7 @@ ggplot(ev_plot, aes(factor(year), filings)) +
 Lead with the trend against the pre-2020 baseline, not a count of displaced households. The provider's own "percent of historical average" has no documented definition, so use the count-based comparison to the 2016-19 monthly mean. Covers Richmond city, Henrico and Chesterfield only.
 :::
 
-## Senior housing: the 65-and-over share is rising across the region
+## The 65-and-over share is rising across the region
 
 :::: columns
 ::: {.column width="34%"}
@@ -348,7 +349,7 @@ Lead with the trend against the pre-2020 baseline, not a count of displaced hous
 :::
 
 ::: kicker
-The senior count is derived from a small sample (about 50 households). Quote it as "about".
+The senior count is a PUMS survey estimate from `r n_fmt(senior_renters_n)` sample households. Quote it as "about".
 :::
 :::
 
@@ -390,10 +391,10 @@ ggplot(age_plot, aes(place, share, fill = year)) +
 ::::
 
 ::: notes
-BHC operates 8 senior affordable properties. The group they serve is growing as a share of the region. Older owners are exposed too: about two-thirds of owners at or below 30% of AMI are 65 or over. The expansion ring also had more deaths than births, so its growth depends on in-migration. Senior counts multiply the income-band count by the share with a householder 65 or over, so round to the nearest 500.
+BHC operates 8 senior affordable properties. The group they serve is growing as a share of the region. Older owners are exposed too: about half of owners at or below 30% of AMI (`r p0(pr("Householder age", "65 and over", ami5_lv[1], "Owner"))`) are 65 or over. The expansion ring also had more deaths than births, so its growth depends on in-migration. Senior counts are weighted PUMS estimates, so round to the nearest 500.
 :::
 
-## Homeownership: homes cost more relative to income, and credit access is uneven
+## Homes cost more relative to income, and credit access is uneven
 
 :::: columns
 ::: {.column width="38%"}
@@ -439,7 +440,7 @@ ggplot(den, aes(group, rate, fill = emph)) +
 Value-to-income uses every owner's own estimate of value, so it understates the cost of buying today. The denial rates are loan records, not a sample, and exclude withdrawn and incomplete applications. Some applications have no race or ethnicity recorded. Don't describe denial reasons as home-purchase reasons; most denials in the lending data are refinance, cash-out and home-improvement loans.
 :::
 
-## Mixed-income: lower-income renters live across the core
+## Low-income renters aren't just in the city
 
 :::: columns
 ::: {.column width="62%"}
@@ -486,6 +487,95 @@ ggplot(lr, aes(geo, n)) +
 Richmond city has the highest share of lower-income households, but most of the lower-income renters live in the suburbs, so mixed-income communities have a role in all three localities. These data speak to income, tenure and structure type; they do not measure demand for retail or commercial space, which needs separate evidence. Housing is old in the city and vacancy is tight in the suburbs, which limits affordable options without new construction.
 :::
 
+## 2027 General Assembly: nine filed housing bills we are watching
+
+| Bill | Subject | Patron | LIS status |
+|:-----|:--------|:-------|:-----------|
+| [HB79](https://lis.virginia.gov/bill-details/20271/HB79) | Mold remediation; tenant lawsuits | Del. Price | In committee |
+| [HB143](https://lis.virginia.gov/bill-details/20271/HB143) | Surplus public land for affordable housing | Del. Gardner | In committee |
+| [HB183](https://lis.virginia.gov/bill-details/20271/HB183) | First-time home buyer savings plan | Del. Reid | In Senate committee |
+| [HB419](https://lis.virginia.gov/bill-details/20271/HB419) | 12-month limit on land use decisions | Del. Cole | In committee |
+| [HB464](https://lis.virginia.gov/bill-details/20271/HB464) | State accessory dwelling unit guide | Del. Cohen | In committee |
+| [HB1376](https://lis.virginia.gov/bill-details/20271/HB1376) | Urban public-private redevelopment fund | Del. Bulova | In committee |
+| [HB1409](https://lis.virginia.gov/bill-details/20271/HB1409) | Fees barred from rental agreements | Del. Schmidt | In committee |
+| [SB349](https://lis.virginia.gov/bill-details/20271/SB349) | Pre-tenancy fees and deposits | Sen. VanValkenburg | In committee |
+| [SB717](https://lis.virginia.gov/bill-details/20271/SB717) | Transit-oriented housing overlay districts | Sen. Salim | In House committee |
+
+::: kicker
+Status as shown on the Virginia Legislative Information System (LIS) on November 12, 2026, before the session opens. Bill text can change in committee.
+:::
+
+::: notes
+Nine bills already on LIS. Most were carried over from the 2026 session. HB183 passed the House 96 to 2 in February 2026 and is in Senate Finance and Appropriations; SB717 passed the Senate and is in House Counties, Cities and Towns. The next slides group them by theme and add the proposals that are not filed yet.
+:::
+
+## Tenants: three bills on mold, fees and deposits
+
+::: icon-list
+- []{.ico .ico-droplet}**[HB79](https://lis.virginia.gov/bill-details/20271/HB79), mold.** Lets tenants sue for damages, including punitive damages and attorney fees, when mold results solely from a landlord's gross negligence or willful misconduct. Requires temporary vacating for remediation when a physician certifies a health risk.
+- []{.ico .ico-receipt}**[HB1409](https://lis.virginia.gov/bill-details/20271/HB1409), rental agreement fees.** Bars agreements that charge tenants for building maintenance, pest control, trash, common-area utilities or security, or for internet and cable above the landlord's cost.
+- []{.ico .ico-key}**[SB349](https://lis.virginia.gov/bill-details/20271/SB349), pre-tenancy fees.** Limits landlords to defined pre-tenancy fees, requires written notice of them before collecting anything, and limits how security and pet deposits can be applied.
+:::
+
+::: notes
+All three amend the Virginia Residential Landlord and Tenant Act. HB79 and HB1409 were continued to 2027 in House General Laws, and in 2026 a subcommittee recommended continuing each to 2028, so watch whether either gets a hearing. These are summaries from LIS, not legal analysis.
+:::
+
+## Land use: five bills on approvals and public land
+
+::: icon-list
+- []{.ico .ico-clock}**[HB419](https://lis.virginia.gov/bill-details/20271/HB419), approval deadlines.** Every locality must approve, approve with conditions, or deny a residential rezoning or development application within 12 months.
+- []{.ico .ico-pin}**[SB717](https://lis.virginia.gov/bill-details/20271/SB717), transit-oriented overlays.** Requires six stories and 30 units per acre by right near major transit stops, ministerial approval, effective September 2027 with a 2030 sunset. Passed the Senate in 2026.
+- []{.ico .ico-landmark}**[HB143](https://lis.virginia.gov/bill-details/20271/HB143), surplus property.** Offers suitable state surplus land to affordable housing developers for at least 90 days, with a 30-year affordability covenant; localities inventory their own land.
+- []{.ico .ico-building}**[HB1376](https://lis.virginia.gov/bill-details/20271/HB1376), redevelopment fund.** Removes the $500,000 cap and the 100% local match on the Urban Public-Private Partnership Redevelopment Fund.
+- []{.ico .ico-home}**[HB464](https://lis.virginia.gov/bill-details/20271/HB464), accessory dwelling units.** Directs the state housing department to publish a construction guide with local rules and model designs.
+:::
+
+::: notes
+SB717 is the most far-reaching. As passed by the Senate it covers certain localities, allows some areas to be excluded, and ends September 1, 2030. HB419 was continued in House Counties, Cities and Towns, with a subcommittee recommending continuing it to 2028.
+:::
+
+## Homeownership: bigger savings accounts, revised tax credit
+
+::: icon-list
+- []{.ico .ico-wallet}**[HB183](https://lis.virginia.gov/bill-details/20271/HB183), savings plan (filed).** Adds townhouses, raises the principal limit from $50,000 to $100,000 and the retained-balance limit from $150,000 to $200,000, and defines first-time buyer. Passed the House 96 to 2.
+- []{.ico .ico-file}**Housing Opportunity Tax Credit (expected).** Add a certificated-credit option and shorten the credit period from 10 years to five to raise credit value.
+- []{.ico .ico-key}**Acquisition Fund pilot (budget request).** A three-year revolving loan program run by the state housing department to buy and preserve units at affordable rates, for localities with a right-of-first-refusal ordinance that match state dollars.
+:::
+
+::: notes
+HB183 is a savings-account bill; it helps households that can already save, so pair it with the renter-income numbers earlier in the deck. The tax credit change and the acquisition pilot are not filed yet, and the pilot's dollar amount is not set.
+:::
+
+## Not yet filed: zoning and parking bills
+
+::: icon-list
+- []{.ico .ico-home}**Starter and Silver Homes.** Limit minimum lot sizes, setbacks and lot dimensions in new subdivisions to allow smaller homes.
+- []{.ico .ico-users}**Co-living.** Remove arbitrary limits on who can live together, with health and safety standards kept.
+- []{.ico .ico-pin}**Transit-oriented development.** Revisit targeted upzoning near transit.
+- []{.ico .ico-file}**Faith in Housing fixes.** Clarify the sunset, industrial-zoning, height and historic-preservation provisions.
+- []{.ico .ico-parking}**Parking reform.** Widen "designated areas" and transit stops, and cap commercial parking at two spaces per 1,000 square feet.
+- []{.ico .ico-bike}**Multi-modal parking.** Let developers swap required car spaces for bicycle spaces one to one.
+:::
+
+::: notes
+None of these are on LIS yet, so wording and patrons are not settled. Check LIS for filed bill numbers once pre-filing opens.
+:::
+
+## Not yet filed: budget requests and right to rest
+
+::: icon-list
+- []{.ico .ico-users}**5,000 Families pilot.** Three-year pilot of ongoing rental assistance for low-income families with children.
+- []{.ico .ico-wallet}**Virginia Housing Trust Fund.** Increase the biennial total to expand the supply of homes and housing stability.
+- []{.ico .ico-home}**Homeless Solutions Program.** More program funding plus a set-aside for provider capacity.
+- []{.ico .ico-key}**State Rental Assistance Program.** $2.4 million a year and one staff position to restore vouchers for people with disabilities.
+- []{.ico .ico-bed}**Right to rest.** Bar localities from arresting or fining people for sleeping or resting in public places where they do not block access or create a hazard.
+:::
+
+::: notes
+Dollar amounts for most budget items depend on the Governor's budget and the Housing Trust Fund workgroup report, so none are shown except the agency-requested rental assistance figure.
+:::
+
 ## Six numbers you can quote
 
 ```{r}
@@ -529,6 +619,7 @@ These are the figures with margins of error already worked out. The full table, 
 - **Round survey counts and say "about."** Household counts by income band are estimates with sampling error.
 - **Say home values rose faster than renter incomes.** Check the rent and renter-income margins of error before saying rent outpaced income.
 - **Eviction filings are not evictions.** Lead with the trend against the pre-2020 baseline, not a count of displaced households.
+- **Bill status changes daily.** The legislation slides are a November 12, 2026 snapshot; check LIS before quoting a bill's status, and treat unfiled proposals as proposals.
 :::
 
 ::: kicker
@@ -536,5 +627,5 @@ Full detail, definitions and sources: the Summary and Data Notes pages of the RV
 :::
 
 ::: notes
-Open the floor for Q&A here. This slide is the one people will want back on screen when they ask how to word something. The data do not measure demand for mixed-use space, and the senior counts rest on about 50 sample households.
+Open the floor for Q&A here. This slide is the one people will want back on screen when they ask how to word something. The data do not measure demand for mixed-use space, and the senior counts rest on `r n_fmt(senior_renters_n)` sample households (margin of error `r au("senior_renters_le50")`).
 :::

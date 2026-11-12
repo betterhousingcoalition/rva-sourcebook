@@ -1,10 +1,6 @@
-# Install required packages
-if (!requireNamespace("devtools", quietly = TRUE)) {
-  install.packages("devtools")
-}
-devtools::install_github("velofrog/readxlsb")
-
-# Load necessary packages
+# readxlsb is GitHub-only (not on CRAN). One-time setup, run from the project
+# root, then renv::snapshot():
+#   renv::install("velofrog/readxlsb")
 library(readxlsb)
 library(tidyverse)
 library(janitor)

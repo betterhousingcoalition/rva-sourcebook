@@ -66,6 +66,11 @@ inc <- function(g, yr, col = estimate_real) {
   demo$median_income |> filter(geoid == g, year == yr) |> pull({{ col }})
 }
 inc_real_growth <- function(g) inc(g, latest_yr) / inc(g, first_yr) - 1
+# Renter-occupied median household income (B25119): the comparison for would-be buyers.
+inc_renter <- function(g, yr, col = estimate_real) {
+  demo$median_income_renter |> filter(geoid == g, year == yr) |> pull({{ col }})
+}
+inc_renter_real_growth <- function(g) inc_renter(g, latest_yr) / inc_renter(g, first_yr) - 1
 
 # ---- Inventory ----
 struct_share <- function(g, s) {
@@ -77,7 +82,7 @@ med <- function(frame, g, yr, col = estimate_real) {
   frame |> filter(geoid == g, year == yr) |> pull({{ col }})
 }
 real_chg <- function(frame, g) med(frame, g, latest_yr) / med(frame, g, first_yr) - 1
-pti <- function(g, yr) med(market$median_value, g, yr, estimate) / inc(g, yr, estimate)
+pti <- function(g, yr) med(market$median_value, g, yr, estimate) / inc_renter(g, yr, estimate)
 b30 <- function(g, ten, yr = latest_yr) {
   burden |>
     filter(geoid == g, year == yr, tenure == ten, burden %in% c("Cost-burdened", "Severely cost-burdened")) |>
@@ -144,7 +149,7 @@ span <- function(text, color) paste0("<b style='color:", color, "'>", text, "</b
 :::
 
 ::: {.stat .warm}
-[`r p0(era_at("rr17", era2, mig_share_of_growth))`]{.num} [of regional growth, `r era2`, comes from net migration]{.lbl}
+[`r p0(era_at("rr17", era2, mig_share_of_growth))`]{.num} [of regional growth, `r era2`, comes from new people moving into the region]{.lbl}
 :::
 :::
 
@@ -185,12 +190,12 @@ ggplot(grow, aes(place, growth, fill = place == "Region")) +
 This is context, not the argument. Population is up across the region and more of that growth now depends on people moving in, which is why housing supply and cost matter to the region's future. Chesterfield and the expansion ring grew fastest. Richmond city has shifted toward international in-migration.
 :::
 
-## Affordable rental: about `r round_to(renters_le80)` renter households earn 80% of AMI or less
+## About `r round_to(renters_le80)` renter households earn 80% of AMI or less
 
 :::: columns
 ::: {.column width="38%"}
 ::: stat
-[`r round_to(renters_le80)`]{.num} [core-three renter households at or below 80% of area median income (AMI): `r p0(le80("Renter"))` of renters]{.lbl}
+[`r round_to(renters_le80)`]{.num} [City and surrounding county renter households at or below 80% of area median income (AMI): `r p0(le80("Renter"))` of renters]{.lbl}
 :::
 
 ::: {.stat .warm}
@@ -237,7 +242,7 @@ ggplot(bb, aes(ami5, est, fill = category)) +
 AMI is area median income, using HUD limits for the Richmond area. The core three are Richmond city, Henrico and Chesterfield. Need is deepest at the bottom: most of the lowest-income renters pay half or more of income on housing. The top band is a small sample, so don't quote it.
 :::
 
-## The burden isn't easing: home values rose far faster than incomes
+## Home values rose far faster than renter incomes
 
 :::: columns
 ::: {.column width="38%"}
@@ -255,14 +260,14 @@ AMI is area median income, using HUD limits for the Richmond area. The core thre
 #| label: chart-price-income
 #| fig-width: 7.4
 #| fig-asp: 0.72
-#| fig-alt: "Bar chart of inflation-adjusted change in Richmond MSA medians between the earlier and latest ACS windows. Median home value rose far more than median household income and median gross rent."
+#| fig-alt: "Bar chart of inflation-adjusted change in Richmond MSA medians between the earlier and latest ACS windows. Median home value rose far more than median renter household income and median gross rent."
 
 chg <- tibble(
   measure = factor(
-    c("Median household income", "Median gross rent", "Median home value"),
-    levels = c("Median household income", "Median gross rent", "Median home value")
+    c("Median renter household income", "Median gross rent", "Median home value"),
+    levels = c("Median renter household income", "Median gross rent", "Median home value")
   ),
-  change = c(inc_real_growth("40060"), real_chg(market$median_rent, "40060"), real_chg(market$median_value, "40060"))
+  change = c(inc_renter_real_growth("40060"), real_chg(market$median_rent, "40060"), real_chg(market$median_value, "40060"))
 )
 
 ggplot(chg, aes(measure, change, fill = measure)) +
@@ -273,7 +278,7 @@ ggplot(chg, aes(measure, change, fill = measure)) +
   scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.12))) +
   labs(
     subtitle = paste0("Richmond MSA, change after inflation,<br>", first_yr, " to ", latest_yr, " ACS 5-year windows"),
-    caption = acs_cap("B19013, B25064, B25077")
+    caption = acs_cap("B25119, B25064, B25077")
   ) +
   theme_rva(20)
 ```
@@ -393,7 +398,7 @@ BHC operates 8 senior affordable properties. The group they serve is growing as 
 :::: columns
 ::: {.column width="38%"}
 ::: {.stat .warm}
-[`r sprintf("%.1f", pti("40060", first_yr))` to `r sprintf("%.1f", pti("40060", latest_yr))`]{.num} [typical home value as a multiple of typical household income, Richmond MSA]{.lbl}
+[`r sprintf("%.1f", pti("40060", first_yr))` to `r sprintf("%.1f", pti("40060", latest_yr))`]{.num} [typical home value as a multiple of typical renter household income, Richmond MSA]{.lbl}
 :::
 
 ::: stat
@@ -497,7 +502,7 @@ quotes <- tribble(
     p0(b30("rr17", "Renter")), au("renter_b30_2024"), "17-locality region", "Not improved since 2014",
   "Senior renter households at or below 50% of AMI",
     paste0("about ", round_to(senior_renters_le50, 500)), au("senior_renters_le50"), "Core three", "Small sample; say \"about\"",
-  "Typical home value vs. typical household income",
+  "Typical home value vs. typical renter household income",
     paste0(sprintf("%.1f", pti("40060", first_yr)), " to ", sprintf("%.1f", pti("40060", latest_yr)), " times"),
     au("pti_2024"), "Richmond MSA", "",
   "Home-purchase denial rate, Black vs. White non-Hispanic applicants",
@@ -522,7 +527,7 @@ These are the figures with margins of error already worked out. The full table, 
 - **These are regional figures, not BHC results.** They describe need and market conditions in Richmond city, Henrico and Chesterfield, or the 17-locality region where noted. Pair them with BHC's own program data.
 - **Say "at or below 80% of AMI," not "low-income,"** unless you define the term.
 - **Round survey counts and say "about."** Household counts by income band are estimates with sampling error.
-- **Say home values rose faster than incomes.** Rent and income changes are statistically similar, so don't say rent outpaced income.
+- **Say home values rose faster than renter incomes.** Check the rent and renter-income margins of error before saying rent outpaced income.
 - **Eviction filings are not evictions.** Lead with the trend against the pre-2020 baseline, not a count of displaced households.
 :::
 

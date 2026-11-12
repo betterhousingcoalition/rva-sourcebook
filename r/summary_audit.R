@@ -61,12 +61,13 @@ for (yr in c(2014, 2024)) {
 }
 
 inc <- d$median_income |> filter(geoid == "40060")
+inc_renter <- d$median_income_renter |> filter(geoid == "40060")
 for (yr in c(2014, 2024)) {
   v <- mk$median_value |> filter(geoid == "40060", year == yr)
-  i <- inc |> filter(year == yr)
+  i <- inc_renter |> filter(year == yr)
   R <- v$estimate / i$estimate
-  add(paste0("pti_", yr), paste("Median home value / median household income,", yr), R,
-    sqrt(v$moe^2 + R^2 * i$moe^2) / i$estimate, "ratio", "ACS B25077, B19013")
+  add(paste0("pti_", yr), paste("Median home value / median renter household income,", yr), R,
+    sqrt(v$moe^2 + R^2 * i$moe^2) / i$estimate, "ratio", "ACS B25077, B25119")
 }
 chg <- function(f) {
   a <- f |> filter(year == 2014)
@@ -81,6 +82,9 @@ add("rent_real_chg", "Real change in median gross rent, 2014-2024", r[1], r[2], 
 r <- chg(inc)
 add("income_real_chg", "Real change in median household income, 2014-2024", r[1], r[2], "pct", "ACS B19013",
   "Rent and income changes are within each other's margins of error; do not say rent outpaced income.")
+r <- chg(inc_renter)
+add("renter_income_real_chg", "Real change in median renter household income, 2014-2024", r[1], r[2], "pct", "ACS B25119",
+  "Compare with rent change only after checking the margins of error.")
 
 ## 3. PUMS figures (90% MOE = 1.645 x SE) ----
 bc <- P$band_counts |> filter(unit == "Households")

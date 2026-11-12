@@ -141,6 +141,7 @@ b11001_raw <- pull_table("B11001") # household type
 b19001_raw <- pull_table("B19001") # household income bands
 b19013_raw <- pull_table("B19013") # median household income
 b25118_raw <- pull_table("B25118") # tenure by household income
+b25119_raw <- pull_table("B25119") # median household income by tenure
 
 ## 5. Pooled-geography helper ----
 # Counts add; MOEs of a sum combine in quadrature (the math lives here, not in
@@ -358,6 +359,29 @@ median_income <- b19013_raw |>
   select(-cpi, -real_factor) |>
   arrange(year, geoid)
 
+# Renter-occupied median household income (B25119). Variable numbering is read
+# from the published label, never assumed. A median: no pooled rows.
+b25119_renter_var <- map(years, \(yr) label_lookup(yr, "^B25119_")) |>
+  list_rbind() |>
+  filter(str_detect(leaf, regex("renter", ignore_case = TRUE))) |>
+  select(variable, year)
+stopifnot(nrow(b25119_renter_var) == length(years))
+
+median_income_renter <- b25119_raw |>
+  inner_join(b25119_renter_var, by = join_by(variable, year)) |>
+  select(geoid, name, year, table, variable, estimate, moe) |>
+  add_cv() |>
+  flag_reliability() |>
+  left_join(cpi_by_year, by = join_by(year)) |>
+  mutate(
+    real_factor = cpi_latest / cpi,
+    estimate_real = estimate * real_factor,
+    moe_real = moe * real_factor,
+    dollar_year = max(years)
+  ) |>
+  select(-cpi, -real_factor) |>
+  arrange(year, geoid)
+
 ## 7. Write output ----
 demographics <- list(
   population = population,
@@ -366,7 +390,8 @@ demographics <- list(
   household_type = household_type,
   income_bands = income_bands,
   tenure_income = tenure_income,
-  median_income = median_income
+  median_income = median_income,
+  median_income_renter = median_income_renter
 )
 
 write_rds(demographics, "data/acs_demographics.rds")
@@ -386,7 +411,9 @@ demo_long <- list(
   tenure_income = tenure_income |>
     mutate(measure = "tenure_income", category = paste(tenure, income_band, sep = " / ")),
   median_income = median_income |>
-    mutate(measure = "median_income", category = NA_character_)
+    mutate(measure = "median_income", category = NA_character_),
+  median_income_renter = median_income_renter |>
+    mutate(measure = "median_income_renter", category = "Renter")
 ) |>
   map(\(d) select(d, geoid, name, year, table, measure, category, estimate, moe, cv, reliability)) |>
   list_rbind()
@@ -437,6 +464,8 @@ stopifnot(
   setequal(d$median_income$geoid, named_ids),
   nrow(d$population) == nrow(distinct(d$population, geoid, year)),
   nrow(d$median_income) == nrow(distinct(d$median_income, geoid, year)),
+  setequal(d$median_income_renter$geoid, named_ids),
+  nrow(d$median_income_renter) == nrow(distinct(d$median_income_renter, geoid, year)),
   # every category survived its recode
   setequal(levels(d$age_sex$age_group), age_levels),
   setequal(levels(d$race_ethnicity$race), race_levels),

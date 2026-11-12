@@ -1,0 +1,154 @@
+/* presentation.css -- reveal.js styling for presentation.qmd only.
+   Colors and fonts follow _brand.yml (Better Housing Coalition brand; Lato). */
+
+:root {
+  --bhc-orange: #eb6e1f;
+  --bhc-orange-dark: #b8500f;
+  --bhc-blue: #2b7bba;
+  --bhc-ink: #262626;
+  --bhc-muted: #6b6963;
+  --bhc-card: #f6f3ef;
+}
+
+.reveal,
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Lato", sans-serif;
+}
+
+.reveal {
+  color: var(--bhc-ink);
+  font-size: 30px;
+}
+
+/* Headline at the top of every content slide: Lato Black with an orange rule */
+.reveal h2 {
+  font-size: 1.4em;
+  line-height: 1.15;
+  font-weight: 900;
+  text-transform: none;
+  text-align: left;
+  color: var(--bhc-ink);
+  margin: 0 0 0.5em 0;
+  padding-bottom: 0.25em;
+  border-bottom: 4px solid var(--bhc-orange);
+}
+
+.reveal section img,
+.reveal .figure img {
+  margin: 0;
+}
+
+/* Big-number cards */
+.stats {
+  display: flex;
+  gap: 1.2em;
+  justify-content: space-between;
+  margin-top: 0.4em;
+}
+
+.stat {
+  flex: 1;
+  background: var(--bhc-card);
+  border-left: 6px solid var(--bhc-blue);
+  border-radius: 4px;
+  padding: 0.55em 0.8em;
+  margin-bottom: 0.7em;
+  text-align: left;
+}
+
+.stat .num {
+  display: block;
+  font-size: 1.9em;
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--bhc-blue);
+}
+
+.stat .lbl {
+  display: block;
+  font-size: 0.72em;
+  line-height: 1.25;
+  color: var(--bhc-ink);
+  margin-top: 0.25em;
+}
+
+.stat.warm {
+  border-left-color: var(--bhc-orange);
+}
+
+.stat.warm .num {
+  color: var(--bhc-orange);
+}
+
+.kicker {
+  font-size: 0.7em;
+  color: var(--bhc-muted);
+  text-align: left;
+  margin-top: 0.6em;
+}
+
+/* Quotables table */
+.reveal table {
+  font-size: 0.6em;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reveal table th {
+  text-align: left;
+  border-bottom: 3px solid var(--bhc-orange);
+  padding: 0.35em 0.6em;
+  color: var(--bhc-ink);
+}
+
+.reveal table td {
+  text-align: left;
+  padding: 0.4em 0.6em;
+  vertical-align: top;
+}
+
+.reveal table tbody tr:nth-child(even) {
+  background: var(--bhc-card);
+}
+
+/* Cautions slide */
+.reveal ul li {
+  margin-bottom: 0.35em;
+}
+
+.reveal .cautions {
+  font-size: 1em;
+}
+
+/* Title slide */
+.reveal #title-slide h1 {
+  color: var(--bhc-ink);
+  font-size: 1.9em;
+  font-weight: 900;
+}
+
+.reveal #title-slide .subtitle {
+  color: var(--bhc-orange-dark);
+  font-weight: 700;
+}
+
+.reveal #title-slide::before {
+  content: "";
+  display: block;
+  height: 120px;
+  margin-bottom: 1.2em;
+  background: url("img/bhc-logo-horiz-color.png") center / contain no-repeat;
+}
+
+/* Brand mark, small, bottom right beside the slide number */
+.reveal .slide-logo {
+  position: fixed;
+  right: 70px;
+  bottom: 12px;
+  left: auto;
+  height: 34px;
+  max-height: 34px;
+  width: auto;
+}

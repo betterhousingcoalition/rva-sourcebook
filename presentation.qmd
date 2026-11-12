@@ -1,0 +1,535 @@
+---
+title: "Housing need in the Richmond region"
+subtitle: "What the public data say, and where BHC's work fits"
+author: "External Affairs Committee briefing"
+date: "2026-11-01"
+date-format: "MMMM YYYY"
+pagetitle: "Housing need in the Richmond region"
+format:
+  revealjs:
+    theme: simple
+    css: presentation.css
+    logo: img/bhc-logo-image-only-rgb.png
+    width: 1280
+    height: 720
+    margin: 0.05
+    center: false
+    slide-number: true
+    transition: none
+    hash: true
+    controls: true
+    fig-align: center
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+source("_common.R")
+
+# Data flow rule: pages read_rds() only, never call an API. This deck reads the
+# same frames summary.qmd reads and computes every number inline, so the slides
+# can't drift from the site. Helpers below are the subset of summary.qmd's setup
+# that this deck uses; if a definition changes there, change it here too.
+stock <- read_rds("data/acs_stock.rds")
+demo <- read_rds("data/acs_demographics.rds")
+pep <- read_rds("data/pep_migration.rds")
+market <- read_rds("data/acs_market.rds")
+burden <- read_rds("data/acs_burden.rds")
+P <- read_rds("data/pums_profiles.rds")
+evict <- read_rds("data/evict.rds")
+hmda <- read_rds("data/hmda.rds")
+audit <- read_rds("data/summary_audit.rds")
+
+first_yr <- min(demo$population$year)
+latest_yr <- max(demo$population$year)
+
+n_fmt <- function(x) scales::label_comma()(x)
+p_fmt <- function(x, accuracy = 0.1) scales::label_percent(accuracy = accuracy)(x)
+p0 <- function(x) scales::label_percent(accuracy = 1)(x)
+round_to <- function(x, k = 1000) n_fmt(round(x / k) * k)
+au <- function(key, col = "moe_text") audit |> filter(key == .env$key) |> pull(all_of(col))
+
+# ---- Demographics ----
+pop_at <- function(g, yr = latest_yr) {
+  demo$population |> filter(geoid == g, year == yr) |> pull(estimate)
+}
+pop_growth <- function(g) pop_at(g) / pop_at(g, first_yr) - 1
+
+era2 <- levels(pep$era$era)[2]
+era_at <- function(g, e, col) pep$era |> filter(geoid == g, era == e) |> pull({{ col }})
+
+age_share <- function(g, grp, yr = latest_yr) {
+  demo$age_sex |> filter(geoid == g, year == yr, age_group == grp) |> pull(share) |> sum()
+}
+inc <- function(g, yr, col = estimate_real) {
+  demo$median_income |> filter(geoid == g, year == yr) |> pull({{ col }})
+}
+inc_real_growth <- function(g) inc(g, latest_yr) / inc(g, first_yr) - 1
+
+# ---- Inventory ----
+struct_share <- function(g, s) {
+  stock$structure_type |> filter(geoid == g, year == latest_yr, structure == s) |> pull(share)
+}
+
+# ---- Market ----
+med <- function(frame, g, yr, col = estimate_real) {
+  frame |> filter(geoid == g, year == yr) |> pull({{ col }})
+}
+real_chg <- function(frame, g) med(frame, g, latest_yr) / med(frame, g, first_yr) - 1
+pti <- function(g, yr) med(market$median_value, g, yr, estimate) / inc(g, yr, estimate)
+b30 <- function(g, ten, yr = latest_yr) {
+  burden |>
+    filter(geoid == g, year == yr, tenure == ten, burden %in% c("Cost-burdened", "Severely cost-burdened")) |>
+    pull(share) |>
+    sum()
+}
+
+# ---- Evictions and lending (core three) ----
+ev_sum <- function(g, col) evict$summary |> filter(geoid == g) |> pull(all_of(col))
+hm_last <- max(hmda$rates$activity_year)
+hm_race <- function(grp, yrs = (hm_last - 3):hm_last) {
+  hmda$by_race |>
+    filter(race_ethnicity == grp, activity_year %in% yrs) |>
+    summarise(rate = sum(denied) / sum(decided_apps)) |>
+    pull(rate)
+}
+
+# ---- Income bands (PUMS, core three) ----
+ami5_lv <- P$levels$ami5
+le80 <- function(ten, geo = "Core three") {
+  P$le80 |> filter(unit == "Households", .data$geo == .env$geo, .data$tenure == .env$ten) |> pull(est)
+}
+pr <- function(tp, cat, band, ten) {
+  P$profile |>
+    filter(topic == tp, category == cat, .data$ami5 == .env$band, .data$tenure == .env$ten) |>
+    pull(est)
+}
+pbsev <- function(band, ten) pr("Cost burden", "Severely cost-burdened (50%+)", band, ten)
+
+hh_count <- function(bands, ten) {
+  P$band_counts |>
+    filter(unit == "Households", ami5 %in% bands, tenure == ten) |>
+    pull(est) |>
+    sum()
+}
+senior_hh <- function(bands, ten) {
+  map_dbl(bands, \(b) hh_count(b, ten) * pr("Householder age", "65 and over", b, ten)) |> sum()
+}
+renters_le80 <- hh_count(ami5_lv[1:3], "Renter")
+senior_renters_le50 <- senior_hh(ami5_lv[1:2], "Renter")
+
+low_renter <- P$dist5 |>
+  filter(unit == "Households", tenure == "Renter", measure == "count", geo != "Core three", band %in% ami5_lv[1:3]) |>
+  summarise(n = sum(est), .by = geo) |>
+  mutate(share = n / sum(n))
+low_renter_city <- low_renter |> filter(geo == "Richmond city") |> pull(share)
+
+# Shared chart bits: blue/orange emphasis, wrapped x labels, slide-sized text.
+col_cool <- rva_brand[["blue"]]
+col_warm <- rva_brand[["orange"]]
+span <- function(text, color) paste0("<b style='color:", color, "'>", text, "</b>")
+```
+
+## The region is growing, and migration is doing the work
+
+:::: columns
+::: {.column width="38%"}
+::: stat
+[`r p_fmt(pop_growth("rr17"))`]{.num} [population growth, 17-locality region, `r first_yr` to `r latest_yr` windows]{.lbl}
+:::
+
+::: stat
+[`r n_fmt(pop_at("rr17"))`]{.num} [people live in the region today]{.lbl}
+:::
+
+::: {.stat .warm}
+[`r p0(era_at("rr17", era2, mig_share_of_growth))`]{.num} [of regional growth, `r era2`, comes from net migration]{.lbl}
+:::
+:::
+
+::: {.column width="62%"}
+```{r}
+#| label: chart-growth
+#| fig-width: 7.4
+#| fig-asp: 0.72
+#| fig-alt: "Bar chart of population growth between the earlier and latest ACS windows for Richmond city, Henrico, Chesterfield, the four-locality expansion ring and the full region. Chesterfield and the expansion ring grew fastest."
+
+grow_lbl <- c(
+  "51760" = "Richmond city", "51087" = "Henrico", "51041" = "Chesterfield",
+  "secondary4" = "Expansion ring", "rr17" = "Region"
+)
+grow <- tibble(
+  geoid = names(grow_lbl),
+  place = factor(grow_lbl, levels = grow_lbl),
+  growth = map_dbl(names(grow_lbl), pop_growth)
+)
+
+ggplot(grow, aes(place, growth, fill = place == "Region")) +
+  geom_col(width = 0.65) +
+  geom_text(aes(label = p_fmt(growth)), vjust = -0.4, fontface = "bold", size = 7, color = rva_ink[["primary"]]) +
+  scale_fill_manual(values = c("TRUE" = col_warm, "FALSE" = col_cool)) +
+  scale_x_discrete(labels = \(x) str_wrap(x, 9)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.14))) +
+  labs(
+    subtitle = paste0("Population growth, ", first_yr, " to ", latest_yr, " ACS 5-year windows"),
+    caption = acs_cap("B01001")
+  ) +
+  theme_rva(20) +
+  theme(axis.text.x = element_text(size = 14))
+```
+:::
+::::
+
+::: notes
+This is context, not the argument. Population is up across the region and more of that growth now depends on people moving in, which is why housing supply and cost matter to the region's future. Chesterfield and the expansion ring grew fastest. Richmond city has shifted toward international in-migration.
+:::
+
+## Affordable rental: about `r round_to(renters_le80)` renter households earn 80% of AMI or less
+
+:::: columns
+::: {.column width="38%"}
+::: stat
+[`r round_to(renters_le80)`]{.num} [core-three renter households at or below 80% of area median income (AMI): `r p0(le80("Renter"))` of renters]{.lbl}
+:::
+
+::: {.stat .warm}
+[`r p0(pbsev(ami5_lv[1], "Renter"))`]{.num} [of renters at 30% of AMI or less pay half or more of income on housing]{.lbl}
+:::
+:::
+
+::: {.column width="62%"}
+```{r}
+#| label: chart-burden-band
+#| fig-width: 7.4
+#| fig-asp: 0.72
+#| fig-alt: "Stacked bar chart of core-three renters by income band showing the share paying 30 to 49 percent and 50 percent or more of income on housing. The burden is highest in the lowest-income bands and falls steeply above 80 percent of area median income."
+
+bb <- P$profile |>
+  filter(topic == "Cost burden", unit == "Households", tenure == "Renter",
+         category != "Not cost-burdened", ami5 %in% ami5_lv) |>
+  mutate(
+    ami5 = factor(ami5, levels = ami5_lv),
+    category = factor(category, levels = c("Cost-burdened (30-49%)", "Severely cost-burdened (50%+)"))
+  )
+bb_tot <- bb |> summarise(total = sum(est), .by = ami5)
+
+ggplot(bb, aes(ami5, est, fill = category)) +
+  geom_col(width = 0.7) +
+  geom_text(
+    data = bb_tot, aes(ami5, total, label = p0(total)), inherit.aes = FALSE,
+    vjust = -0.4, fontface = "bold", size = 6.5, color = rva_ink[["primary"]]
+  ) +
+  scale_fill_manual(values = c("Cost-burdened (30-49%)" = col_cool, "Severely cost-burdened (50%+)" = col_warm)) +
+  scale_x_discrete(labels = \(x) str_wrap(x, 8)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    subtitle = paste0("Core three renters paying 30%+ of income on housing<br>", span("50%+", col_warm), " and ", span("30-49%", col_cool), ", by income band"),
+    caption = pums_cap()
+  ) +
+  theme_rva(20) +
+  theme(axis.text.x = element_text(size = 14))
+```
+:::
+::::
+
+::: notes
+AMI is area median income, using HUD limits for the Richmond area. The core three are Richmond city, Henrico and Chesterfield. Need is deepest at the bottom: most of the lowest-income renters pay half or more of income on housing. The top band is a small sample, so don't quote it.
+:::
+
+## The burden isn't easing: home values rose far faster than incomes
+
+:::: columns
+::: {.column width="38%"}
+::: {.stat .warm}
+[`r p0(b30("rr17", "Renter"))`]{.num} [of renter households pay 30% or more of income on housing (`r p0(b30("rr17", "Renter", first_yr))` in the `r first_yr` window)]{.lbl}
+:::
+
+::: stat
+[`r p0(b30("rr17", "Owner"))`]{.num} [of owners pay 30% or more, down from `r p0(b30("rr17", "Owner", first_yr))`]{.lbl}
+:::
+:::
+
+::: {.column width="62%"}
+```{r}
+#| label: chart-price-income
+#| fig-width: 7.4
+#| fig-asp: 0.72
+#| fig-alt: "Bar chart of inflation-adjusted change in Richmond MSA medians between the earlier and latest ACS windows. Median home value rose far more than median household income and median gross rent."
+
+chg <- tibble(
+  measure = factor(
+    c("Median household income", "Median gross rent", "Median home value"),
+    levels = c("Median household income", "Median gross rent", "Median home value")
+  ),
+  change = c(inc_real_growth("40060"), real_chg(market$median_rent, "40060"), real_chg(market$median_value, "40060"))
+)
+
+ggplot(chg, aes(measure, change, fill = measure)) +
+  geom_col(width = 0.65) +
+  geom_text(aes(label = p0(change)), vjust = -0.4, fontface = "bold", size = 7, color = rva_ink[["primary"]]) +
+  scale_fill_manual(values = c(col_cool, col_cool, col_warm)) +
+  scale_x_discrete(labels = \(x) str_wrap(x, 12)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    subtitle = paste0("Richmond MSA, change after inflation,<br>", first_yr, " to ", latest_yr, " ACS 5-year windows"),
+    caption = acs_cap("B19013, B25064, B25077")
+  ) +
+  theme_rva(20)
+```
+:::
+::::
+
+::: notes
+Home value is the stronger finding: its rise is outside the margins of error. Rent and income changes are within each other's margins of error, so do not say rent grew faster than income. Renter burden is essentially unchanged region-wide; owner burden fell. Dollar changes are adjusted with national CPI-U.
+:::
+
+## Housing stability: eviction filings have recovered, but not fully
+
+:::: columns
+::: {.column width="34%"}
+::: stat
+[`r p0(-ev_sum("bhc3", "latest12_vs_pre"))`]{.num} [below the 2016-19 monthly average, over the latest 12 months]{.lbl}
+:::
+
+::: {.stat .warm}
+[about `r round_to(ev_sum("bhc3", "latest12_mean"), 100)`]{.num} [filings a month in the core three]{.lbl}
+:::
+
+::: kicker
+Filings are landlord court requests, not completed evictions. The 2020-21 low reflects pandemic moratoria and rental assistance.
+:::
+:::
+
+::: {.column width="66%"}
+```{r}
+#| label: chart-evictions
+#| fig-width: 7.8
+#| fig-asp: 0.7
+#| fig-alt: "Column chart of annual eviction filings in the core three localities. Filings were around seven thousand to eight thousand a year before 2020, fell sharply in 2020 and 2021, and have recovered in later years."
+
+ev_plot <- evict$annual |> filter(geoid == "bhc3", complete_year)
+pre_mean <- ev_plot |> filter(year < 2020) |> summarise(m = mean(filings)) |> pull(m)
+
+ggplot(ev_plot, aes(factor(year), filings)) +
+  geom_col(fill = col_cool, width = 0.7) +
+  geom_hline(yintercept = pre_mean, linetype = "dashed", color = rva_ink[["muted"]]) +
+  annotate("text", x = "2021", y = pre_mean, label = "2016-19 average", vjust = -0.6, size = 5.5, color = rva_ink[["muted"]]) +
+  geom_text(aes(label = n_fmt(filings)), vjust = -0.4, size = 5, color = rva_ink[["primary"]]) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    subtitle = "Core three, eviction filings per year",
+    caption = paste0(eviction_cap(), " Complete years only.")
+  ) +
+  theme_rva(20)
+```
+:::
+::::
+
+::: notes
+Lead with the trend against the pre-2020 baseline, not a count of displaced households. The provider's own "percent of historical average" has no documented definition, so use the count-based comparison to the 2016-19 monthly mean. Covers Richmond city, Henrico and Chesterfield only.
+:::
+
+## Senior housing: the 65-and-over share is rising across the region
+
+:::: columns
+::: {.column width="34%"}
+::: stat
+[about `r round_to(senior_renters_le50, 500)`]{.num} [core-three renter households at or below 50% of AMI with a householder 65 or over]{.lbl}
+:::
+
+::: {.stat .warm}
+[`r p0(age_share("secondary4", "65 and over"))`]{.num} [of expansion-ring residents are 65 or over, the oldest part of the region]{.lbl}
+:::
+
+::: kicker
+The senior count is derived from a small sample (about 50 households). Quote it as "about".
+:::
+:::
+
+::: {.column width="66%"}
+```{r}
+#| label: chart-seniors
+#| fig-width: 7.8
+#| fig-asp: 0.7
+#| fig-alt: "Grouped column chart of the share of residents aged 65 and over in Richmond city, Henrico, Chesterfield, the expansion ring and the full region in the earlier and latest ACS windows. The share rose everywhere and is highest in the expansion ring."
+
+geo_lbl <- c(
+  "51760" = "Richmond city", "51087" = "Henrico", "51041" = "Chesterfield",
+  "secondary4" = "Expansion ring", "rr17" = "Region"
+)
+age_plot <- expand_grid(geoid = names(geo_lbl), year = c(first_yr, latest_yr)) |>
+  mutate(
+    share = map2_dbl(geoid, year, \(g, y) age_share(g, "65 and over", y)),
+    place = factor(geo_lbl[geoid], levels = geo_lbl),
+    year = factor(year)
+  )
+yr_cols <- setNames(c(rva_seq[[3]], rva_seq[[6]]), c(first_yr, latest_yr))
+
+ggplot(age_plot, aes(place, share, fill = year)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.75) +
+  geom_text(
+    aes(label = p0(share)), position = position_dodge(width = 0.8),
+    vjust = -0.4, size = 5, color = rva_ink[["primary"]]
+  ) +
+  scale_fill_manual(values = yr_cols) +
+  scale_x_discrete(labels = \(x) str_wrap(x, 10)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.12))) +
+  labs(
+    subtitle = paste0("Share of residents 65 and over, ", span(first_yr, yr_cols[[1]]), " and ", span(latest_yr, yr_cols[[2]]), " windows"),
+    caption = acs_cap("B01001")
+  ) +
+  theme_rva(20)
+```
+:::
+::::
+
+::: notes
+BHC operates 8 senior affordable properties. The group they serve is growing as a share of the region. Older owners are exposed too: about two-thirds of owners at or below 30% of AMI are 65 or over. The expansion ring also had more deaths than births, so its growth depends on in-migration. Senior counts multiply the income-band count by the share with a householder 65 or over, so round to the nearest 500.
+:::
+
+## Homeownership: homes cost more relative to income, and credit access is uneven
+
+:::: columns
+::: {.column width="38%"}
+::: {.stat .warm}
+[`r sprintf("%.1f", pti("40060", first_yr))` to `r sprintf("%.1f", pti("40060", latest_yr))`]{.num} [typical home value as a multiple of typical household income, Richmond MSA]{.lbl}
+:::
+
+::: stat
+[`r sprintf("%.1f", hm_race("Black") / hm_race("White, non-Hispanic"))`x]{.num} [Black applicants were denied home-purchase loans this many times as often as non-Hispanic White applicants]{.lbl}
+:::
+:::
+
+::: {.column width="62%"}
+```{r}
+#| label: chart-denial
+#| fig-width: 7.4
+#| fig-asp: 0.72
+#| fig-alt: "Bar chart of pooled home-purchase denial rates in the core three over the last four years. Black and Hispanic or Latino applicants were denied more often than Asian and non-Hispanic White applicants."
+
+den_groups <- c("Black", "Hispanic or Latino", "Asian", "White, non-Hispanic")
+den <- tibble(group = den_groups, rate = map_dbl(den_groups, hm_race)) |>
+  mutate(
+    group = factor(group, levels = den_groups),
+    emph = group %in% c("Black", "Hispanic or Latino")
+  )
+
+ggplot(den, aes(group, rate, fill = emph)) +
+  geom_col(width = 0.65) +
+  geom_text(aes(label = p_fmt(rate)), vjust = -0.4, fontface = "bold", size = 7, color = rva_ink[["primary"]]) +
+  scale_fill_manual(values = c("TRUE" = col_warm, "FALSE" = col_cool)) +
+  scale_x_discrete(labels = \(x) str_wrap(x, 11)) +
+  scale_y_continuous(labels = scales::label_percent(), expand = expansion(mult = c(0, 0.14))) +
+  labs(
+    subtitle = paste0("Home-purchase denial rate, core three,<br>", hm_last - 3, "-", hm_last, " pooled"),
+    caption = "**Source:** FFIEC/CFPB HMDA. Denied / (originated + approved-not-accepted + denied); one- to four-unit principal residences."
+  ) +
+  theme_rva(20)
+```
+:::
+::::
+
+::: notes
+Value-to-income uses every owner's own estimate of value, so it understates the cost of buying today. The denial rates are loan records, not a sample, and exclude withdrawn and incomplete applications. Some applications have no race or ethnicity recorded. Don't describe denial reasons as home-purchase reasons; most denials in the lending data are refinance, cash-out and home-improvement loans.
+:::
+
+## Mixed-income: lower-income renters live across the core
+
+:::: columns
+::: {.column width="62%"}
+```{r}
+#| label: chart-low-renters
+#| fig-width: 7.4
+#| fig-asp: 0.72
+#| fig-alt: "Bar chart of renter households at or below 80 percent of area median income in Henrico, Chesterfield and Richmond city, with each locality's share of the core-three total."
+
+lr <- low_renter |>
+  mutate(
+    geo = fct_reorder(geo, n, .desc = TRUE),
+    lab = paste0(round_to(n, 500), "\n(", p0(share), ")")
+  )
+
+ggplot(lr, aes(geo, n)) +
+  geom_col(fill = col_cool, width = 0.6) +
+  geom_text(aes(label = lab), vjust = -0.3, fontface = "bold", size = 6.5, lineheight = 0.95, color = rva_ink[["primary"]]) +
+  scale_y_continuous(labels = scales::label_comma(), expand = expansion(mult = c(0, 0.25))) +
+  labs(
+    subtitle = "Renter households at or below 80% of AMI,<br>and share of the core-three total",
+    caption = pums_cap()
+  ) +
+  theme_rva(20)
+```
+:::
+
+::: {.column width="38%"}
+::: stat
+[`r p0(1 - low_renter_city)`]{.num} [of lower-income renter households live in Henrico or Chesterfield, not Richmond city]{.lbl}
+:::
+
+::: stat
+[`r p0(struct_share("51760", "20+ units"))`]{.num} [of Richmond city's housing is in buildings of 20+ units, the only multifamily-heavy core locality]{.lbl}
+:::
+
+::: {.stat .warm}
+[`r p0(struct_share("bhc3", "Single-family detached"))`]{.num} [of core-three housing is detached single-family homes]{.lbl}
+:::
+:::
+::::
+
+::: notes
+Richmond city has the highest share of lower-income households, but most of the lower-income renters live in the suburbs, so mixed-income communities have a role in all three localities. These data speak to income, tenure and structure type; they do not measure demand for retail or commercial space, which needs separate evidence. Housing is old in the city and vacancy is tight in the suburbs, which limits affordable options without new construction.
+:::
+
+## Six numbers you can quote
+
+```{r}
+#| label: quotables
+
+quotes <- tribble(
+  ~Figure, ~Value, ~`Margin of error (90%)`, ~Where, ~Note,
+  "Renter households at or below 80% of AMI",
+    paste0("about ", round_to(renters_le80), " (", p0(le80("Renter")), " of renters)"),
+    au("renters_le80"), "Core three", "Say \"about\"",
+  "Renters at or below 30% of AMI paying half or more of income on housing",
+    p0(pbsev(ami5_lv[1], "Renter")), au("renter_le30_sev"), "Core three", "",
+  "Renter households paying 30%+ of income on housing",
+    p0(b30("rr17", "Renter")), au("renter_b30_2024"), "17-locality region", "Not improved since 2014",
+  "Senior renter households at or below 50% of AMI",
+    paste0("about ", round_to(senior_renters_le50, 500)), au("senior_renters_le50"), "Core three", "Small sample; say \"about\"",
+  "Typical home value vs. typical household income",
+    paste0(sprintf("%.1f", pti("40060", first_yr)), " to ", sprintf("%.1f", pti("40060", latest_yr)), " times"),
+    au("pti_2024"), "Richmond MSA", "",
+  "Home-purchase denial rate, Black vs. White non-Hispanic applicants",
+    paste0(p0(hm_race("Black")), " vs. ", p0(hm_race("White, non-Hispanic"))),
+    paste0(au("denial_Black"), " / ", au("denial_White")), "Core three", "Loan records; some lack race data"
+)
+
+quotes |> kbl(format = "html", align = "lllll")
+```
+
+::: kicker
+AMI = area median income. ACS and PUMS figures are the `r latest_yr` 5-year window. Margins of error are published ACS values or PUMS replicate-weight standard errors x 1.645 (see `r/summary_audit.R`).
+:::
+
+::: notes
+These are the figures with margins of error already worked out. The full table, with the eviction and population figures, is on the Summary page of the site.
+:::
+
+## Using these numbers well
+
+::: cautions
+- **These are regional figures, not BHC results.** They describe need and market conditions in Richmond city, Henrico and Chesterfield, or the 17-locality region where noted. Pair them with BHC's own program data.
+- **Say "at or below 80% of AMI," not "low-income,"** unless you define the term.
+- **Round survey counts and say "about."** Household counts by income band are estimates with sampling error.
+- **Say home values rose faster than incomes.** Rent and income changes are statistically similar, so don't say rent outpaced income.
+- **Eviction filings are not evictions.** Lead with the trend against the pre-2020 baseline, not a count of displaced households.
+:::
+
+::: kicker
+Full detail, definitions and sources: the Summary and Data Notes pages of the RVA Sourcebook. Questions?
+:::
+
+::: notes
+Open the floor for Q&A here. This slide is the one people will want back on screen when they ask how to word something. The data do not measure demand for mixed-use space, and the senior counts rest on about 50 sample households.
+:::

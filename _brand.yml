@@ -1,0 +1,52 @@
+# _brand.yml — Better Housing Coalition brand, applied to the site and the deck.
+# Source: BHC brand identity guide (betterhousingcoalition.org, 2016) and the logo files in img/.
+#
+# Orange is sampled from the logo PNG (#EB6E1F; matches the guide's Pantone 173 U).
+# Blue, red and brown are the guide's CMYK swatches converted to approximate RGB:
+#   blue  C85 M50 Y0 K0     red   C15 M100 Y90 K10     brown  C40 M70 Y100 K50
+# The guide did not state hex values or roles for them, so confirm against the guide.
+# orange-dark is a derived shade (not a brand color) used for link/body text, because
+# the brand orange alone is too light for small text on white (about 3:1).
+# Keep _common.R's `rva_brand` in sync with the palette below.
+
+meta:
+  name: Better Housing Coalition
+  link: https://www.betterhousingcoalition.org
+
+color:
+  palette:
+    orange: "#EB6E1F"
+    orange-dark: "#B8500F"
+    blue: "#2B7BBA"
+    red: "#B8232F"
+    brown: "#5E3A1C"
+    ink: "#262626"
+    white: "#FFFFFF"
+  foreground: ink
+  background: white
+  primary: orange
+  secondary: blue
+  link: orange-dark
+
+logo:
+  images:
+    horizontal:
+      path: img/bhc-logo-horiz-color.png
+      alt: Better Housing Coalition
+    icon:
+      path: img/bhc-logo-image-only-rgb.png
+      alt: Better Housing Coalition mark
+  small: icon
+  medium: horizontal
+  large: horizontal
+
+typography:
+  fonts:
+    - family: Lato
+      source: google
+      weight: [400, 700, 900]
+      style: [normal, italic]
+  base: Lato
+  headings:
+    family: Lato
+    weight: 900

@@ -9,7 +9,11 @@ execute:
 website:
   title: "rva-sourcebook"
   description: "Basic Richmond-region housing data — inventory, demographics, and market — from public sources."
+  favicon: img/bhc-logo-image-only-rgb.png
   navbar:
+    logo: img/bhc-logo-horiz-color.png
+    logo-alt: "Better Housing Coalition"
+    background: light
     left:
       - href: index.qmd
         text: Home

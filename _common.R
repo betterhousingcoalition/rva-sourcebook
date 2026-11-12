@@ -123,13 +123,25 @@ puma_locality <- c(
 
 rva_pal <- c(
   blue    = "#2a78d6",
-  orange  = "#eb6834",
+  orange  = "#eb6e1f", # BHC brand orange (sampled from the logo); was #eb6834
   aqua    = "#1baf7a",
   yellow  = "#eda100",
   magenta = "#e87ba4",
   green   = "#008300",
   violet  = "#4a3aa7",
   red     = "#e34948"
+)
+
+# Better Housing Coalition brand colors -- keep in sync with _brand.yml. Orange is
+# sampled from the logo; blue/red/brown are the guide's CMYK swatches converted to
+# approximate RGB (the guide gives no hex or roles; confirm). orange_dark is a derived
+# shade for text, not a brand color.
+rva_brand <- c(
+  orange      = "#EB6E1F",
+  orange_dark = "#B8500F",
+  blue        = "#2B7BBA",
+  red         = "#B8232F",
+  brown       = "#5E3A1C"
 )
 
 # Sequential blue ramp, light -> dark, for choropleths and other magnitude

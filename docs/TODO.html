@@ -30,6 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./img/bhc-logo-image-only-rgb.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -38,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ddd961a2510921635943dfbbd19534c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-e8c30951653fb2a8b08e6f1cc7985340.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,6 +79,9 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <img src="./img\bhc-logo-image-only-rgb.png" alt="Better Housing Coalition mark" class="navbar-logo">
+    </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">rva-sourcebook</span>
     </a>
@@ -150,6 +154,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#phase-5-interactive-maps" id="toc-phase-5-interactive-maps" class="nav-link" data-scroll-target="#phase-5-interactive-maps">Phase 5 — interactive maps</a></li>
   <li><a href="#phase-6-polish-publish" id="toc-phase-6-polish-publish" class="nav-link" data-scroll-target="#phase-6-polish-publish">Phase 6 — polish &amp; publish</a></li>
   <li><a href="#surfaced-during-phase-2-not-blocking" id="toc-surfaced-during-phase-2-not-blocking" class="nav-link" data-scroll-target="#surfaced-during-phase-2-not-blocking">Surfaced during Phase 2 — not blocking</a></li>
+  <li><a href="#presentation-external-affairs-committee-deck-2026-11-06" id="toc-presentation-external-affairs-committee-deck-2026-11-06" class="nav-link" data-scroll-target="#presentation-external-affairs-committee-deck-2026-11-06">Presentation — external affairs committee deck (2026-11-06)</a></li>
   <li><a href="#future-not-in-scope-right-now" id="toc-future-not-in-scope-right-now" class="nav-link" data-scroll-target="#future-not-in-scope-right-now">Future — not in scope right now</a></li>
   </ul></li>
   </ul>
@@ -285,6 +290,15 @@ ul.task-list li input[type="checkbox"] {
 <li><label><input type="checkbox"><code>cache_table = TRUE</code> is deprecated in current tidycensus (one warning per <code>get_acs()</code> call, ignored). CLAUDE.md still prescribes it. Drop it project-wide in one pass — <code>acs_stock.R</code>, <code>acs_tenure.R</code>, <code>acs_burden.R</code>, and the CLAUDE.md line together — rather than piecemeal.</label></li>
 <li><label><input type="checkbox"><code>theme_rva()</code>‘s caption switched to <code>element_textbox_simple()</code> so long source lines wrap instead of clipping. The other pages’ charts haven’t been re-rendered against it yet; check them when Phases 3–4 land.</label></li>
 <li><label><input type="checkbox"><code>formattable::comma()</code>/<code>percent()</code> mask the <code>scales</code> versions (<code>_common.R</code> loads formattable last) and take <code>digits</code>, not <code>accuracy</code>. <code>inventory.qmd</code> works around it with local <code>n_fmt()</code>/<code>p_fmt()</code> wrappers — consider promoting those to <code>_common.R</code> before the next page repeats the workaround.</label></li>
+</ul>
+</section>
+<section id="presentation-external-affairs-committee-deck-2026-11-06" class="level2">
+<h2 class="anchored" data-anchor-id="presentation-external-affairs-committee-deck-2026-11-06">Presentation — external affairs committee deck (2026-11-06)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>presentation.qmd</code> + <code>presentation.css</code> — 10-slide reveal.js deck built from the <code>summary.qmd</code> findings (BHC section first): headline on every slide, big-number cards plus charts, a six-figure quotables table with margins of error, a cautions slide for Q&amp;A. Speaker notes on each slide. Renders standalone to <code>docs/presentation.html</code>.</label></li>
+<li><label><input type="checkbox">Decide whether to link the deck from the site navbar or <code>summary.qmd</code> (not linked yet). Not committed yet either.</label></li>
+<li><label><input type="checkbox">Setup chunk copies a subset of <code>summary.qmd</code>’s helpers; if those change (or get promoted to <code>_common.R</code>), update the deck too.</label></li>
+<li><label><input type="checkbox">Optional: BHC logo on the title slide (<code>img/</code> has two logo files that are not tracked); left off because the deck publishes to a public site and could read as BHC-endorsed.</label></li>
 </ul>
 </section>
 <section id="future-not-in-scope-right-now" class="level2">

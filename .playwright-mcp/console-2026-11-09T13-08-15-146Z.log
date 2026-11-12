@@ -1,0 +1,148 @@
+[    2790ms] [LOG] [MockCache] 🚀 Auto-enabled on first load @ https://prd.realist.com/main-ELY3KBJR.js:3
+[    3241ms] [LOG] Pendo visitor data: {id: 89632, full_name: Eric Mai, first_name: Eric, last_name: Mai, ResAgentid: 1000039-89632} @ https://prd.realist.com/main-ELY3KBJR.js:1
+[    3264ms] [LOG] Registering Action -  openHelp @ https://prd.realist.com/chunk-QLYBPBXH.js:116
+[    3267ms] [LOG] Registering Action -  openFavorites @ https://prd.realist.com/chunk-QLYBPBXH.js:116
+[   29333ms] [WARNING] AG Grid: As of version 32.2.1, using `rowSelection` with the values "single" or "multiple" has been deprecated. Use the object value instead. @ https://prd.realist.com/chunk-KZYA734I.js:0
+[   29334ms] [WARNING] AG Grid: As of v32.2, suppressRowClickSelection is deprecated. Use `rowSelection.enableClickSelection` instead. @ https://prd.realist.com/chunk-KZYA734I.js:0
+[   29357ms] [WARNING] AG Grid: As of v32.2, checkboxSelection is deprecated. Use `rowSelection.checkboxes` in `GridOptions` instead. @ https://prd.realist.com/chunk-KZYA734I.js:0
+[   34206ms] [WARNING] Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:2614
+[   35872ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[   35872ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[   44554ms] [INFO] Autofocus processing was blocked because a document already has a focused element. @ https://prd.realist.com/search:0
+[   93607ms] [WARNING] As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:2716
+[   93964ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: null} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   93967ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: null} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   93968ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: null} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   93990ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: null} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   94145ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   94146ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   94146ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[   94146ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  116292ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[  116293ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[  166465ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166466ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166467ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166467ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166686ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166686ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166686ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  166686ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  373858ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[  373858ms] [WARNING] As of March 1st, 2025, google.maps.places.Autocomplete is not available to new customers. Please use google.maps.places.PlaceAutocompleteElement instead. At this time, google.maps.places.Autocomplete is not scheduled to be discontinued, but google.maps.places.PlaceAutocompleteElement is recommended over google.maps.places.Autocomplete. While google.maps.places.Autocomplete will continue to receive bug fixes for any major regressions, existing bugs in google.maps.places.Autocomplete will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/legacy for additional details and https://developers.google.com/maps/documentation/javascript/places-migration-overview for the migration guide. @ https://maps.googleapis.com/maps/api/js?key=AIzaSyAXjWJrUCYOH2Bw1e2YgrpF1KcE_dsnCP4&v=3.65&libraries=places,drawing,geometry&callback=ng_jsonp_callback_0:785
+[  378733ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378734ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378735ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378736ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378898ms] [LOG] Resolving badge for FCFLDPREM {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378899ms] [LOG] Resolving badge for FCBLDGPRMT {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378899ms] [LOG] Resolving badge for FCHAZRD {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[  378899ms] [LOG] Resolving badge for FCCMYNSGTS {featureCode: Object, promotions: Array(0), usageSummary: Object, premiumProductPrices: Object, mlsCreditStatus: Object} @ https://prd.realist.com/chunk-XXTARYIZ.js:16
+[ 2498371ms] [ERROR] Executing inline event handler violates the following Content Security Policy directive 'script-src 'nonce--27RVW1mO9RvHqpIm4eLZg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:'. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked. @ https://www.google.com/search?q=where+do+i+find+my+plaud+token&rlz=1C1CHBF_enUS939US939&oq=where+do+i+find+my+plaud+token+&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORifBTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigATIJCAQQIRgKGKABMgkIBRAhGAoYoAEyBwgGECEYnwUyBwgHECEYnwUyBwgIECEYnwUyBwgJECEYnwXSAQg1ODcxajBqNKgCALACAQ&sourceid=chrome&source=chrome.ob&ie=UTF-8:0
+[ 2499700ms] [WARNING] A speculation rule set was inserted into the document but will be ignored. This might happen, for example, if it was previously inserted into another document, or if it was created using the innerHTML setter. @ https://www.google.com/search?q=where+do+i+find+my+plaud+token&rlz=1C1CHBF_enUS939US939&oq=where+do+i+find+my+plaud+token+&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORifBTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigATIJCAQQIRgKGKABMgkIBRAhGAoYoAEyBwgGECEYnwUyBwgHECEYnwUyBwgIECEYnwUyBwgJECEYnwXSAQg1ODcxajBqNKgCALACAQ&sourceid=chrome&source=chrome.ob&ie=UTF-8:46
+[ 2504492ms] [INFO] Autofocus processing was blocked because a document already has a focused element. @ https://www.google.com/search?q=where+do+i+find+my+plaud+token&rlz=1C1CHBF_enUS939US939&oq=where+do+i+find+my+plaud+token+&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORifBTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigATIJCAQQIRgKGKABMgkIBRAhGAoYoAEyBwgGECEYnwUyBwgHECEYnwUyBwgIECEYnwUyBwgJECEYnwXSAQg1ODcxajBqNKgCALACAQ&sourceid=chrome&source=chrome.ob&ie=UTF-8:0
+[ 9559555ms] [ERROR] Executing inline event handler violates the following Content Security Policy directive 'script-src 'nonce-I3lb0jxte_00hngbSmj-8Q' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:'. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked. @ https://www.google.com/search?q=chesterfield+board+of+supervisors&rlz=1C1CHBF_enUS939US939&oq=chesterfield+boar&gs_lcrp=EgZjaHJvbWUqBwgAEAAYgAQyBwgAEAAYgAQyBwgBEAAYgAQyBwgCEAAYgAQyEAgDEC4YrwEYxwEYgAQYjgUyBwgEEAAYgAQyBwgFEAAYgAQyBwgGEAAYgAQyBggHEEUYOTIHCAgQABiABDINCAkQLhivARjHARiABKgCBrACAfEFYRIqlU72PwM&sourceid=chrome&source=chrome.ob&ie=UTF-8:0
+[ 9564032ms] [INFO] Autofocus processing was blocked because a document already has a focused element. @ https://www.google.com/search?q=chesterfield+board+of+supervisors&rlz=1C1CHBF_enUS939US939&oq=chesterfield+board+o&gs_lcrp=EgZjaHJvbWUqBwgBEAAYgAQyBggAEEUYOTIHCAEQABiABDIHCAIQABiABDIHCAMQABiABDIQCAQQLhivARjHARiABBiOBTIHCAUQABiABDIHCAYQABiABDIICAcQABgWGB4yCAgIEAAYFhgeMggICRAAGBYYHtIBCDU0ODVqMGo5qAIGsAIB8QVhEiqVTvY_Aw&sourceid=chrome&source=chrome.ob&ie=UTF-8:0
+[ 9565601ms] [ERROR] Executing inline event handler violates the following Content Security Policy directive 'script-src 'nonce-1Pzi28MrrQtbIdS-OOIpRg' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:'. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked. @ https://www.google.com/search?q=chesterfield+board+of+supervisors+meeting&sca_esv=98bdd051a2fad891&rlz=1C1CHBF_enUS939US939&sxsrf=AKL5yDh6_ZKpD9L5DiaNq7Ul_MjQzxhK9g%3A1794239254097&ei=FuvxapO5BbSEw8cPiMXB-A0&biw=2560&bih=1305&uact=5&oq=chesterfield+board+of+supervisors+meeting&gs_lp=Egxnd3Mtd2l6LXNlcnAiKWNoZXN0ZXJmaWVsZCBib2FyZCBvZiBzdXBlcnZpc29ycyBtZWV0aW5nMgUQABiABDIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgYQABgWGB4yBhAAGBYYHjIGEAAYFhgeMgsQABiABBiKBRiGAzILEAAYgAQYigUYhgNI8AtQgQRY6gpwAXgBkAEAmAFLoAGDBKoBATi4AQPIAQD4AQGYAgmgAroEwgIKEAAYRxjWBBiwA8ICChAAGIAEGIoFGEPCAggQABiABBiiBMICBRAAGO8FmAMAiAYBkAYIkgcBOaAH0DyyBwE4uAe2BMIHBTAuMy42yAcmgAgB&sclient=gws-wiz-serp:0
+[ 9571902ms] [ERROR] Access to XMLHttpRequest at 'https://api.cludo.com/api/v3/-1/-1/websites/publicsettings' from origin 'https://www.chesterfield.gov' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://www.chesterfield.gov/244/Agendas-and-Minutes:0
+[ 9571903ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.cludo.com/api/v3/-1/-1/websites/publicsettings:0
+[ 9571969ms] Unable to resolve public settings via web service
+[ 9603589ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9916876ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9917398ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9918931ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9924133ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9950112ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9951976ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9953191ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9954942ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9956024ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9957294ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9960435ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9965250ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9967127ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9972134ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9973290ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9976066ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9979204ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9981279ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9981688ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9982054ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:219:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9983713ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9986385ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[ 9988540ms] ReferenceError: ga is not defined
+    at HTMLDocument.<anonymous> (https://www.chesterfield.gov/244/Agendas-and-Minutes:210:3)
+    at HTMLDocument.dispatch (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:40035)
+    at v.handle (https://www.chesterfield.gov/Assets/Scripts/jQuery/jquery-3.7.1.min.js:2:38006)
+[10076238ms] [ERROR] Executing inline event handler violates the following Content Security Policy directive 'script-src 'nonce-LFCA9bt2P7zLZUG4P60GnA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:'. Note that 'unsafe-inline' is ignored if either a hash or nonce value is present in the source list. The action has been blocked. @ https://www.google.com/search?q=checkbox+list+in+obsidian&rlz=1C1CHBF_enUS939US939&oq=check+list+in+obsi&gs_lcrp=EgZjaHJvbWUqCAgCEAAYFhgeMgcIABAAGIAEMgYIARBFGDkyCAgCEAAYFhgeMggIAxAAGBYYHjIICAQQABgWGB4yCAgFEAAYFhgeMgoIBhAAGAoYFhgeMg0IBxAAGIYDGIAEGIoF0gEINTUwOWowajSoAgCwAgE&sourceid=chrome&source=chrome.ob&ie=UTF-8:0
+[10077023ms] [WARNING] The powerPreference option is currently ignored when calling requestAdapter() on Windows. See https://crbug.com/369219127 @ :0
+[10077791ms] [VERBOSE] [DOM] Input elements should have autocomplete attributes (suggested: "current-password"): (More info: https://goo.gl/9p2vKq) %o @ https://forum.obsidian.md/t/how-do-i-make-a-checkbox/31096:0

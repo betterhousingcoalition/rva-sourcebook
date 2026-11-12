@@ -53,7 +53,7 @@ Script anatomy: a header comment stating what, source, and output → numbered `
 ## What `_common.R` provides
 
 - **Geography:** `rr` (17-locality Richmond region), `bhc` (3-locality core: Richmond city, Henrico, Chesterfield), `secondary` (4 expansion localities: Hanover, Goochland, New Kent, Powhatan), `ashland` (place 5103368, sumlev 160), `regions` (comparison MSAs: Charlottesville, Richmond, Hampton Roads, DC), `virginia`; and PUMA sets `puma_core3`/`puma_region`/`puma_locality`, used by `r/pums/` and `profiles.qmd` (`profiles.qmd` covers the core three only, via `puma_core3` — see METHODOLOGY.md).
-- **Palette/theme:** `rva_pal` (8-hue categorical, fixed order — never cycle or reorder), `rva_seq` (7-step blue sequential ramp for choropleths/magnitude), `rva_ink` (chart chrome: primary/muted/gridline/baseline), `theme_rva()` (ggplot2 theme; `legend.position = "none"` by default since 2-3 series use bold ggtext subtitle spans instead of a legend box), and `rva_map_style` (free Carto MapLibre basemap URL, no token). Values come from the dataviz skill's validated reference palette — CVD-safe adjacent pairs. Change values in `_common.R` only, never at the call site.
+- **Palette/theme:** `rva_pal` (8-hue categorical, fixed order — never cycle or reorder), `rva_seq` (7-step blue sequential ramp for choropleths/magnitude), `rva_ink` (chart chrome: primary/muted/gridline/baseline), `rva_brand` (Better Housing Coalition brand colors; mirrors `_brand.yml`, which drives site and deck fonts, colors, and logo — change both together), `theme_rva()` (ggplot2 theme; `legend.position = "none"` by default since 2-3 series use bold ggtext subtitle spans instead of a legend box), and `rva_map_style` (free Carto MapLibre basemap URL, no token). Values come from the dataviz skill's validated reference palette — CVD-safe adjacent pairs. Change values in `_common.R` only, never at the call site.
 - **Caption helpers:** `acs_cap`, `pums_cap`, `chas_cap`, `dec_cap`, `pep_cap`, `bps_cap`, `oews_cap` and others — see the file for the full list. Not every helper has a matching script yet; that's fine, they're cheap to keep around.
 - **`flag_reliability(df, cv_col = cv)`** — High at or below 15, Medium at or below 30, Low above 30, from a **0 to 100** CV. Use it for secondary-locality and Ashland ACS estimates, which run noisier than the `bhc` core.
 - **`export_csv(df, name)`** — writes `data-out/<name>.csv`. All data in this project is public-source, so no filename-prefix privacy convention is needed (unlike sibling reports that mix in licensed MLS/CoStar data).
@@ -116,6 +116,11 @@ Not yet published. Intended as a public GitHub Pages site (`docs/` on `main`) on
 rva-sourcebook/
 ├── _quarto.yml            # website config: freeze auto, execute-dir project, output-dir docs
 ├── _common.R              # sourced by every page: libs, geography constants, caption helpers, flag_reliability(), export_csv()
+├── _brand.yml             # BHC brand (colors, Lato, logos) for the site and the deck
+├── styles.css             # site-wide brand styling on top of _brand.yml
+├── presentation.qmd       # reveal.js deck for the external affairs committee (built from summary.qmd findings)
+├── presentation.css       # deck-only styling
+├── img/                   # BHC logo files (used by _brand.yml, navbar, favicon, deck)
 ├── CLAUDE.md              # this file
 ├── PLAN.md                # target architecture and phased build order
 ├── METHODOLOGY.md         # internal data/geography/scope conventions

@@ -103,6 +103,16 @@
 - [ ] `theme_rva()`'s caption switched to `element_textbox_simple()` so long source lines wrap instead of clipping. The other pages' charts haven't been re-rendered against it yet; check them when Phases 3–4 land.
 - [ ] `formattable::comma()`/`percent()` mask the `scales` versions (`_common.R` loads formattable last) and take `digits`, not `accuracy`. `inventory.qmd` works around it with local `n_fmt()`/`p_fmt()` wrappers — consider promoting those to `_common.R` before the next page repeats the workaround.
 
+## Presentation — external affairs committee deck (2026-11-06)
+
+- [x] `presentation.qmd` + `presentation.css` — 10-slide reveal.js deck built from the `summary.qmd` findings (BHC section first): headline on every slide, big-number cards plus charts, a six-figure quotables table with margins of error, a cautions slide for Q&A. Speaker notes on each slide. Renders standalone to `docs/presentation.html`.
+- [ ] Decide whether to link the deck from the site navbar or `summary.qmd` (not linked yet). Not committed yet either.
+- [ ] Setup chunk copies a subset of `summary.qmd`'s helpers; if those change (or get promoted to `_common.R`), update the deck too.
+- [x] BHC branding on the site and the deck (`_brand.yml`, `styles.css`, `presentation.css`, navbar logo, favicon, title-slide logo).
+- [ ] Confirm brand blue/red/brown against the brand guide (extracted only as CMYK swatches, converted approximately) and the logo usage rules; update `_brand.yml` and `rva_brand` in `_common.R` together.
+- [ ] Optional: Lato in R charts (`showtext`/`sysfonts`); charts currently use the system sans font.
+- [ ] Before publishing `docs/`: confirm BHC has cleared use of its logo and brand on the public site. `img/` logo files are still untracked.
+
 ## Future — not in scope right now
 
 - [ ] PUMS gap analysis, CHAS, MLS/CoStar, vulnerable-populations data. The PUMA geography groundwork (`puma_core3`/`puma_region`/`puma_locality`) already exists in `_common.R` if this ever gets picked up — see METHODOLOGY.md.

@@ -6,7 +6,31 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-03 (latest) — accuracy audit of the BHC section and margins of error
+## 2026-11-06 (latest) — BHC branding across the site and the deck
+
+**What changed:** Added `_brand.yml` (colors, Lato Regular/Bold/Black, logos), rewrote `styles.css` (white navbar with logo and orange rule, Lato Black headings with orange rules, orange-dark links), set the navbar logo and favicon in `_quarto.yml`, and restyled `presentation.css` (logo on the title slide and as a corner mark, brand orange/blue stat cards, orange headline rules). `_common.R` gains `rva_brand`, and the `rva_pal` orange moved from `#eb6834` to the logo's `#eb6e1f`; the deck's charts now use brand blue and orange. Full-site render took 28 seconds (frozen pages, no R re-run).
+
+**Brand sources and confidence:** Orange `#EB6E1F` is sampled from the logo PNG (matches the guide's Pantone 173 U). The guide's PDF text extracted only partially: four CMYK swatches (orange/Pantone 173 U, blue C85 M50 Y0 K0, red C15 M100 Y90 K10, brown C40 M70 Y100 K50) and the Lato typeface (Black and Italic). No hex values, color roles, or logo rules (clear space, minimum size) were readable. Blue, red, and brown are approximate CMYK-to-RGB conversions; the brown and red are defined but not yet used. `orange-dark` (`#B8500F`) is a derived shade for link and body text because the brand orange is only about 3:1 on white.
+
+**Surprises:** reveal.js's title slide is `#title-slide` (an id), not a `.title-slide` class. Quarto parsed `date: "November 2026"` as a date and printed 2026-11-01; fixed with `date-format`. Existing frozen pages keep their old chart images (orange `#eb6834`) until their sources change; the difference is barely visible.
+
+**Left open:** Confirm blue, red, brown against the guide (and send hex values if there are any); confirm logo usage rules. R charts still use the system sans font, not Lato (would need `showtext`/`sysfonts`). The site goes public with BHC's logo, so confirm BHC has cleared that before publishing `docs/`.
+
+---
+
+## 2026-11-06 — reveal.js deck for the external affairs committee
+
+**What changed:** Added `presentation.qmd` and `presentation.css`, a 10-slide reveal.js deck (about 10 minutes plus Q&A) built from the `summary.qmd` findings. Slides: title; growth and migration; affordable rental (renters by AMI band); price vs. income and renter burden; evictions; seniors; homeownership and credit; mixed-income (lower-income renters by locality); six quotable numbers with margins of error; cautions. Every number is computed inline from the same `.rds` frames `summary.qmd` reads, and charts use `theme_rva()` and the site palette. Speaker notes carry the fuller talking points and the caveats.
+
+**Build notes:** The deck's setup chunk duplicates a subset of `summary.qmd`'s helpers (drift risk; noted in TODO). Chunk labels use `chart-`, not `fig-`, because `fig-` labels make Quarto add "Figure N" captions to slides. `fig-asp` must be set per chunk, because `_common.R` sets a global `fig.asp` that overrides `fig-height`. A stray `NA` band appeared in the burden chart (a `P$profile` row outside `ami5` levels); filtered to the five bands. Checked all 10 slides visually in a browser and fixed overflow and two-line headlines.
+
+**Numbers match the 2026-11-03 audit:** about 84,000 renter households at or below 80% AMI, about 12,000 senior renters at or below 50% AMI, 55% of lower-income renters outside Richmond city.
+
+**Left open:** Not linked from the navbar; not committed (`docs/` build output is untracked). Rendering the deck also touched `docs/search.json`. BHC logo not used (see TODO).
+
+---
+
+## 2026-11-03 — accuracy audit of the BHC section and margins of error
 
 **What changed:** Added `r/summary_audit.R` (writes `data/summary_audit.rds`, `data-out/summary_audit.csv`): 90% MOEs for the quoted ACS/PUMS figures, binomial intervals for HMDA rates, and stopifnot re-computation of HMDA originations/denials from the raw parquet and eviction annual totals from the raw exports (all pass). `summary.qmd` now shows a margin-of-error and caution column on the quotable-numbers table and reads the audit frame.
 

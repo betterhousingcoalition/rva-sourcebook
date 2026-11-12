@@ -1,0 +1,4 @@
+[     217ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://chesterfieldcova.portal.civicclerk.com/site.webmanifest:0
+[     217ms] [ERROR] Manifest fetch from https://chesterfieldcova.portal.civicclerk.com/site.webmanifest failed, code 404 @ https://chesterfieldcova.portal.civicclerk.com/event/2032/files:0
+[     651ms] [LOG] DocAccess CivicClerk: Integration ready chesterfieldcova @ https://docaccess.com/docbox-civicclerk.js:932
+[    1651ms] [LOG] DocAccess CivicClerk: Translate button inserted @ https://docaccess.com/docbox-civicclerk.js:248

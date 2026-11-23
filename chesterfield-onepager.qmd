@@ -1,0 +1,133 @@
+---
+brand: false
+title: "On one starting salary, Chesterfield's public servants can't afford the median rent"
+format:
+  html:
+    toc: false
+  typst:
+    papersize: us-letter
+    margin:
+      x: 0.6in
+      y: 0.4in
+    fontsize: 8pt
+    toc: false
+    fig-format: png
+    fig-dpi: 200
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+source("_common.R")
+
+# Pages read_rds() only. Written by r/chesterfield_afford.R.
+op <- read_rds("data/chesterfield_onepager.rds")
+afford <- op$afford
+ctx <- op$ctx
+
+usd <- scales::label_dollar(accuracy = 1)
+usd0 <- \(x) usd(round(x))
+
+# One row per role: the latest figure we could confirm ("current", else the
+# only figure there is), plus any proposed figure shown beside it.
+cur <- afford |>
+  arrange(role, factor(status, c("current", "stale", "proposed"))) |>
+  slice(1, .by = role)
+prop <- afford |>
+  filter(status == "proposed") |>
+  select(role, proposed_pay = annual_pay)
+roles <- cur |>
+  left_join(prop, by = "role") |>
+  mutate(proposed_pay = if_else(status == "proposed", NA_real_, proposed_pay)) |>
+  arrange(desc(annual_pay))
+
+police <- afford |> filter(role == "Police officer") |> slice(1)
+teacher <- cur |> filter(role == "Teacher")
+rent_short_min <- -max(roles$rent_gap)
+rent_short_max <- -min(roles$rent_gap)
+two_ff <- 2 * police$annual_pay
+```
+
+::: {.content-visible when-format="typst"}
+![](img/bhc-logo-horiz-color.png){width=1.8in}
+:::
+
+*Starting pay for Chesterfield County public-service roles versus what one income affords in the county, 2026.*
+
+::: {layout-ncol=3}
+**`{r} usd0(ctx$median_rent)`** a month: Chesterfield's median rent
+
+**`{r} usd0(police$max_rent)`** a month: the most a `{r} usd0(police$annual_pay)` police or fire starting salary affords
+
+**`{r} usd0(ctx$income_for_home)`** a year: income needed to afford the median home
+:::
+
+```{r}
+#| label: fig-pay-vs-afford
+#| fig-width: 7.2
+#| fig-asp: 0.34
+#| fig-alt: "Horizontal bars of starting pay for seven Chesterfield public-service roles, from about $37,000 for instructional assistants to $60,147 for police officers and firefighters. A vertical line at about $65,000 marks the income needed to afford the median rent and a line near $117,000 marks the income needed for the median home; every bar falls short of both."
+
+plot_df <- roles |>
+  mutate(
+    label = case_when(
+      status == "proposed" ~ paste0(role, " (proposed)"),
+      status == "stale" ~ paste0(role, " (", format(source_date, "%b %Y"), " posting)"),
+      .default = role
+    ),
+    label = fct_reorder(label, annual_pay)
+  )
+
+ggplot(plot_df, aes(annual_pay, label)) +
+  geom_col(fill = rva_pal[1], width = 0.65) +
+  geom_text(aes(label = usd0(annual_pay)), hjust = 1.1, size = 3, color = "white", fontface = "bold") +
+  geom_vline(xintercept = ctx$income_for_rent, color = rva_pal[2], linewidth = 0.8) +
+  geom_vline(xintercept = ctx$income_for_home, color = rva_pal[2], linewidth = 0.8, linetype = "dashed") +
+  annotate("text", x = ctx$income_for_rent + 1500, y = 1.3, hjust = 0, size = 3,
+           color = rva_ink[["primary"]], label = "Needed for\nmedian rent") +
+  annotate("text", x = ctx$income_for_home - 1500, y = 1.3, hjust = 1, size = 3,
+           color = rva_ink[["primary"]], label = "Needed for\nmedian home") +
+  scale_x_continuous(labels = scales::label_dollar(), breaks = seq(0, 125000, 25000), limits = c(0, 132000), expand = c(0, 0)) +
+  labs(
+    title = "Every starting salary falls short of both lines",
+    subtitle = "Annual starting pay, one earner, Chesterfield County, 2026",
+    x = NULL, y = NULL
+  ) +
+  theme_rva(base_size = 10)
+```
+
+```{r}
+#| label: tbl-roles
+
+neg <- \(x) if_else(x < 0, paste0("-", usd0(-x)), paste0("+", usd0(x)))
+tbl <- roles |>
+  transmute(
+    Role = role,
+    `Starting pay (as of)` = paste0(usd0(annual_pay), " (", format(source_date, "%b %Y"), ")"),
+    `Proposed FY27` = if_else(is.na(proposed_pay), "", usd0(proposed_pay)),
+    `Max rent / mo (vs. median)` = paste0(usd0(max_rent), " (", neg(rent_gap), ")"),
+    `Max home price` = usd0(max_price)
+  )
+
+if (knitr::is_html_output()) {
+  kbl(tbl, align = "lrrrr") |> kable_styling(c("condensed", "striped"))
+} else {
+  knitr::kable(tbl, format = "markdown", align = "lrrrr")
+}
+```
+
+- Every role shown earns less than the median rent requires: the gap runs from `{r} usd0(rent_short_min)` to `{r} usd0(rent_short_max)` a month.
+- The best-paid starting salary here affords a home of about `{r} usd0(max(roles$max_price))`, roughly half the county's `{r} usd0(ctx$median_value)` median home value.
+- Two police or firefighter starting incomes (`{r} usd0(two_ff)`) are just above the `{r} usd0(ctx$income_for_home)` the median home needs.
+- Every starting salary is below HUD's 80% area-median-income limit for one person (`{r} usd0(ctx$ami80_1p)`).
+
+::: {.callout-note}
+## How to read these figures
+One earner, starting pay. Affordable rent is 30% of gross income. Home price assumes a `{r} scales::percent(ctx$assumptions$rate, accuracy = 0.01)` 30-year mortgage (Freddie Mac, week of `{r} format(ctx$assumptions$rate_date, "%b %d, %Y")`), 5% down, the county's $0.89 per $100 tax rate, plus insurance. Hourly pay is annualized at 2,080 hours, so school-year workers earn less. FY27 pay is proposed, not confirmed adopted. Deputy sheriff pay is from a January 2026 posting; the 911 officer figure is the class-spec minimum. Median rent and value are 2020-2024 ACS.
+:::
+
+```{r}
+#| output: asis
+cat(chesterfield_pay_cap())
+```

@@ -366,6 +366,17 @@ export_csv <- function(df, name) {
   invisible(path)
 }
 
+# Source line for the Chesterfield one-pager (pay from county and school postings,
+# rent and home value from the ACS, income limits from HUD).
+chesterfield_pay_cap <- function(year = "2020-2024") {
+  paste0(
+    "**Sources:** Chesterfield County HR postings and class specifications (retrieved Nov 23, 2026); ",
+    "Chesterfield County Public Schools, compensation presentation, Feb 3, 2026; ",
+    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25064 and B25077; ",
+    "HUD FY2026 income limits, Richmond HUD Metro FMR Area."
+  )
+}
+
 # ---- Plot rendering options ----------------------------------------------
 
 if (knitr::is_html_output()) {

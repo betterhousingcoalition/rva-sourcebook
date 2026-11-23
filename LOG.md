@@ -6,7 +6,19 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-12 (latest) — quoted-figure review: sample sizes and one wrong claim
+## 2026-11-23 (latest) — Chesterfield one-pager (HTML + one-page PDF)
+
+**What changed:** New `chesterfield-onepager.qmd` for BHC supporters to use at public hearings: starting pay for seven Chesterfield public-service roles (teacher, instructional assistant, school bus driver, police officer, firefighter/EMT, deputy sheriff, 911 officer) against what one income affords in rent and home price. Renders to HTML and, with the Typst format, a single-page PDF (`docs/chesterfield-onepager.pdf`, linked from the HTML page). Two scripts feed it: `r/chesterfield_pay.R` (curated pay rows with source, source date and status) and `r/chesterfield_afford.R` (30%-of-income rent, price at a stated mortgage, comparison with ACS median rent $1,629 and median value $366,000, HUD 80% AMI). `_common.R` gains `chesterfield_pay_cap()`. Navbar entry, `data-notes.qmd` paragraph, CLAUDE.md repo-map line added. Spec and plan are in `design/`.
+
+**Results:** one starting income at the police/firefighter figure ($60,147) affords $1,504 rent, $125 under the median; every role is short, up to $703 (instructional assistant, proposed FY27 pay). The median home needs about $116,800 a year; the best starting salary affords about $188,500. Two police/firefighter incomes ($120,294) just clear it.
+
+**Data surprises:** the county class-spec minimum for police and firefighters ($53,214) is the FY2023 entry rate and is stale; current postings say $60,147. The CCPS deck's own scale table prints $57,227 for the FY27 teacher start, while its slide and the county budget letter say $57,277 (used). The deputy sheriff posting is from January 2026. govsalaries.com blocks automated access (403) and was not used. The class-spec and job pages are script-rendered and were read in a headless browser. FY27 adoption of CCPS pay could not be confirmed from search, so FY27 teacher, aide and bus figures are labeled proposed.
+
+**Left open:** confirm adopted FY27 CCPS pay and update the status column; deputy sheriff current pay; BHC logo clearance for the public PDF; the insurance (0.35%) and PMI (0.7%) assumptions are unsourced; no "ask" line on the page (needs BHC's position); a full site render (navbar changed on every page) was not run.
+
+---
+
+## 2026-11-12 — quoted-figure review: sample sizes and one wrong claim
 
 **What changed:** Fixed the senior-count sample size. The pages said "about 50 sample households" (hardcoded) and the audit said "roughly 115" (`n_obs x share`, which double-counts the share). In a PUMS profile row `n_obs` is already the unweighted record count in the category, so the true figure is **509** records (226 + 283) for core-three renters at or below 50% of AMI with a householder 65+, and **910** for owners. `r/summary_audit.R` now sums `n_obs` (`sen_n()`); `summary.qmd` and `presentation.qmd` compute `senior_renters_n` instead of typing a number. The audit's `renter_gt120_b30` note reported the smaller category (10 cases); it now reports 42 sample cases of 1,081 renter households above 120% of AMI.
 

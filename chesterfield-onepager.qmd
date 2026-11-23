@@ -55,6 +55,10 @@ two_ff <- 2 * police$annual_pay
 
 *Starting pay for Chesterfield County public-service roles versus what one income affords in the county, 2026.*
 
+::: {.content-visible when-format="html"}
+[Download the one-page PDF](chesterfield-onepager.pdf){.btn .btn-outline-secondary .btn-sm}
+:::
+
 ::: {layout-ncol=3}
 **`{r} usd0(ctx$median_rent)`** a month: Chesterfield's median rent
 

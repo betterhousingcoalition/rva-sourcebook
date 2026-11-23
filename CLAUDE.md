@@ -133,6 +133,7 @@ rva-sourcebook/
 ├── demographics.qmd        # Population & household characteristics
 ├── market.qmd               # Tenure, values, rents, cost burden
 ├── profiles.qmd             # Households and residents by AMI band and tenure (PUMS)
+├── chesterfield-onepager.qmd # One-page Chesterfield brief (HTML + Typst PDF): public-service starting pay vs. affordable rent/price; data from r/chesterfield_pay.R and r/chesterfield_afford.R
 ├── summary.qmd              # Executive summary of the pages above
 ├── data-notes.qmd           # Public-facing methodology
 ├── r/                      # collection and prep scripts — committed (r/pums/ holds the PUMS pipeline)

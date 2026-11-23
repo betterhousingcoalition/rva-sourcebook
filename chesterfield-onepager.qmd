@@ -1,5 +1,7 @@
 ---
 brand: false
+execute:
+  freeze: false
 title: "On one starting salary, Chesterfield's public servants can't afford the median rent"
 format:
   html:
@@ -42,11 +44,32 @@ roles <- cur |>
   mutate(proposed_pay = if_else(status == "proposed", NA_real_, proposed_pay)) |>
   arrange(desc(annual_pay))
 
+# Label for any figure that is not a confirmed, full-year, as-published current rate.
+tag_for <- \(status, source_date, basis) paste0(
+  case_match(status,
+    "proposed" ~ " (proposed)",
+    "stale" ~ paste0(" (", format(source_date, "%b %Y"), " posting)"),
+    .default = ""
+  ),
+  if_else(basis == "hourly", " (hourly x 2,080 hrs)", "")
+)
+roles <- roles |> mutate(role_label = paste0(role, tag_for(status, source_date, basis)))
+
 police <- afford |> filter(role == "Police officer") |> slice(1)
-teacher <- cur |> filter(role == "Teacher")
 rent_short_min <- -max(roles$rent_gap)
 rent_short_max <- -min(roles$rent_gap)
 two_ff <- 2 * police$annual_pay
+
+# The bullets and chart title below state these claims; stop the render if the
+# data ever stops supporting them.
+stopifnot(
+  "claim: every role is short of the median rent" = all(roles$rent_gap < 0),
+  "claim: two police incomes clear the median-home income" = two_ff > ctx$income_for_home,
+  "claim: every salary is below 80% AMI (1 person)" = all(roles$annual_pay < ctx$ami80_1p),
+  "claim: best salary affords about half the median home" =
+    between(max(roles$max_price) / ctx$median_value, 0.45, 0.55)
+)
+asm <- ctx$assumptions
 ```
 
 ::: {.content-visible when-format="typst"}
@@ -75,12 +98,7 @@ two_ff <- 2 * police$annual_pay
 
 plot_df <- roles |>
   mutate(
-    label = case_when(
-      status == "proposed" ~ paste0(role, " (proposed)"),
-      status == "stale" ~ paste0(role, " (", format(source_date, "%b %Y"), " posting)"),
-      .default = role
-    ),
-    label = fct_reorder(label, annual_pay)
+    label = fct_reorder(role_label, annual_pay)
   )
 
 ggplot(plot_df, aes(annual_pay, label)) +
@@ -107,7 +125,7 @@ ggplot(plot_df, aes(annual_pay, label)) +
 neg <- \(x) if_else(x < 0, paste0("-", usd0(-x)), paste0("+", usd0(x)))
 tbl <- roles |>
   transmute(
-    Role = role,
+    Role = role_label,
     `Starting pay (as of)` = paste0(usd0(annual_pay), " (", format(source_date, "%b %Y"), ")"),
     `Proposed FY27` = if_else(is.na(proposed_pay), "", usd0(proposed_pay)),
     `Max rent / mo (vs. median)` = paste0(usd0(max_rent), " (", neg(rent_gap), ")"),
@@ -128,7 +146,7 @@ if (knitr::is_html_output()) {
 
 ::: {.callout-note}
 ## How to read these figures
-One earner, starting pay. Affordable rent is 30% of gross income. Home price assumes a `{r} scales::percent(ctx$assumptions$rate, accuracy = 0.01)` 30-year mortgage (Freddie Mac, week of `{r} format(ctx$assumptions$rate_date, "%b %d, %Y")`), 5% down, the county's $0.89 per $100 tax rate, plus insurance. Hourly pay is annualized at 2,080 hours, so school-year workers earn less. FY27 pay is proposed, not confirmed adopted. Deputy sheriff pay is from a January 2026 posting; the 911 officer figure is the class-spec minimum. Median rent and value are 2020-2024 ACS.
+One earner, starting pay. Affordable rent is 30% of gross income. Home price assumes a `{r} scales::percent(asm$rate, accuracy = 0.01)` 30-year mortgage (Freddie Mac, week of `{r} format(asm$rate_date, "%b %d, %Y")`), `{r} scales::percent(asm$down_pct, accuracy = 1)` down, the real estate tax rate in the county's FY2027 proposed budget (`{r} sprintf("$%.2f", asm$tax_rate * 100)` per $100), homeowners insurance at `{r} scales::percent(asm$ins_rate, accuracy = 0.01)` of price and mortgage insurance at `{r} scales::percent(asm$pmi_rate, accuracy = 0.1)` of the loan (these last two are our assumptions). Hourly pay is annualized at 2,080 hours, so school-year workers earn less. Teacher and bus driver pay is the FY26 scale from February 2026; FY27 pay is proposed, not confirmed adopted. Deputy sheriff pay is from a January 2026 posting; the 911 officer figure is the class-spec minimum. Median rent and value are 2020-2024 ACS.
 :::
 
 ```{r}

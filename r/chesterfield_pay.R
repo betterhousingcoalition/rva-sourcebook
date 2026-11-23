@@ -80,6 +80,10 @@ stopifnot(
     filter(pay, basis == "hourly"), all(annual_pay == round(amount * 2080))
   )
 )
+stopifnot(
+  "each role may have at most one 'current' row (mark superseded rows 'stale')" =
+    all(count(filter(pay, status == "current"), role)$n == 1)
+)
 pin <- function(r, st, v) {
   got <- pay |> filter(role == r, status == st) |> pull(annual_pay)
   if (!(v %in% got)) stop(r, " (", st, ") should be ", v, call. = FALSE)

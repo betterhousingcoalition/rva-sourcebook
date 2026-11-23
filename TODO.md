@@ -138,7 +138,7 @@ Why: the question is whether renters can move to ownership, so home values and r
 ## Chesterfield one-pager (2026-11-23, at the user's request)
 
 - [x] `r/chesterfield_pay.R`, `r/chesterfield_afford.R`, `chesterfield-onepager.qmd` (HTML + one-page Typst PDF), navbar entry, data-notes paragraph. Spec and plan in `design/`.
-- [ ] Confirm the adopted FY27 CCPS pay (teacher $57,277, instructional assistant $17.81/hr, bus driver $25.11/hr were *proposed* in Feb 2026); update the `status` column in `r/chesterfield_pay.R` and re-run both scripts.
+- [ ] Confirm the adopted FY27 CCPS pay (teacher $57,277, instructional assistant $17.81/hr, bus driver $25.11/hr were *proposed* in Feb 2026). If adopted: mark the old FY26 teacher and bus rows `stale`, mark the FY27 rows `current` in `r/chesterfield_pay.R` (the script now fails if a role has two `current` rows), re-run both scripts, then re-render `chesterfield-onepager.qmd`.
 - [ ] Deputy sheriff pay ($56,741) is from a January 2026 posting; re-check against the current posting or pay plan.
 - [ ] Source or replace the unsourced insurance (0.35%) and PMI (0.7%) assumptions in `r/chesterfield_afford.R`.
 - [ ] Confirm BHC has cleared its logo on the public PDF; decide whether the page needs an "ask" line (needs BHC's position).

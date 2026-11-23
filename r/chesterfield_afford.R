@@ -93,6 +93,11 @@ stopifnot(
     afford$max_rent[afford$role == "Police officer"] - 1503.675
   ) < 0.01
 )
+# Independent benchmark: a 30-year loan at 7.11% costs $6.726 a month per $1,000
+# borrowed (standard amortization table value), with no tax, insurance or PMI.
+stopifnot(
+  "amortization factor is off" = abs(price_factor(0.0711, 0, 0, 0, 0) * 1000 - 6.726) < 0.01
+)
 # Round trip: monthly cost at max_price equals the income-based budget.
 cost_at <- afford$max_price * f
 stopifnot(

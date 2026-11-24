@@ -1,0 +1,13 @@
+year,tenure,bedrooms,estimate,moe
+2014,Owner occupied,0-1 bedroom,397,148.18906842274163
+2014,Owner occupied,2 bedrooms,5044,454
+2014,Owner occupied,3+ bedrooms,82615,1313.5615706924439
+2014,Renter occupied,0-1 bedroom,4486,468.3641745479686
+2014,Renter occupied,2 bedrooms,10907,699
+2014,Renter occupied,3+ bedrooms,11556,752.9309397282065
+2024,Owner occupied,0-1 bedroom,559,304.00164473239283
+2024,Owner occupied,2 bedrooms,6201,719
+2024,Owner occupied,3+ bedrooms,100778,2252.52458366163
+2024,Renter occupied,0-1 bedroom,6671,738.7299912687992
+2024,Renter occupied,2 bedrooms,12042,1058
+2024,Renter occupied,3+ bedrooms,13904,1174.9353173685774

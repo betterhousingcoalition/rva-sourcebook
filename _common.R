@@ -144,6 +144,19 @@ rva_brand <- c(
   brown       = "#5E3A1C"
 )
 
+# BHC Brand Identity Guide palette (the guide's RGB/HEX values, "BHC Color Palette" page).
+# Used by the Chesterfield one-pager. rva_brand above is the older site palette, whose
+# blue/red/brown were converted from CMYK guesses and are not in the guide; reconcile later.
+rva_guide <- c(
+  orange = "#E86C1F", # PMS 173
+  amber  = "#FBB035", # PMS 143
+  cream  = "#FEE49B", # PMS 1215
+  green  = "#8CC63F", # PMS 382
+  sky    = "#ADE0ED", # PMS 2975
+  teal   = "#00617F", # PMS 634 (BHC Management); 7:1 against white
+  ink    = "#262626"
+)
+
 # Sequential blue ramp, light -> dark, for choropleths and other magnitude
 # encodings (ggplot2 continuous fills and mapgl step/interpolate expressions).
 rva_seq <- c(
@@ -372,8 +385,9 @@ chesterfield_pay_cap <- function(year = "2020-2024") {
   paste0(
     "**Sources:** Chesterfield County HR postings and class specifications (retrieved Nov 23, 2026); ",
     "Chesterfield County Public Schools, compensation presentation, Feb 3, 2026; ",
-    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25064 and B25077; ",
-    "HUD FY2026 income limits, Richmond HUD Metro FMR Area."
+    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25064, B25077, B25070, B25091, B25072, B25093, B25009, B25042, B25007, B01001 and B11001; ",
+    "ACS 2020-2024 PUMS household incomes against HUD FY2026 income limits (Richmond HUD Metro FMR Area), adjusted for household size; ",
+    "Census Population Estimates Program, Vintages 2019 and 2025."
   )
 }
 

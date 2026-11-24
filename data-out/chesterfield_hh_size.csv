@@ -1,0 +1,19 @@
+year,tenure,size,estimate,moe
+2014,Owner occupied,1 person,17360,746
+2014,Owner occupied,2 people,31693,807
+2014,Owner occupied,3+ people,39003,1141.6330408673357
+2014,Renter occupied,1 person,9678,705
+2014,Renter occupied,2 people,6850,470
+2014,Renter occupied,3+ people,10421,748.5586149394047
+2019,Owner occupied,1 person,18222,823
+2019,Owner occupied,2 people,34766,918
+2019,Owner occupied,3+ people,41710,1252.1996645902761
+2019,Renter occupied,1 person,9350,663
+2019,Renter occupied,2 people,8299,634
+2019,Renter occupied,3+ people,12624,807.3134459427763
+2024,Owner occupied,1 person,20572,1005
+2024,Owner occupied,2 people,40406,1310
+2024,Owner occupied,3+ people,46560,1712.619338907511
+2024,Renter occupied,1 person,11465,858
+2024,Renter occupied,2 people,8837,952
+2024,Renter occupied,3+ people,12315,1019.0456319517787

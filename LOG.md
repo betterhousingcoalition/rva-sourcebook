@@ -6,7 +6,19 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-23 (latest) — Chesterfield one-pager (HTML + one-page PDF)
+## 2026-11-24 (latest) — Chesterfield one-pager: BHC brand styling and demand data
+
+**What changed:** Restyled `chesterfield-onepager.qmd` from the BHC Brand Identity Guide (palette orange/amber/cream/green/sky/teal as `rva_guide` in `_common.R`; Lato from `fonts/`; logo, tagline, orange rule, cream stat tiles). Added demand-side data from the repo: cost-burdened households (`acs_burden`), AMI mix (`pums_profiles$dist5`/`le80`), seniors (65+ population and households, cost burden by householder age), household size vs. bedrooms, and population/household growth (`acs_demographics`, `pep_migration`). New `r/chesterfield_context.R` pulls Chesterfield-only ACS B25009, B25042, B25007, B25072 and B25093 (2014/2019/2024) -> `data/chesterfield_context.rds`, `data-out/chesterfield_{hh_size,bedrooms,hh_age,burden_age}.csv`. Pay chart now carries rent and home price in its labels; the HTML-only table was dropped to keep the PDF to one page. Sources helper extended.
+
+**Results:** 37,145 households (27%) are cost-burdened, 52% of renters and 20% of owners; 33% of households are at or below 80% AMI (56% of renters); 65+ population 37,702 -> 60,831 (+61%) and 65+ households 22,823 -> 36,839 since 2014; 68% of senior renters are cost-burdened; 58% of households have 1-2 people but 18% of occupied homes have 2 or fewer bedrooms; population +25% since 2010. PDF verified at one page by rasterizing. `stopifnot` claims check every chart headline.
+
+**Data surprises / calls:** A system "Lato" font already exists, so ggplot text registers it as "BHC Lato". Lato is used for body text too (the guide's Lora body face is a variable font that Typst may not render). The guide's blue/red/brown differ from `_brand.yml` (which used CMYK guesses); site-wide palette left unchanged. HTML view not visually checked (browser tool blocks `file:` URLs); only the tile markup and title were checked in the rendered file. Stray `chesterfield-onepager.typ` remains in the root (delete blocked).
+
+**Left open:** reconcile `_brand.yml`/`styles.css` with the guide's palette; confirm BHC logo clearance; confirm adopted FY27 CCPS pay; no "ask" line yet; full-site `quarto render`; CHAS-based senior need data if wanted (the senior panel uses ACS, not CHAS).
+
+---
+
+## 2026-11-23 — Chesterfield one-pager (HTML + one-page PDF)
 
 **What changed:** New `chesterfield-onepager.qmd` for BHC supporters to use at public hearings: starting pay for seven Chesterfield public-service roles (teacher, instructional assistant, school bus driver, police officer, firefighter/EMT, deputy sheriff, 911 officer) against what one income affords in rent and home price. Renders to HTML and, with the Typst format, a single-page PDF (`docs/chesterfield-onepager.pdf`, linked from the HTML page). Two scripts feed it: `r/chesterfield_pay.R` (curated pay rows with source, source date and status) and `r/chesterfield_afford.R` (30%-of-income rent, price at a stated mortgage, comparison with ACS median rent $1,629 and median value $366,000, HUD 80% AMI). `_common.R` gains `chesterfield_pay_cap()`. Navbar entry, `data-notes.qmd` paragraph, CLAUDE.md repo-map line added. Spec and plan are in `design/`.
 

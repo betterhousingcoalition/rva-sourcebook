@@ -117,6 +117,10 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Profiles</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./chesterfield-onepager.html"> 
+<span class="menu-text">Chesterfield</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./presentation.html" target="_blank"> 
 <span class="menu-text">Presentation</span></a>
   </li>  
@@ -160,6 +164,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#surfaced-during-phase-2-not-blocking" id="toc-surfaced-during-phase-2-not-blocking" class="nav-link" data-scroll-target="#surfaced-during-phase-2-not-blocking">Surfaced during Phase 2 — not blocking</a></li>
   <li><a href="#presentation-external-affairs-committee-deck-2026-11-06" id="toc-presentation-external-affairs-committee-deck-2026-11-06" class="nav-link" data-scroll-target="#presentation-external-affairs-committee-deck-2026-11-06">Presentation — external affairs committee deck (2026-11-06)</a></li>
   <li><a href="#renter-income-comparison-2026-11-12-at-the-users-request" id="toc-renter-income-comparison-2026-11-12-at-the-users-request" class="nav-link" data-scroll-target="#renter-income-comparison-2026-11-12-at-the-users-request">Renter-income comparison (2026-11-12, at the user’s request)</a></li>
+  <li><a href="#chesterfield-one-pager-2026-11-23-at-the-users-request" id="toc-chesterfield-one-pager-2026-11-23-at-the-users-request" class="nav-link" data-scroll-target="#chesterfield-one-pager-2026-11-23-at-the-users-request">Chesterfield one-pager (2026-11-23, at the user’s request)</a></li>
   <li><a href="#future-not-in-scope-right-now" id="toc-future-not-in-scope-right-now" class="nav-link" data-scroll-target="#future-not-in-scope-right-now">Future — not in scope right now</a></li>
   </ul></li>
   </ul>
@@ -330,6 +335,22 @@ ul.task-list li input[type="checkbox"] {
 <li><label><input type="checkbox">Check the typed numbers in the new <code>fig-alt</code> text (renter ratio ~5.9 to ~6.5; renter income ~$38k to ~$48k for Richmond city, ~$48k to ~$55k for the metro) against the rendered figures.</label></li>
 <li><label><input type="checkbox">Add B25119 and the renter-income rationale to <code>data-notes.qmd</code> and METHODOLOGY.md (median of renter-occupied households; B25119 is published in all three windows).</label></li>
 <li><label><input type="checkbox">Confirm B25119 <code>estimate_real</code> for small localities: renter-income cells for Amelia (CV 43) and similar are Low reliability and should be suppressed anywhere they’re tabled.</label></li>
+</ul>
+</section>
+<section id="chesterfield-one-pager-2026-11-23-at-the-users-request" class="level2">
+<h2 class="anchored" data-anchor-id="chesterfield-one-pager-2026-11-23-at-the-users-request">Chesterfield one-pager (2026-11-23, at the user’s request)</h2>
+<ul class="task-list">
+<li><label><input type="checkbox" checked=""><code>r/chesterfield_pay.R</code>, <code>r/chesterfield_afford.R</code>, <code>chesterfield-onepager.qmd</code> (HTML + one-page Typst PDF), navbar entry, data-notes paragraph. Spec and plan in <code>design/</code>.</label></li>
+<li><label><input type="checkbox" checked="">2026-11-24: restyled from the BHC Brand Identity Guide and added cost burden, AMI mix, seniors, household size/bedrooms and growth panels (<code>r/chesterfield_context.R</code>, <code>fonts/</code>, <code>rva_guide</code> in <code>_common.R</code>).</label></li>
+<li><label><input type="checkbox">Reconcile <code>_brand.yml</code>, <code>styles.css</code> and <code>rva_brand</code> with the guide’s palette (orange #E86C1F, amber #FBB035, cream #FEE49B, green #8CC63F, sky #ADE0ED, teal #00617F); the current blue/red/brown are CMYK guesses not in the guide.</label></li>
+<li><label><input type="checkbox">Check the HTML version of the one-pager in a browser (not visually checked 2026-11-24).</label></li>
+<li><label><input type="checkbox">Optional: CHAS-based senior and small-household need; the page uses ACS.</label></li>
+<li><label><input type="checkbox">Confirm the adopted FY27 CCPS pay (teacher $57,277, instructional assistant $17.81/hr, bus driver $25.11/hr were <em>proposed</em> in Feb 2026). If adopted: mark the old FY26 teacher and bus rows <code>stale</code>, mark the FY27 rows <code>current</code> in <code>r/chesterfield_pay.R</code> (the script now fails if a role has two <code>current</code> rows), re-run both scripts, then re-render <code>chesterfield-onepager.qmd</code>.</label></li>
+<li><label><input type="checkbox">Deputy sheriff pay ($56,741) is from a January 2026 posting; re-check against the current posting or pay plan.</label></li>
+<li><label><input type="checkbox">Source or replace the unsourced insurance (0.35%) and PMI (0.7%) assumptions in <code>r/chesterfield_afford.R</code>.</label></li>
+<li><label><input type="checkbox">Confirm BHC has cleared its logo on the public PDF; decide whether the page needs an “ask” line (needs BHC’s position).</label></li>
+<li><label><input type="checkbox">The public safety pay-plan step table was not found; add mid-career pay if it is published.</label></li>
+<li><label><input type="checkbox"><strong>User: full <code>quarto render</code></strong> — the navbar changed on every page, and <code>docs/</code> for the other pages is stale.</label></li>
 </ul>
 </section>
 <section id="future-not-in-scope-right-now" class="level2">

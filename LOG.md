@@ -6,7 +6,17 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-24 (latest) — Chesterfield one-pager: BHC brand styling and demand data
+## 2026-11-24 (latest) — Chesterfield one-pager: orange stat tiles, renter section, row separation
+
+**What changed:** Top stat tiles are now solid orange with large white numbers and a fixed height (burdened households, renter households +21%, cost-burdened renters +30%, 33% at or below 80% AMI). Added a "More renters" row (renter households 2014/2019/2024; cost-burdened renters by severity). Section headings are teal over an orange rule, emitted by `h2()` because raw Typst is block-scoped. `r/chesterfield_context.R` now also pulls B25074 (renters by household income) into `renter_income` and `data-out/chesterfield_renter_income.csv`.
+
+**Data surprise:** Renters with household income under $50,000 are flat in nominal dollars (14.1k to 12.7k incl. bands, 2014 to 2024) because income bands are not inflation-adjusted, so the page does not claim growth in lower-income renters by income band. Cost-burdened renters (+30%, 12,301 to 16,034) and severely burdened renters (+32%) are the clean growth measures. Renter share of households is flat (23.4% to 23.3%); the count grew with the county.
+
+**Left open:** HTML version not checked in a browser; PDF is one page (7.5pt, margins 0.15in vertical, tight).
+
+---
+
+## 2026-11-24 — Chesterfield one-pager: BHC brand styling and demand data
 
 **What changed:** Restyled `chesterfield-onepager.qmd` from the BHC Brand Identity Guide (palette orange/amber/cream/green/sky/teal as `rva_guide` in `_common.R`; Lato from `fonts/`; logo, tagline, orange rule, cream stat tiles). Added demand-side data from the repo: cost-burdened households (`acs_burden`), AMI mix (`pums_profiles$dist5`/`le80`), seniors (65+ population and households, cost burden by householder age), household size vs. bedrooms, and population/household growth (`acs_demographics`, `pep_migration`). New `r/chesterfield_context.R` pulls Chesterfield-only ACS B25009, B25042, B25007, B25072 and B25093 (2014/2019/2024) -> `data/chesterfield_context.rds`, `data-out/chesterfield_{hh_size,bedrooms,hh_age,burden_age}.csv`. Pay chart now carries rent and home price in its labels; the HTML-only table was dropped to keep the PDF to one page. Sources helper extended.
 

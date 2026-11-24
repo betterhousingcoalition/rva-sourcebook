@@ -171,10 +171,11 @@ ul.task-list li input[type="checkbox"] {
 <style>
 .bhc-kicker{color:#E86C1F;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
 .bhc-tag{color:#00617F;font-style:italic;font-weight:700}
-.bhc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:1rem 0}
-.bhc-tile{background:#FEF3CF;border-top:4px solid #E86C1F;padding:.5rem .7rem}
-.bhc-num{font-weight:900;font-size:1.9rem;line-height:1.1;color:#00617F}
-.bhc-lab{font-size:.85rem}
+.bhc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.2rem 0 1.5rem}
+.bhc-tile{background:#E86C1F;color:#fff;padding:.7rem .85rem;border-radius:2px}
+.bhc-num{font-weight:900;font-size:2.4rem;line-height:1.05;color:#fff;margin-bottom:.25rem}
+.bhc-lab{font-size:.85rem;font-weight:700;line-height:1.25}
+h2{margin-top:2.2rem}
 </style>
 <p class="bhc-kicker">
 Chesterfield County, Virginia · Affordable housing fact sheet
@@ -194,10 +195,18 @@ households pay 30%+ of income on housing (27% of the county)
 </div>
 <div class="bhc-tile">
 <div class="bhc-num">
-$65,160
++21%
 </div>
 <div class="bhc-lab">
-a year in income needed to afford the median rent of $1,629
+renter households since 2014, from 26,949 to 32,617
+</div>
+</div>
+<div class="bhc-tile">
+<div class="bhc-num">
++30%
+</div>
+<div class="bhc-lab">
+cost-burdened renter households since 2014, from 12,301 to 16,034
 </div>
 </div>
 <div class="bhc-tile">
@@ -208,18 +217,11 @@ a year in income needed to afford the median rent of $1,629
 of households earn 80% of area median income or less
 </div>
 </div>
-<div class="bhc-tile">
-<div class="bhc-num">
-+25%
-</div>
-<div class="bhc-lab">
-population growth since 2010, from 317,000 to 397,000
 </div>
 </div>
-</div>
-</div>
-<section id="public-service-starting-pay-falls-short-of-the-median-rent" class="level2">
+<section id="public-service-starting-pay-falls-short-of-the-median-rent" class="level2 cell" data-layout-align="left">
 <h2 class="anchored" data-anchor-id="public-service-starting-pay-falls-short-of-the-median-rent">Public-service starting pay falls short of the median rent</h2>
+</section>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
@@ -231,11 +233,26 @@ population growth since 2010, from 317,000 to 397,000
 </div>
 <ul>
 <li>Starting pay for seven county and school roles is $37,045 to $60,147; every role is short of the median rent of $1,629 by $125 to $703 a month.</li>
-<li>The best-paid starting salary affords a home of about $188,473, roughly half the median home value of $366,000; two police starting incomes ($120,294) are just enough.</li>
+<li>The best starting salary affords a home near $188,473, about half the median value of $366,000; two police incomes ($120,294) are just enough.</li>
 </ul>
+<section id="more-renters-and-more-of-them-are-stretched-thin" class="level2 cell" data-layout-align="left">
+<h2 class="anchored" data-anchor-id="more-renters-and-more-of-them-are-stretched-thin">More renters, and more of them are stretched thin</h2>
 </section>
-<section id="housing-cost-burden-is-widespread-and-heaviest-for-renters-and-seniors" class="level2">
+<div class="cell" data-layout-align="left">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-left">
+<figure class="figure">
+<p><img src="chesterfield-onepager_files/figure-html/renter-panels-1.png" class="img-fluid quarto-figure quarto-figure-left figure-img" style="width:100.0%" alt="Two panels. Left: bars of Chesterfield renter households in 2014, 2019 and 2024, rising from about 27,000 to about 33,000. Right: stacked bars of cost-burdened renter households for the same years, split into those paying 30 to 49 percent and 50 percent or more of income, rising from about 12,000 to about 16,000."></p>
+</figure>
+</div>
+</div>
+</div>
+<ul>
+<li>Renter households grew by 5,668 in ten years, and cost-burdened renters grew faster; 56% of renters earn 80% of area median income or less.</li>
+</ul>
+<section id="housing-cost-burden-is-widespread-and-heaviest-for-renters-and-seniors" class="level2 cell" data-layout-align="left">
 <h2 class="anchored" data-anchor-id="housing-cost-burden-is-widespread-and-heaviest-for-renters-and-seniors">Housing cost burden is widespread, and heaviest for renters and seniors</h2>
+</section>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
@@ -245,9 +262,9 @@ population growth since 2010, from 317,000 to 397,000
 </div>
 </div>
 </div>
-</section>
-<section id="seniors-and-smaller-households-need-smaller-homes" class="level2">
+<section id="seniors-and-smaller-households-need-smaller-homes" class="level2 cell" data-layout-align="left">
 <h2 class="anchored" data-anchor-id="seniors-and-smaller-households-need-smaller-homes">Seniors and smaller households need smaller homes</h2>
+</section>
 <div class="cell" data-layout-align="left">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-left">
@@ -271,11 +288,10 @@ How to read these figures
 <p>One earner, starting pay. Affordable rent is 30% of gross income; cost burden means 30% or more of income goes to housing. Home price assumes a 7.11% 30-year mortgage (Freddie Mac, week of Nov 12, 2026), 5% down, the county’s proposed FY2027 real estate tax rate ($0.89 per $100), insurance at 0.35% of price and mortgage insurance at 0.7% of the loan (the last two are our assumptions). Hourly pay is annualized at 2,080 hours; school-year workers earn less. Teacher and bus driver pay is the FY26 scale; FY27 pay is proposed, not confirmed adopted. Deputy sheriff pay is from a January 2026 posting; the 911 officer figure is the class-specification minimum. AMI is HUD’s FY2026 area median income for the Richmond area, adjusted for household size. Median rent and home value are 2020-2024 ACS.</p>
 </div>
 </div>
-<p><strong>Sources:</strong> Chesterfield County HR postings and class specifications (retrieved Nov 23, 2026); Chesterfield County Public Schools, compensation presentation, Feb 3, 2026; U.S. Census Bureau, 2020-2024 American Community Survey 5-year estimates, Tables B25064, B25077, B25070, B25091, B25072, B25093, B25009, B25042, B25007, B01001 and B11001; ACS 2020-2024 PUMS household incomes against HUD FY2026 income limits (Richmond HUD Metro FMR Area), adjusted for household size; Census Population Estimates Program, Vintages 2019 and 2025.</p>
+<p><strong>Sources:</strong> Chesterfield County HR postings (retrieved Nov 23, 2026); CCPS compensation presentation, Feb 3, 2026; U.S. Census Bureau, 2020-2024 American Community Survey 5-year estimates, Tables B25003, B25007, B25009, B25042, B25064, B25070, B25072, B25077, B25091, B25093, B01001, B11001; ACS PUMS incomes against HUD FY2026 income limits; Census Population Estimates Program, Vintages 2019 and 2025.</p>
 </div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

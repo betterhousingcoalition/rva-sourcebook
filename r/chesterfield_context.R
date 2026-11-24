@@ -5,7 +5,7 @@
 #         householder (seniors vs. everyone). Complements acs_burden, acs_demographics,
 #         pep_migration and pums_ami_dist, which the page reads directly.
 # Source: tidycensus ACS 5-year, survey years 2014 / 2019 / 2024 (2024 = 2020-2024).
-# Tables: B25009 (tenure by household size), B25042 (tenure by bedrooms),
+# Tables: B25074 (renter households by household income), B25009 (tenure by household size), B25042 (tenure by bedrooms),
 #         B25007 (tenure by age of householder), B25072 (renter gross rent as a
 #         share of income, by age of householder), B25093 (owner costs as a share
 #         of income, by age of householder).
@@ -107,15 +107,27 @@ burden_age <- bind_rows(renter_b, owner_b) |>
   summarise(estimate = sum(estimate), moe = sqrt(sum(moe^2)), .by = c(tenure, age, burdened)) |>
   mutate(year = 2024)
 
-## 7. Write ----
-ctx <- list(hh_size = hh_size, bedrooms = bedrooms, hh_age = hh_age, burden_age = burden_age)
+## 7. Renter households by household income (B25074), 2014 / 2019 / 2024 ----
+# Income bands are nominal dollars in each ACS window, so band counts are not
+# comparable across years without an inflation adjustment; the page uses the
+# renter totals and the burden counts instead.
+renter_income <- map(years, \(y) pull_tbl("B25074", y)) |>
+  list_rbind() |>
+  filter(!is.na(l1)) |>
+  mutate(income = l1) |>
+  summarise(estimate = sum(estimate[is.na(l2)]), moe = sqrt(sum(moe[is.na(l2)]^2)), .by = c(year, income))
+
+## 8. Write ----
+ctx <- list(hh_size = hh_size, bedrooms = bedrooms, hh_age = hh_age, burden_age = burden_age,
+            renter_income = renter_income)
 write_rds(ctx, "data/chesterfield_context.rds")
 export_csv(hh_size, "chesterfield_hh_size")
 export_csv(bedrooms, "chesterfield_bedrooms")
 export_csv(hh_age, "chesterfield_hh_age")
 export_csv(burden_age, "chesterfield_burden_age")
+export_csv(renter_income, "chesterfield_renter_income")
 
-## 8. Validation ----
+## 9. Validation ----
 # Same-vintage benchmark: household totals must equal B25003 in acs_market.rds.
 mk <- read_rds("data/acs_market.rds")
 tot_b25003 <- mk$tenure |> filter(geoid == "51041", year == 2024, tenure == "Total") |> pull(estimate)
@@ -127,8 +139,13 @@ cat(sprintf("Households 2024: B25003 %s | B25009 %s | B25007 %s | B25042 %s\n",
 stopifnot(
   "all three years present" = setequal(unique(hh_size$year), years),
   "no NA estimates" = !anyNA(c(hh_size$estimate, bedrooms$estimate, hh_age$estimate, burden_age$estimate)),
-  "household totals agree with B25003 (same vintage)" = all(c(tot_size, tot_age, tot_bed) == tot_b25003)
+  "household totals agree with B25003 (same vintage)" = all(c(tot_size, tot_age, tot_bed) == tot_b25003),
+  "B25074 has the same income bands every year" = n_distinct(count(renter_income, year)$n) == 1,
+  "B25074 renter total agrees with B25003 renters (same vintage)" =
+    sum(renter_income$estimate[renter_income$year == 2024]) ==
+    mk$tenure |> filter(geoid == "51041", year == 2024, tenure == "Renter") |> pull(estimate)
 )
+print(renter_income |> summarise(n = sum(estimate), .by = year), n = Inf)
 
 print(hh_size |> filter(year == 2024), n = Inf)
 print(burden_age, n = Inf)

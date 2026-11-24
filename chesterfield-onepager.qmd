@@ -10,7 +10,7 @@ format:
     papersize: us-letter
     margin:
       x: 0.55in
-      y: 0.4in
+      y: 0.15in
     fontsize: 7.5pt
     mainfont: Lato
     font-paths: ["fonts"]
@@ -42,7 +42,9 @@ op <- read_rds("data/chesterfield_onepager.rds") # r/chesterfield_afford.R
 afford <- op$afford
 ctx <- op$ctx
 cc <- read_rds("data/chesterfield_context.rds") # r/chesterfield_context.R
-bur <- read_rds("data/acs_burden.rds") |> filter(geoid == "51041", year == 2024)
+bur_all <- read_rds("data/acs_burden.rds") |> filter(geoid == "51041")
+bur <- bur_all |> filter(year == 2024)
+ten <- read_rds("data/acs_market.rds")$tenure |> filter(geoid == "51041", tenure != "Total")
 demo <- read_rds("data/acs_demographics.rds")
 pep <- read_rds("data/pep_migration.rds")$annual |> filter(geoid == "51041")
 pums <- read_rds("data/pums_profiles.rds")
@@ -85,6 +87,17 @@ share_burdened <- n_burdened / sum(bt$estimate)
 b_share <- \(ten) bt |> filter(tenure == ten, burden != "Not cost-burdened") |> pull(share) |> sum()
 renter_b <- b_share("Renter")
 owner_b <- b_share("Owner")
+
+## ---- Renters (ACS B25003 and B25070, 2014 / 2019 / 2024) ----
+renters <- ten |> filter(tenure == "Renter") |> select(year, n = estimate)
+rn <- \(y) renters$n[renters$year == y]
+renter_growth <- rn(2024) / rn(2014) - 1
+rb <- bur_all |>
+  filter(tenure == "Renter", burden %in% c("Cost-burdened", "Severely cost-burdened")) |>
+  mutate(burden = factor(burden, c("Severely cost-burdened", "Cost-burdened"), c("50%+ of income", "30-49% of income")))
+rb_tot <- rb |> summarise(n = sum(estimate), .by = year)
+rbn <- \(y) rb_tot$n[rb_tot$year == y]
+rb_growth <- rbn(2024) / rbn(2014) - 1
 
 ## ---- Income distribution (PUMS vs HUD FY2026 limits) ----
 ami_lv <- c("30% AMI or less", "31-50% AMI", "51-80% AMI", "81-120% AMI", "Above 120% AMI")
@@ -150,6 +163,8 @@ stopifnot(
   "claim: two police incomes clear the median-home income" = two_ff > ctx$income_for_home,
   "claim: every salary is below 80% AMI (1 person)" = all(roles$annual_pay < ctx$ami80_1p),
   "claim: renters more burdened than owners" = renter_b > owner_b,
+  "claim: renter households grew" = rn(2024) > rn(2019) && rn(2019) > rn(2014),
+  "claim: burdened renters grew faster than renters" = rb_growth > renter_growth,
   "claim: about one in three households is at or below 80% AMI" = between(le80, 0.30, 0.37),
   "claim: senior renters more burdened than younger renters" =
     sr_get("Renters", "Householder 65+") > sr_get("Renters", "Under 65"),
@@ -164,14 +179,28 @@ asm <- ctx$assumptions
 typ_esc <- \(x) gsub("([\\\\$#*_@<>`~\\[\\]])", "\\\\\\1", x, perl = TRUE)
 raw_typst <- \(x) cat("```{=typst}\n", x, "\n```\n", sep = "")
 tile_values <- c(
-  num(n_burdened), usd0(ctx$income_for_rent), pct(le80), paste0("+", pct(pop_growth))
+  num(n_burdened), paste0("+", pct(renter_growth)), paste0("+", pct(rb_growth)), pct(le80)
 )
 tile_labels <- c(
   paste0("households pay 30%+ of income on housing (", pct(share_burdened), " of the county)"),
-  paste0("a year in income needed to afford the median rent of ", usd0(ctx$median_rent)),
-  "of households earn 80% of area median income or less",
-  paste0("population growth since 2010, from ", num(round(pop10, -3)), " to ", num(round(pop25, -3)))
+  paste0("renter households since 2014, from ", num(rn(2014)), " to ", num(rn(2024))),
+  paste0("cost-burdened renter households since 2014, from ", num(rbn(2014)), " to ", num(rbn(2024))),
+  "of households earn 80% of area median income or less"
 )
+
+# Section heading: Markdown H2 in HTML, a teal title over an orange rule in Typst
+# (raw Typst is block-scoped, so a heading show rule cannot be set globally).
+h2 <- function(title) {
+  if (html) {
+    cat("\n## ", title, "\n\n", sep = "")
+  } else {
+    raw_typst(paste0(
+      "#block(above: 9pt, below: 0pt, breakable: false)[#text(size: 10.5pt, weight: 900, fill: rgb(\"#00617F\"))[",
+      typ_esc(title), "]#v(-3pt)#line(length: 100%, stroke: 1.4pt + rgb(\"#E86C1F\"))]
+"
+    ))
+  }
+}
 
 # ggplot theme in BHC type and colors
 theme_bhc <- function(base_size = 7) {
@@ -220,10 +249,11 @@ if (html) {
   cat('<style>
 .bhc-kicker{color:#E86C1F;font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}
 .bhc-tag{color:#00617F;font-style:italic;font-weight:700}
-.bhc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin:1rem 0}
-.bhc-tile{background:#FEF3CF;border-top:4px solid #E86C1F;padding:.5rem .7rem}
-.bhc-num{font-weight:900;font-size:1.9rem;line-height:1.1;color:#00617F}
-.bhc-lab{font-size:.85rem}
+.bhc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.2rem 0 1.5rem}
+.bhc-tile{background:#E86C1F;color:#fff;padding:.7rem .85rem;border-radius:2px}
+.bhc-num{font-weight:900;font-size:2.4rem;line-height:1.05;color:#fff;margin-bottom:.25rem}
+.bhc-lab{font-size:.85rem;font-weight:700;line-height:1.25}
+h2{margin-top:2.2rem}
 </style>\n')
   cat('<p class="bhc-kicker">Chesterfield County, Virginia &middot; Affordable housing fact sheet</p>\n')
   cat('<p class="bhc-tag">Better Homes. Better Communities. Better Lives.</p>\n\n')
@@ -233,22 +263,16 @@ if (html) {
   cat('<div class="bhc-tiles">', tiles, '</div>\n', sep = "")
 } else {
   tiles <- paste0(
-    "block(width: 100%, fill: rgb(\"#FEF3CF\"), stroke: (top: 2.5pt + rgb(\"#E86C1F\")), inset: (x: 6pt, y: 4pt))[",
-    "#text(size: 19pt, weight: 900, fill: rgb(\"#00617F\"))[", typ_esc(tile_values), "] \\ ",
-    "#text(size: 6.8pt)[", typ_esc(tile_labels), "]]",
+    "block(width: 100%, height: 55pt, fill: rgb(\"#E86C1F\"), inset: (x: 7pt, y: 5pt))[",
+    "#text(size: 24pt, weight: 900, fill: white, top-edge: \"cap-height\", bottom-edge: \"baseline\")[", typ_esc(tile_values), "]",
+    "#v(4pt)#text(size: 6.8pt, weight: 700, fill: white)[", typ_esc(tile_labels), "]]",
     collapse = ",\n  "
   )
   raw_typst(paste0(
     "#set par(leading: 0.45em, justify: false)
 #set block(spacing: 0.6em)
-#show heading.where(level: 2): it => block(above: 7pt, below: 3pt, breakable: false)[
-  #text(size: 10.5pt, weight: 900, fill: rgb(\"#00617F\"))[#it.body]
-  #v(-4pt)
-  #line(length: 100%, stroke: 1.4pt + rgb(\"#E86C1F\"))
-]
-#show figure: set block(above: 3pt, below: 3pt)
 #grid(columns: (auto, 1fr), column-gutter: 8pt,
-  image(\"img/bhc-logo-horiz-color.png\", width: 1.9in),
+  image(\"img/bhc-logo-horiz-color.png\", width: 1.5in),
   align(right + horizon)[#text(size: 8.5pt, style: \"italic\", weight: 700, fill: rgb(\"#00617F\"))[Better Homes. Better Communities. Better Lives.]]
 )
 #v(2pt)
@@ -258,19 +282,23 @@ if (html) {
 #v(-3pt)
 #text(size: 17pt, weight: 900)[Chesterfield needs affordable homes for the people who serve it]
 #v(2pt)
-#grid(columns: (1fr, 1fr, 1fr, 1fr), column-gutter: 6pt,
+#grid(columns: (1fr, 1fr, 1fr, 1fr), column-gutter: 7pt,
   ", tiles, "
 )
 "))
 }
 ```
 
-## Public-service starting pay falls short of the median rent
+```{r}
+#| output: asis
+#| echo: false
+h2("Public-service starting pay falls short of the median rent")
+```
 
 ```{r}
 #| label: pay-chart
 #| fig-width: 7.4
-#| fig-asp: 0.275
+#| fig-asp: 0.225
 #| fig-alt: "Horizontal bars of starting pay for seven Chesterfield public-service roles, from about $37,000 for instructional assistants to $60,147 for police officers and firefighters. Each role's label states the rent and home price one income affords. A vertical line near $65,000 marks the income needed for the median rent and a dashed line near $117,000 the income needed for the median home; every bar falls short of both. Diamonds mark proposed FY27 pay where it differs."
 
 plot_df <- roles |>
@@ -311,14 +339,60 @@ ggplot(plot_df, aes(annual_pay, lab)) +
 ```
 
 - Starting pay for seven county and school roles is `{r} usd0(min(roles$annual_pay))` to `{r} usd0(max(roles$annual_pay))`; every role is short of the median rent of `{r} usd0(ctx$median_rent)` by `{r} usd0(-max(roles$rent_gap))` to `{r} usd0(-min(roles$rent_gap))` a month.
-- The best-paid starting salary affords a home of about `{r} usd0(max(roles$max_price))`, roughly half the median home value of `{r} usd0(ctx$median_value)`; two police starting incomes (`{r} usd0(two_ff)`) are just enough.
+- The best starting salary affords a home near `{r} usd0(max(roles$max_price))`, about half the median value of `{r} usd0(ctx$median_value)`; two police incomes (`{r} usd0(two_ff)`) are just enough.
 
-## Housing cost burden is widespread, and heaviest for renters and seniors
+```{r}
+#| output: asis
+#| echo: false
+h2("More renters, and more of them are stretched thin")
+```
+
+```{r}
+#| label: renter-panels
+#| fig-width: 7.4
+#| fig-asp: 0.14
+#| fig-alt: "Two panels. Left: bars of Chesterfield renter households in 2014, 2019 and 2024, rising from about 27,000 to about 33,000. Right: stacked bars of cost-burdened renter households for the same years, split into those paying 30 to 49 percent and 50 percent or more of income, rising from about 12,000 to about 16,000."
+
+ra <- renters |>
+  ggplot(aes(factor(year), n)) +
+  geom_col(fill = g[["orange"]], width = 0.6) +
+  geom_text(aes(label = num(n)), vjust = -0.4, size = 2.6, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.3))) +
+  labs(
+    title = paste0("Renter households are up ", pct(renter_growth), " since 2014"),
+    subtitle = "Occupied rental homes, ACS 5-year ending in the year shown"
+  ) +
+  theme_bhc() + theme(axis.line.x = element_line(color = rva_ink[["baseline"]]), axis.text.x = element_text(face = "bold"))
+
+rb_lab <- rb_tot |> mutate(lab = num(n))
+rbp <- rb |>
+  ggplot(aes(factor(year), estimate, fill = burden)) +
+  geom_col(width = 0.6) +
+  geom_text(aes(label = num(estimate)), position = position_stack(vjust = 0.5), size = 2.4, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(data = rb_lab, aes(y = n, label = lab, fill = NULL), vjust = -0.4, size = 2.6, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  scale_fill_manual(values = c("30-49% of income" = g[["amber"]], "50%+ of income" = g[["orange"]])) +
+  scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.3))) +
+  labs(
+    title = paste0("Cost-burdened renter households are up ", pct(rb_growth)),
+    subtitle = "Paying 30%+ of income on rent: 30-49% (amber), 50%+ (orange)"
+  ) +
+  theme_bhc() + theme(axis.line.x = element_line(color = rva_ink[["baseline"]]), axis.text.x = element_text(face = "bold"))
+
+row_of(list(ra, rbp))
+```
+
+- Renter households grew by `{r} num(rn(2024) - rn(2014))` in ten years, and cost-burdened renters grew faster; `{r} pct(le80_renter)` of renters earn 80% of area median income or less.
+
+```{r}
+#| output: asis
+#| echo: false
+h2("Housing cost burden is widespread, and heaviest for renters and seniors")
+```
 
 ```{r}
 #| label: need-panels
 #| fig-width: 7.4
-#| fig-asp: 0.25
+#| fig-asp: 0.19
 #| fig-alt: "Three panels. Left: stacked bars of cost-burdened share of Chesterfield renters (about half) and owners (about one in five). Middle: share of households by income band relative to area median income; about one in three is at or below 80 percent. Right: share of households that are cost-burdened by tenure, for householders 65 and over versus under 65; senior renters are the most burdened at about two in three."
 
 burden_lab <- c("Not cost-burdened" = "Under 30% of income", "Cost-burdened" = "30-49%", "Severely cost-burdened" = "50%+")
@@ -364,7 +438,7 @@ pc <- sr_burden |>
   geom_col(position = position_dodge(width = 0.75), width = 0.7) +
   geom_text(aes(label = pct(share)), position = position_dodge(width = 0.75), vjust = -0.4, size = 2.5, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_fill_manual(values = c("Householder 65+" = g[["teal"]], "Under 65" = g[["sky"]])) +
-  scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.15))) +
+  scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.32))) +
   guides(fill = guide_legend(nrow = 2, title = NULL, keywidth = 0.6, keyheight = 0.6)) +
   labs(
     title = paste0(pct(sr_get("Renters", "Householder 65+")), " of senior renters are cost-burdened"),
@@ -376,12 +450,16 @@ pc <- sr_burden |>
 row_of(list(pa, pb, pc))
 ```
 
-## Seniors and smaller households need smaller homes
+```{r}
+#| output: asis
+#| echo: false
+h2("Seniors and smaller households need smaller homes")
+```
 
 ```{r}
 #| label: size-panels
 #| fig-width: 7.4
-#| fig-asp: 0.22
+#| fig-asp: 0.16
 #| fig-alt: "Two panels. Left: two stacked bars comparing households by size with occupied homes by bedrooms in Chesterfield; most households have one or two people while most homes have three or more bedrooms. Right: lines showing growth since 2014 for householders 65 and over, all households, people living alone and population; senior households grew fastest."
 
 seg_cols <- c("1" = g[["orange"]], "2" = g[["amber"]], "3" = g[["sky"]])
@@ -407,7 +485,7 @@ pd_plot <- ggplot(pd, aes(share, bar, fill = seg)) +
 gl <- growth |>
   mutate(series = factor(series, c("Householders 65+", "All households", "People living alone", "Population")))
 lab_df <- gl |> filter(year == 2024) |> mutate(lab = paste0(series, " +", round(index - 100), "%")) |> arrange(index)
-for (i in seq_len(nrow(lab_df))[-1]) lab_df$index[i] <- max(lab_df$index[i], lab_df$index[i - 1] + 6.5) # keep end labels apart
+for (i in seq_len(nrow(lab_df))[-1]) lab_df$index[i] <- max(lab_df$index[i], lab_df$index[i - 1] + 16) # keep end labels apart
 pe_plot <- ggplot(gl, aes(year, index, color = series, group = series)) +
   geom_line(linewidth = 0.8) +
   geom_point(size = 1.4) +
@@ -415,7 +493,7 @@ pe_plot <- ggplot(gl, aes(year, index, color = series, group = series)) +
   scale_color_manual(values = c("Householders 65+" = g[["teal"]], "All households" = g[["orange"]],
                                 "People living alone" = "#8a8a8a", "Population" = "#c9a96a")) +
   scale_x_continuous(breaks = c(2014, 2019, 2024), limits = c(2013.6, 2032.5), expand = c(0, 0)) +
-  scale_y_continuous(limits = c(95, NA)) +
+  scale_y_continuous(limits = c(95, 182)) +
   labs(
     title = "Senior households and household count are growing faster than population",
     subtitle = "Index, 2014 = 100 (2010-14, 2015-19, 2020-24 ACS)"
@@ -444,7 +522,7 @@ if (html) {
   cat(chesterfield_pay_cap(), "\n")
 } else {
   raw_typst(paste0(
-    "#v(3pt)\n#block(width: 100%, fill: rgb(\"#FEF3CF\"), inset: 4pt)[#set text(size: 5.8pt)\n#strong[How to read these figures.] ", typ_esc(notes), "]\n"
+    "#v(3pt)\n#block(width: 100%, fill: rgb(\"#FEF3CF\"), inset: 4pt)[#set text(size: 5.4pt)\n#strong[How to read these figures.] ", typ_esc(notes), "]\n"
   ))
   cat("\n```{=typst}\n#set text(size: 5.5pt)\n```\n\n")
   cat(chesterfield_pay_cap(), "\n")

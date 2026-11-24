@@ -383,10 +383,10 @@ export_csv <- function(df, name) {
 # rent and home value from the ACS, income limits from HUD).
 chesterfield_pay_cap <- function(year = "2020-2024") {
   paste0(
-    "**Sources:** Chesterfield County HR postings and class specifications (retrieved Nov 23, 2026); ",
-    "Chesterfield County Public Schools, compensation presentation, Feb 3, 2026; ",
-    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25064, B25077, B25070, B25091, B25072, B25093, B25009, B25042, B25007, B01001 and B11001; ",
-    "ACS 2020-2024 PUMS household incomes against HUD FY2026 income limits (Richmond HUD Metro FMR Area), adjusted for household size; ",
+    "**Sources:** Chesterfield County HR postings (retrieved Nov 23, 2026); ",
+    "CCPS compensation presentation, Feb 3, 2026; ",
+    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25003, B25007, B25009, B25042, B25064, B25070, B25072, B25077, B25091, B25093, B01001, B11001; ",
+    "ACS PUMS incomes against HUD FY2026 income limits; ",
     "Census Population Estimates Program, Vintages 2019 and 2025."
   )
 }

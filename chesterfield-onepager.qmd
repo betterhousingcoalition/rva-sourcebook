@@ -188,7 +188,9 @@ theme_bhc <- function(base_size = 7) {
       axis.text = element_text(color = g[["ink"]]),
       axis.line.x = element_blank(),
       panel.grid.major.y = element_blank(),
-      plot.margin = margin(2, 6, 2, 2),
+      # Each chart is a "card": white with a thin cream border, so side-by-side charts read as separate.
+      plot.background = element_rect(fill = "white", color = g[["cream"]], linewidth = 0.9),
+      plot.margin = margin(5, 8, 4, 6),
       legend.position = "none"
     )
 }
@@ -196,9 +198,15 @@ theme_bhc <- function(base_size = 7) {
 # Print several ggplots side by side in one device (one figure, one alt text).
 row_of <- function(plots, widths = rep(1, length(plots))) {
   grid::grid.newpage()
-  grid::pushViewport(grid::viewport(layout = grid::grid.layout(1, length(plots), widths = grid::unit(widths, "null"))))
-  for (i in seq_along(plots)) {
-    print(plots[[i]], vp = grid::viewport(layout.pos.col = i))
+  n <- length(plots)
+  # Fixed 7pt gutters between the chart cards.
+  w <- grid::unit.c(
+    grid::unit(widths[1], "null"),
+    do.call(grid::unit.c, lapply(seq_len(n)[-1], \(i) grid::unit.c(grid::unit(7, "pt"), grid::unit(widths[i], "null"))))
+  )
+  grid::pushViewport(grid::viewport(layout = grid::grid.layout(1, 2 * n - 1, widths = w)))
+  for (i in seq_len(n)) {
+    print(plots[[i]], vp = grid::viewport(layout.pos.col = 2 * i - 1))
   }
   invisible()
 }

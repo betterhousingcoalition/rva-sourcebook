@@ -144,6 +144,19 @@ rva_brand <- c(
   brown       = "#5E3A1C"
 )
 
+# BHC Brand Identity Guide palette (the guide's RGB/HEX values, "BHC Color Palette" page).
+# Used by the Chesterfield one-pager. rva_brand above is the older site palette, whose
+# blue/red/brown were converted from CMYK guesses and are not in the guide; reconcile later.
+rva_guide <- c(
+  orange = "#E86C1F", # PMS 173
+  amber  = "#FBB035", # PMS 143
+  cream  = "#FEE49B", # PMS 1215
+  green  = "#8CC63F", # PMS 382
+  sky    = "#ADE0ED", # PMS 2975
+  teal   = "#00617F", # PMS 634 (BHC Management); 7:1 against white
+  ink    = "#262626"
+)
+
 # Sequential blue ramp, light -> dark, for choropleths and other magnitude
 # encodings (ggplot2 continuous fills and mapgl step/interpolate expressions).
 rva_seq <- c(
@@ -364,6 +377,18 @@ export_csv <- function(df, name) {
   path <- file.path("data-out", paste0(name, ".csv"))
   readr::write_csv(df, path)
   invisible(path)
+}
+
+# Source line for the Chesterfield one-pager (pay from county and school postings,
+# rent and home value from the ACS, income limits from HUD).
+chesterfield_pay_cap <- function(year = "2020-2024") {
+  paste0(
+    "**Sources:** Chesterfield County HR postings (retrieved Nov 23, 2026); ",
+    "CCPS compensation presentation, Feb 3, 2026; ",
+    "U.S. Census Bureau, ", year, " American Community Survey 5-year estimates, Tables B25003, B25007, B25009, B25042, B25064, B25070, B25072, B25077, B25091, B25093, B01001, B11001; ",
+    "ACS PUMS incomes against HUD FY2026 income limits; ",
+    "Census Population Estimates Program, Vintages 2019 and 2025."
+  )
 }
 
 # ---- Plot rendering options ----------------------------------------------

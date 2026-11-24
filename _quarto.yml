@@ -27,6 +27,8 @@ website:
         text: Market
       - href: profiles.qmd
         text: Profiles
+      - href: chesterfield-onepager.qmd
+        text: Chesterfield
       - href: presentation.qmd
         text: Presentation
         target: _blank

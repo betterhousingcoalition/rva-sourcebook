@@ -6,7 +6,47 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-12 (latest) — quoted-figure review: sample sizes and one wrong claim
+## 2026-11-24 (latest) — Chesterfield fact sheet: two pages, larger type
+
+**What changed:** The PDF is now two pages (9pt body, 0.45in margins, larger chart text, taller charts). Page 1: header, tiles, pay chart, renter row. Page 2: cost burden row, household-size row, reading note, sources. Tile numbers sit closer to their labels. The owner 8% severe-burden label was dropped from the stacked bar to avoid overlap. The file is still named `chesterfield-onepager`.
+
+---
+
+## 2026-11-24 — Chesterfield one-pager: orange stat tiles, renter section, row separation
+
+**What changed:** Top stat tiles are now solid orange with large white numbers and a fixed height (burdened households, renter households +21%, cost-burdened renters +30%, 33% at or below 80% AMI). Added a "More renters" row (renter households 2014/2019/2024; cost-burdened renters by severity). Section headings are teal over an orange rule, emitted by `h2()` because raw Typst is block-scoped. `r/chesterfield_context.R` now also pulls B25074 (renters by household income) into `renter_income` and `data-out/chesterfield_renter_income.csv`.
+
+**Data surprise:** Renters with household income under $50,000 are flat in nominal dollars (14.1k to 12.7k incl. bands, 2014 to 2024) because income bands are not inflation-adjusted, so the page does not claim growth in lower-income renters by income band. Cost-burdened renters (+30%, 12,301 to 16,034) and severely burdened renters (+32%) are the clean growth measures. Renter share of households is flat (23.4% to 23.3%); the count grew with the county.
+
+**Left open:** HTML version not checked in a browser; PDF is one page (7.5pt, margins 0.15in vertical, tight).
+
+---
+
+## 2026-11-24 — Chesterfield one-pager: BHC brand styling and demand data
+
+**What changed:** Restyled `chesterfield-onepager.qmd` from the BHC Brand Identity Guide (palette orange/amber/cream/green/sky/teal as `rva_guide` in `_common.R`; Lato from `fonts/`; logo, tagline, orange rule, cream stat tiles). Added demand-side data from the repo: cost-burdened households (`acs_burden`), AMI mix (`pums_profiles$dist5`/`le80`), seniors (65+ population and households, cost burden by householder age), household size vs. bedrooms, and population/household growth (`acs_demographics`, `pep_migration`). New `r/chesterfield_context.R` pulls Chesterfield-only ACS B25009, B25042, B25007, B25072 and B25093 (2014/2019/2024) -> `data/chesterfield_context.rds`, `data-out/chesterfield_{hh_size,bedrooms,hh_age,burden_age}.csv`. Pay chart now carries rent and home price in its labels; the HTML-only table was dropped to keep the PDF to one page. Sources helper extended.
+
+**Results:** 37,145 households (27%) are cost-burdened, 52% of renters and 20% of owners; 33% of households are at or below 80% AMI (56% of renters); 65+ population 37,702 -> 60,831 (+61%) and 65+ households 22,823 -> 36,839 since 2014; 68% of senior renters are cost-burdened; 58% of households have 1-2 people but 18% of occupied homes have 2 or fewer bedrooms; population +25% since 2010. PDF verified at one page by rasterizing. `stopifnot` claims check every chart headline.
+
+**Data surprises / calls:** A system "Lato" font already exists, so ggplot text registers it as "BHC Lato". Lato is used for body text too (the guide's Lora body face is a variable font that Typst may not render). The guide's blue/red/brown differ from `_brand.yml` (which used CMYK guesses); site-wide palette left unchanged. HTML view not visually checked (browser tool blocks `file:` URLs); only the tile markup and title were checked in the rendered file. Stray `chesterfield-onepager.typ` remains in the root (delete blocked).
+
+**Left open:** reconcile `_brand.yml`/`styles.css` with the guide's palette; confirm BHC logo clearance; confirm adopted FY27 CCPS pay; no "ask" line yet; full-site `quarto render`; CHAS-based senior need data if wanted (the senior panel uses ACS, not CHAS).
+
+---
+
+## 2026-11-23 — Chesterfield one-pager (HTML + one-page PDF)
+
+**What changed:** New `chesterfield-onepager.qmd` for BHC supporters to use at public hearings: starting pay for seven Chesterfield public-service roles (teacher, instructional assistant, school bus driver, police officer, firefighter/EMT, deputy sheriff, 911 officer) against what one income affords in rent and home price. Renders to HTML and, with the Typst format, a single-page PDF (`docs/chesterfield-onepager.pdf`, linked from the HTML page). Two scripts feed it: `r/chesterfield_pay.R` (curated pay rows with source, source date and status) and `r/chesterfield_afford.R` (30%-of-income rent, price at a stated mortgage, comparison with ACS median rent $1,629 and median value $366,000, HUD 80% AMI). `_common.R` gains `chesterfield_pay_cap()`. Navbar entry, `data-notes.qmd` paragraph, CLAUDE.md repo-map line added. Spec and plan are in `design/`.
+
+**Results:** one starting income at the police/firefighter figure ($60,147) affords $1,504 rent, $125 under the median; every role is short, up to $703 (instructional assistant, proposed FY27 pay). The median home needs about $116,800 a year; the best starting salary affords about $188,500. Two police/firefighter incomes ($120,294) just clear it.
+
+**Data surprises:** the county class-spec minimum for police and firefighters ($53,214) is the FY2023 entry rate and is stale; current postings say $60,147. The CCPS deck's own scale table prints $57,227 for the FY27 teacher start, while its slide and the county budget letter say $57,277 (used). The deputy sheriff posting is from January 2026. govsalaries.com blocks automated access (403) and was not used. The class-spec and job pages are script-rendered and were read in a headless browser. FY27 adoption of CCPS pay could not be confirmed from search, so FY27 teacher, aide and bus figures are labeled proposed.
+
+**Left open:** confirm adopted FY27 CCPS pay and update the status column; deputy sheriff current pay; BHC logo clearance for the public PDF; the insurance (0.35%) and PMI (0.7%) assumptions are unsourced; no "ask" line on the page (needs BHC's position); a full site render (navbar changed on every page) was not run.
+
+---
+
+## 2026-11-12 — quoted-figure review: sample sizes and one wrong claim
 
 **What changed:** Fixed the senior-count sample size. The pages said "about 50 sample households" (hardcoded) and the audit said "roughly 115" (`n_obs x share`, which double-counts the share). In a PUMS profile row `n_obs` is already the unweighted record count in the category, so the true figure is **509** records (226 + 283) for core-three renters at or below 50% of AMI with a householder 65+, and **910** for owners. `r/summary_audit.R` now sums `n_obs` (`sen_n()`); `summary.qmd` and `presentation.qmd` compute `senior_renters_n` instead of typing a number. The audit's `renter_gt120_b30` note reported the smaller category (10 cases); it now reports 42 sample cases of 1,081 renter households above 120% of AMI.
 

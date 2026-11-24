@@ -135,6 +135,20 @@ Why: the question is whether renters can move to ownership, so home values and r
 - [ ] Add B25119 and the renter-income rationale to `data-notes.qmd` and METHODOLOGY.md (median of renter-occupied households; B25119 is published in all three windows).
 - [ ] Confirm B25119 `estimate_real` for small localities: renter-income cells for Amelia (CV 43) and similar are Low reliability and should be suppressed anywhere they're tabled.
 
+## Chesterfield one-pager (2026-11-23, at the user's request)
+
+- [x] `r/chesterfield_pay.R`, `r/chesterfield_afford.R`, `chesterfield-onepager.qmd` (HTML + one-page Typst PDF), navbar entry, data-notes paragraph. Spec and plan in `design/`.
+- [x] 2026-11-24: restyled from the BHC Brand Identity Guide and added cost burden, AMI mix, seniors, household size/bedrooms and growth panels (`r/chesterfield_context.R`, `fonts/`, `rva_guide` in `_common.R`).
+- [ ] Reconcile `_brand.yml`, `styles.css` and `rva_brand` with the guide's palette (orange #E86C1F, amber #FBB035, cream #FEE49B, green #8CC63F, sky #ADE0ED, teal #00617F); the current blue/red/brown are CMYK guesses not in the guide.
+- [ ] Check the HTML version of the one-pager in a browser (not visually checked 2026-11-24).
+- [ ] Optional: CHAS-based senior and small-household need; the page uses ACS.
+- [ ] Confirm the adopted FY27 CCPS pay (teacher $57,277, instructional assistant $17.81/hr, bus driver $25.11/hr were *proposed* in Feb 2026). If adopted: mark the old FY26 teacher and bus rows `stale`, mark the FY27 rows `current` in `r/chesterfield_pay.R` (the script now fails if a role has two `current` rows), re-run both scripts, then re-render `chesterfield-onepager.qmd`.
+- [ ] Deputy sheriff pay ($56,741) is from a January 2026 posting; re-check against the current posting or pay plan.
+- [ ] Source or replace the unsourced insurance (0.35%) and PMI (0.7%) assumptions in `r/chesterfield_afford.R`.
+- [ ] Confirm BHC has cleared its logo on the public PDF; decide whether the page needs an "ask" line (needs BHC's position).
+- [ ] The public safety pay-plan step table was not found; add mid-career pay if it is published.
+- [ ] **User: full `quarto render`** — the navbar changed on every page, and `docs/` for the other pages is stale.
+
 ## Future — not in scope right now
 
 - [ ] PUMS gap analysis, CHAS, MLS/CoStar, vulnerable-populations data. The PUMA geography groundwork (`puma_core3`/`puma_region`/`puma_locality`) already exists in `_common.R` if this ever gets picked up — see METHODOLOGY.md.

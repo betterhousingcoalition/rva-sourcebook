@@ -10,8 +10,8 @@ format:
     papersize: us-letter
     margin:
       x: 0.55in
-      y: 0.15in
-    fontsize: 7.5pt
+      y: 0.45in
+    fontsize: 9pt
     mainfont: Lato
     font-paths: ["fonts"]
     toc: false
@@ -182,9 +182,9 @@ tile_values <- c(
   num(n_burdened), paste0("+", pct(renter_growth)), paste0("+", pct(rb_growth)), pct(le80)
 )
 tile_labels <- c(
-  paste0("households pay 30%+ of income on housing (", pct(share_burdened), " of the county)"),
+  paste0("households pay 30%+ of income on housing (", pct(share_burdened), " of all)"),
   paste0("renter households since 2014, from ", num(rn(2014)), " to ", num(rn(2024))),
-  paste0("cost-burdened renter households since 2014, from ", num(rbn(2014)), " to ", num(rbn(2024))),
+  paste0("cost-burdened renter households since 2014"),
   "of households earn 80% of area median income or less"
 )
 
@@ -203,7 +203,7 @@ h2 <- function(title) {
 }
 
 # ggplot theme in BHC type and colors
-theme_bhc <- function(base_size = 7) {
+theme_bhc <- function(base_size = 8.5) {
   theme_rva(base_size = base_size) +
     theme(
       text = element_text(family = "BHC Lato", color = g[["ink"]]),
@@ -219,7 +219,7 @@ theme_bhc <- function(base_size = 7) {
       panel.grid.major.y = element_blank(),
       # Each chart is a "card": white with a thin cream border, so side-by-side charts read as separate.
       plot.background = element_rect(fill = "white", color = g[["cream"]], linewidth = 0.9),
-      plot.margin = margin(5, 8, 4, 6),
+      plot.margin = margin(8, 8, 4, 6),
       legend.position = "none"
     )
 }
@@ -251,7 +251,7 @@ if (html) {
 .bhc-tag{color:#00617F;font-style:italic;font-weight:700}
 .bhc-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:1.2rem 0 1.5rem}
 .bhc-tile{background:#E86C1F;color:#fff;padding:.7rem .85rem;border-radius:2px}
-.bhc-num{font-weight:900;font-size:2.4rem;line-height:1.05;color:#fff;margin-bottom:.25rem}
+.bhc-num{font-weight:900;font-size:2.4rem;line-height:1;color:#fff;margin-bottom:.1rem}
 .bhc-lab{font-size:.85rem;font-weight:700;line-height:1.25}
 h2{margin-top:2.2rem}
 </style>\n')
@@ -263,9 +263,9 @@ h2{margin-top:2.2rem}
   cat('<div class="bhc-tiles">', tiles, '</div>\n', sep = "")
 } else {
   tiles <- paste0(
-    "block(width: 100%, height: 55pt, fill: rgb(\"#E86C1F\"), inset: (x: 7pt, y: 5pt))[",
-    "#text(size: 24pt, weight: 900, fill: white, top-edge: \"cap-height\", bottom-edge: \"baseline\")[", typ_esc(tile_values), "]",
-    "#v(4pt)#text(size: 6.8pt, weight: 700, fill: white)[", typ_esc(tile_labels), "]]",
+    "block(width: 100%, height: 58pt, fill: rgb(\"#E86C1F\"), inset: (x: 7pt, y: 6pt))[#set block(spacing: 0pt);",
+    "#text(size: 27pt, weight: 900, fill: white, top-edge: \"cap-height\", bottom-edge: \"baseline\")[", typ_esc(tile_values), "]",
+    "#v(6pt)#text(size: 8pt, weight: 700, fill: white)[", typ_esc(tile_labels), "]]",
     collapse = ",\n  "
   )
   raw_typst(paste0(
@@ -298,7 +298,7 @@ h2("Public-service starting pay falls short of the median rent")
 ```{r}
 #| label: pay-chart
 #| fig-width: 7.4
-#| fig-asp: 0.225
+#| fig-asp: 0.4
 #| fig-alt: "Horizontal bars of starting pay for seven Chesterfield public-service roles, from about $37,000 for instructional assistants to $60,147 for police officers and firefighters. Each role's label states the rent and home price one income affords. A vertical line near $65,000 marks the income needed for the median rent and a dashed line near $117,000 the income needed for the median home; every bar falls short of both. Diamonds mark proposed FY27 pay where it differs."
 
 plot_df <- roles |>
@@ -312,20 +312,21 @@ rent ", usd0(max_rent), " · home ", usd0(max_price)
 
 ggplot(plot_df, aes(annual_pay, lab)) +
   geom_col(fill = g[["orange"]], width = 0.62) +
-  geom_text(aes(label = usd0(annual_pay)), hjust = 1.1, size = 2.5, color = g[["ink"]], fontface = "bold", family = "BHC Lato") +
+  geom_text(aes(label = usd0(annual_pay)), hjust = 1.1, size = 3, color = g[["ink"]], fontface = "bold", family = "BHC Lato") +
   geom_point(
     data = filter(plot_df, !is.na(proposed_pay)), aes(proposed_pay),
-    shape = 23, size = 2.4, fill = g[["amber"]], color = g[["ink"]], stroke = 0.5
+    shape = 23, size = 2.9, fill = g[["amber"]], color = g[["ink"]], stroke = 0.5
   ) +
   geom_vline(xintercept = ctx$income_for_rent, color = g[["teal"]], linewidth = 0.7) +
   geom_vline(xintercept = ctx$income_for_home, color = g[["teal"]], linewidth = 0.7, linetype = "dashed") +
-  annotate("text", x = ctx$income_for_rent + 1500, y = 7, hjust = 0, size = 2.5, family = "BHC Lato", fontface = "bold",
+  annotate("text", x = ctx$income_for_rent + 1500, y = 7, hjust = 0, size = 3, family = "BHC Lato", fontface = "bold",
            color = g[["teal"]], label = paste0("Median rent needs\n",usd0(ctx$income_for_rent))) +
-  annotate("text", x = ctx$income_for_home - 1500, y = 7, hjust = 1, size = 2.5, family = "BHC Lato", fontface = "bold",
+  annotate("text", x = ctx$income_for_home + 1500, y = 7, hjust = 0, size = 3, family = "BHC Lato", fontface = "bold",
            color = g[["teal"]], label = paste0("Median home needs\n",usd0(ctx$income_for_home))) +
+  scale_y_discrete(expand = expansion(add = c(0.9, 0.6))) +
   scale_x_continuous(
     labels = scales::label_dollar(scale = 1e-3, suffix = "k"), breaks = seq(0, 125000, 25000),
-    limits = c(0, 132000), expand = c(0, 0)
+    limits = c(0, 150000), expand = c(0, 0)
   ) +
   labs(
     title = "Every starting salary falls short of both lines",
@@ -350,13 +351,13 @@ h2("More renters, and more of them are stretched thin")
 ```{r}
 #| label: renter-panels
 #| fig-width: 7.4
-#| fig-asp: 0.14
+#| fig-asp: 0.27
 #| fig-alt: "Two panels. Left: bars of Chesterfield renter households in 2014, 2019 and 2024, rising from about 27,000 to about 33,000. Right: stacked bars of cost-burdened renter households for the same years, split into those paying 30 to 49 percent and 50 percent or more of income, rising from about 12,000 to about 16,000."
 
 ra <- renters |>
   ggplot(aes(factor(year), n)) +
   geom_col(fill = g[["orange"]], width = 0.6) +
-  geom_text(aes(label = num(n)), vjust = -0.4, size = 2.6, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(aes(label = num(n)), vjust = -0.4, size = 3.1, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.3))) +
   labs(
     title = paste0("Renter households are up ", pct(renter_growth), " since 2014"),
@@ -368,8 +369,8 @@ rb_lab <- rb_tot |> mutate(lab = num(n))
 rbp <- rb |>
   ggplot(aes(factor(year), estimate, fill = burden)) +
   geom_col(width = 0.6) +
-  geom_text(aes(label = num(estimate)), position = position_stack(vjust = 0.5), size = 2.4, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
-  geom_text(data = rb_lab, aes(y = n, label = lab, fill = NULL), vjust = -0.4, size = 2.6, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(aes(label = num(estimate)), position = position_stack(vjust = 0.5), size = 2.9, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(data = rb_lab, aes(y = n, label = lab, fill = NULL), vjust = -0.4, size = 3.1, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_fill_manual(values = c("30-49% of income" = g[["amber"]], "50%+ of income" = g[["orange"]])) +
   scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.3))) +
   labs(
@@ -383,6 +384,8 @@ row_of(list(ra, rbp))
 
 - Renter households grew by `{r} num(rn(2024) - rn(2014))` in ten years, and cost-burdened renters grew faster; `{r} pct(le80_renter)` of renters earn 80% of area median income or less.
 
+{{< pagebreak >}}
+
 ```{r}
 #| output: asis
 #| echo: false
@@ -392,7 +395,7 @@ h2("Housing cost burden is widespread, and heaviest for renters and seniors")
 ```{r}
 #| label: need-panels
 #| fig-width: 7.4
-#| fig-asp: 0.19
+#| fig-asp: 0.34
 #| fig-alt: "Three panels. Left: stacked bars of cost-burdened share of Chesterfield renters (about half) and owners (about one in five). Middle: share of households by income band relative to area median income; about one in three is at or below 80 percent. Right: share of households that are cost-burdened by tenure, for householders 65 and over versus under 65; senior renters are the most burdened at about two in three."
 
 burden_lab <- c("Not cost-burdened" = "Under 30% of income", "Cost-burdened" = "30-49%", "Severely cost-burdened" = "50%+")
@@ -403,7 +406,7 @@ pa <- bt |>
   ) |>
   ggplot(aes(share, tenure, fill = fct_rev(burden))) +
   geom_col(width = 0.6) +
-  geom_text(aes(label = pct(share)), position = position_stack(vjust = 0.5), size = 2.5, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(aes(label = if_else(share >= 0.09, pct(share), "")), position = position_stack(vjust = 0.5), size = 3, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_fill_manual(
     values = c("Not cost-burdened" = g[["sky"]], "Cost-burdened" = g[["amber"]], "Severely cost-burdened" = g[["orange"]]),
     labels = burden_lab, breaks = names(burden_lab)
@@ -414,17 +417,22 @@ pa <- bt |>
     title = paste0(pct(renter_b), " of renters and ", pct(owner_b), " of owners are cost-burdened"),
     subtitle = "Share of households by housing cost as a share of income, 2020-2024"
   ) +
-  theme_bhc() + theme(legend.position = "bottom", legend.text = element_text(size = 6), axis.text.y = element_text(face = "bold"),
+  theme_bhc() + theme(legend.position = "bottom", legend.text = element_text(size = 7.5), axis.text.y = element_text(face = "bold"),
                       panel.grid.major.x = element_blank(), legend.margin = margin(0, 0, 0, 0))
 
 pb <- ami |>
   mutate(
     low = band %in% ami_lv[1:3],
-    lab = factor(band, ami_lv, c("30% or less", "31-50%", "51-80%", "81-120%", "Over 120%"))
+    lab = factor(band, ami_lv, c("30%
+or less", "31-
+50%", "51-
+80%", "81-
+120%", "Over
+120%"))
   ) |>
   ggplot(aes(lab, share, fill = low)) +
   geom_col(width = 0.7) +
-  geom_text(aes(label = pct(share)), vjust = -0.4, size = 2.5, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(aes(label = pct(share)), vjust = -0.4, size = 3, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_fill_manual(values = c(`TRUE` = g[["orange"]], `FALSE` = g[["sky"]])) +
   scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.15))) +
   labs(
@@ -436,7 +444,7 @@ pb <- ami |>
 pc <- sr_burden |>
   ggplot(aes(tenure, share, fill = age)) +
   geom_col(position = position_dodge(width = 0.75), width = 0.7) +
-  geom_text(aes(label = pct(share)), position = position_dodge(width = 0.75), vjust = -0.4, size = 2.5, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
+  geom_text(aes(label = pct(share)), position = position_dodge(width = 0.75), vjust = -0.4, size = 3, family = "BHC Lato", fontface = "bold", color = g[["ink"]]) +
   scale_fill_manual(values = c("Householder 65+" = g[["teal"]], "Under 65" = g[["sky"]])) +
   scale_y_continuous(labels = NULL, expand = expansion(mult = c(0, 0.32))) +
   guides(fill = guide_legend(nrow = 2, title = NULL, keywidth = 0.6, keyheight = 0.6)) +
@@ -444,7 +452,7 @@ pc <- sr_burden |>
     title = paste0(pct(sr_get("Renters", "Householder 65+")), " of senior renters are cost-burdened"),
     subtitle = paste0("Paying 30%+ of income. 65+ households: ", num(sr_hh14), " (2014) to ", num(sr_hh24), " (2024)")
   ) +
-  theme_bhc() + theme(legend.position = "bottom", legend.text = element_text(size = 6), legend.margin = margin(0, 0, 0, 0),
+  theme_bhc() + theme(legend.position = "bottom", legend.text = element_text(size = 7.5), legend.margin = margin(0, 0, 0, 0),
                       axis.text.x = element_text(face = "bold"), axis.line.x = element_line(color = rva_ink[["baseline"]]))
 
 row_of(list(pa, pb, pc))
@@ -459,7 +467,7 @@ h2("Seniors and smaller households need smaller homes")
 ```{r}
 #| label: size-panels
 #| fig-width: 7.4
-#| fig-asp: 0.16
+#| fig-asp: 0.32
 #| fig-alt: "Two panels. Left: two stacked bars comparing households by size with occupied homes by bedrooms in Chesterfield; most households have one or two people while most homes have three or more bedrooms. Right: lines showing growth since 2014 for householders 65 and over, all households, people living alone and population; senior households grew fastest."
 
 seg_cols <- c("1" = g[["orange"]], "2" = g[["amber"]], "3" = g[["sky"]])
@@ -473,7 +481,7 @@ pd <- bind_rows(
 pd_plot <- ggplot(pd, aes(share, bar, fill = seg)) +
   geom_col(width = 0.6) +
   geom_text(aes(label = paste0(name, "\n", pct(share))), position = position_stack(vjust = 0.5, reverse = FALSE),
-            size = 2.3, family = "BHC Lato", fontface = "bold", color = g[["ink"]], lineheight = 0.9) +
+            size = 2.8, family = "BHC Lato", fontface = "bold", color = g[["ink"]], lineheight = 0.9) +
   scale_fill_manual(values = seg_cols) +
   scale_x_continuous(labels = NULL, expand = c(0, 0)) +
   labs(
@@ -489,7 +497,7 @@ for (i in seq_len(nrow(lab_df))[-1]) lab_df$index[i] <- max(lab_df$index[i], lab
 pe_plot <- ggplot(gl, aes(year, index, color = series, group = series)) +
   geom_line(linewidth = 0.8) +
   geom_point(size = 1.4) +
-  geom_text(data = lab_df, aes(label = lab), hjust = 0, nudge_x = 0.35, size = 2.4, family = "BHC Lato", fontface = "bold", show.legend = FALSE) +
+  geom_text(data = lab_df, aes(label = lab), hjust = 0, nudge_x = 0.35, size = 2.9, family = "BHC Lato", fontface = "bold", show.legend = FALSE) +
   scale_color_manual(values = c("Householders 65+" = g[["teal"]], "All households" = g[["orange"]],
                                 "People living alone" = "#8a8a8a", "Population" = "#c9a96a")) +
   scale_x_continuous(breaks = c(2014, 2019, 2024), limits = c(2013.6, 2032.5), expand = c(0, 0)) +
@@ -522,9 +530,9 @@ if (html) {
   cat(chesterfield_pay_cap(), "\n")
 } else {
   raw_typst(paste0(
-    "#v(3pt)\n#block(width: 100%, fill: rgb(\"#FEF3CF\"), inset: 4pt)[#set text(size: 5.4pt)\n#strong[How to read these figures.] ", typ_esc(notes), "]\n"
+    "#v(3pt)\n#block(width: 100%, fill: rgb(\"#FEF3CF\"), inset: 6pt)[#set text(size: 7pt)\n#strong[How to read these figures.] ", typ_esc(notes), "]\n"
   ))
-  cat("\n```{=typst}\n#set text(size: 5.5pt)\n```\n\n")
+  cat("\n```{=typst}\n#set text(size: 7pt)\n```\n\n")
   cat(chesterfield_pay_cap(), "\n")
 }
 ```

@@ -6,7 +6,7 @@ Append-only. Newest entry first.
 
 ---
 
-## 2026-11-24 (latest) — Chesterfield one-pager: orange stat tiles, renter section, row separation
+## 2026-11-24 — Chesterfield one-pager: orange stat tiles, renter section, row separation
 
 **What changed:** Top stat tiles are now solid orange with large white numbers and a fixed height (burdened households, renter households +21%, cost-burdened renters +30%, 33% at or below 80% AMI). Added a "More renters" row (renter households 2014/2019/2024; cost-burdened renters by severity). Section headings are teal over an orange rule, emitted by `h2()` because raw Typst is block-scoped. `r/chesterfield_context.R` now also pulls B25074 (renters by household income) into `renter_income` and `data-out/chesterfield_renter_income.csv`.
 

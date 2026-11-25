@@ -298,7 +298,7 @@ h2("Public-service starting pay falls short of the median rent")
 ```{r}
 #| label: pay-chart
 #| fig-width: 7.4
-#| fig-asp: 0.4
+#| fig-asp: 0.53
 #| fig-alt: "Horizontal bars of starting pay for seven Chesterfield public-service roles, from about $37,000 for instructional assistants to $60,147 for police officers and firefighters. Each role's label states the rent and home price one income affords. A vertical line near $65,000 marks the income needed for the median rent and a dashed line near $117,000 the income needed for the median home; every bar falls short of both. Diamonds mark proposed FY27 pay where it differs."
 
 plot_df <- roles |>
@@ -326,15 +326,15 @@ ggplot(plot_df, aes(annual_pay, lab)) +
   scale_y_discrete(expand = expansion(add = c(0.9, 0.6))) +
   scale_x_continuous(
     labels = scales::label_dollar(scale = 1e-3, suffix = "k"), breaks = seq(0, 125000, 25000),
-    limits = c(0, 150000), expand = c(0, 0)
+    limits = c(0, 170000), expand = c(0, 0)
   ) +
   labs(
     title = "Every starting salary falls short of both lines",
-    subtitle = "Annual starting pay, one earner, 2026. Diamonds mark proposed FY27 pay; labels show the most rent and home price that pay affords."
+    subtitle = "One earner, 2026. Diamonds mark proposed FY27 pay. Labels show affordable rent and home price."
   ) +
   theme_bhc() +
   theme(
-    axis.text.y = element_text(lineheight = 1.0, face = "plain"),
+    axis.text.y = element_text(size = 8.5, lineheight = 1.05, face = "plain", color = g[["ink"]]),
     panel.grid.major.x = element_line(color = rva_ink[["gridline"]])
   )
 ```
@@ -534,5 +534,32 @@ if (html) {
   ))
   cat("\n```{=typst}\n#set text(size: 7pt)\n```\n\n")
   cat(chesterfield_pay_cap(), "\n")
+}
+```
+
+```{r}
+#| output: asis
+#| echo: false
+
+contact <- list(
+  name = "Eric Mai",
+  title = "Vice President of Government Relations",
+  org = "Better Housing Coalition",
+  email = "e.mai@betterhousingcoalition.org",
+  addr = "2108 W Laburnum Ave, Suite 200, Richmond, VA 23227"
+)
+if (html) {
+  cat('<div style="border-top:3px solid #E86C1F;margin-top:1.5rem;padding-top:.6rem;font-size:.9rem">',
+      '<strong style="color:#00617F">Contact</strong><br>',
+      '<strong>', contact$name, '</strong>, ', contact$title, '<br>',
+      '<a href="mailto:', contact$email, '">', contact$email, '</a><br>',
+      contact$addr, '</div>\n', sep = "")
+} else {
+  raw_typst(paste0(
+    "#v(4pt)#line(length: 100%, stroke: 1.4pt + rgb(\"#E86C1F\"))#v(-2pt)\n",
+    "#block(breakable: false)[#set text(size: 8pt);#text(weight: 900, fill: rgb(\"#00617F\"))[Contact]  #h(4pt) ",
+    "#strong[", typ_esc(contact$name), "], ", typ_esc(contact$title), "  ·  ",
+    typ_esc(contact$email), "  ·  ", typ_esc(contact$addr), "]\n"
+  ))
 }
 ```

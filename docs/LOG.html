@@ -150,7 +150,8 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#log.md-dev-log" id="toc-log.md-dev-log" class="nav-link active" data-scroll-target="#log.md-dev-log">LOG.md — dev log</a>
   <ul class="collapse">
-  <li><a href="#latest-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" id="toc-latest-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" class="nav-link" data-scroll-target="#latest-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation">2026-11-24 (latest) — Chesterfield one-pager: orange stat tiles, renter section, row separation</a></li>
+  <li><a href="#latest-chesterfield-fact-sheet-two-pages-larger-type" id="toc-latest-chesterfield-fact-sheet-two-pages-larger-type" class="nav-link" data-scroll-target="#latest-chesterfield-fact-sheet-two-pages-larger-type">2026-11-24 (latest) — Chesterfield fact sheet: two pages, larger type</a></li>
+  <li><a href="#chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" id="toc-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" class="nav-link" data-scroll-target="#chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation">2026-11-24 — Chesterfield one-pager: orange stat tiles, renter section, row separation</a></li>
   <li><a href="#chesterfield-one-pager-bhc-brand-styling-and-demand-data" id="toc-chesterfield-one-pager-bhc-brand-styling-and-demand-data" class="nav-link" data-scroll-target="#chesterfield-one-pager-bhc-brand-styling-and-demand-data">2026-11-24 — Chesterfield one-pager: BHC brand styling and demand data</a></li>
   <li><a href="#chesterfield-one-pager-html-one-page-pdf" id="toc-chesterfield-one-pager-html-one-page-pdf" class="nav-link" data-scroll-target="#chesterfield-one-pager-html-one-page-pdf">2026-11-23 — Chesterfield one-pager (HTML + one-page PDF)</a></li>
   <li><a href="#quoted-figure-review-sample-sizes-and-one-wrong-claim" id="toc-quoted-figure-review-sample-sizes-and-one-wrong-claim" class="nav-link" data-scroll-target="#quoted-figure-review-sample-sizes-and-one-wrong-claim">2026-11-12 — quoted-figure review: sample sizes and one wrong claim</a></li>
@@ -192,8 +193,13 @@ ul.task-list li input[type="checkbox"] {
 <h1>LOG.md — dev log</h1>
 <p>Append-only. Newest entry first.</p>
 <hr>
-<section id="latest-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" class="level2">
-<h2 class="anchored" data-anchor-id="latest-chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation">2026-11-24 (latest) — Chesterfield one-pager: orange stat tiles, renter section, row separation</h2>
+<section id="latest-chesterfield-fact-sheet-two-pages-larger-type" class="level2">
+<h2 class="anchored" data-anchor-id="latest-chesterfield-fact-sheet-two-pages-larger-type">2026-11-24 (latest) — Chesterfield fact sheet: two pages, larger type</h2>
+<p><strong>What changed:</strong> The PDF is now two pages (9pt body, 0.45in margins, larger chart text, taller charts). Page 1: header, tiles, pay chart, renter row. Page 2: cost burden row, household-size row, reading note, sources. Tile numbers sit closer to their labels. The owner 8% severe-burden label was dropped from the stacked bar to avoid overlap. The file is still named <code>chesterfield-onepager</code>.</p>
+<hr>
+</section>
+<section id="chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation" class="level2">
+<h2 class="anchored" data-anchor-id="chesterfield-one-pager-orange-stat-tiles-renter-section-row-separation">2026-11-24 — Chesterfield one-pager: orange stat tiles, renter section, row separation</h2>
 <p><strong>What changed:</strong> Top stat tiles are now solid orange with large white numbers and a fixed height (burdened households, renter households +21%, cost-burdened renters +30%, 33% at or below 80% AMI). Added a “More renters” row (renter households 2014/2019/2024; cost-burdened renters by severity). Section headings are teal over an orange rule, emitted by <code>h2()</code> because raw Typst is block-scoped. <code>r/chesterfield_context.R</code> now also pulls B25074 (renters by household income) into <code>renter_income</code> and <code>data-out/chesterfield_renter_income.csv</code>.</p>
 <p><strong>Data surprise:</strong> Renters with household income under $50,000 are flat in nominal dollars (14.1k to 12.7k incl.&nbsp;bands, 2014 to 2024) because income bands are not inflation-adjusted, so the page does not claim growth in lower-income renters by income band. Cost-burdened renters (+30%, 12,301 to 16,034) and severely burdened renters (+32%) are the clean growth measures. Renter share of households is flat (23.4% to 23.3%); the count grew with the county.</p>
 <p><strong>Left open:</strong> HTML version not checked in a browser; PDF is one page (7.5pt, margins 0.15in vertical, tight).</p>
